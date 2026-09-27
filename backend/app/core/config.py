@@ -14,10 +14,14 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/capacity_connect"
 
-    # Security placeholders for Phase 2
+    # Security & Authentication
     SECRET_KEY: str = "dev-insecure-secret-key-change-this-in-production-32bytes"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    VERIFICATION_TOKEN_EXPIRE_HOURS: int = 24
+    RESET_TOKEN_EXPIRE_HOURS: int = 2
+    REQUIRE_ADMIN_APPROVAL: bool = True
 
     # CORS
     BACKEND_CORS_ORIGINS: List[str] = [

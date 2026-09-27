@@ -1,5 +1,5 @@
 import uuid
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional, TYPE_CHECKING
 from sqlalchemy import (
     String,
@@ -8,6 +8,7 @@ from sqlalchemy import (
     Integer,
     Float,
     Date,
+    DateTime,
     ForeignKey,
     UniqueConstraint,
 )
@@ -57,6 +58,13 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     avatar_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    account_status: Mapped[str] = mapped_column(
+        String(50), default="PENDING", index=True, nullable=False
+    )  # PENDING, ACTIVE, SUSPENDED, REJECTED
+    verification_token_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    verification_token_expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    reset_token_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    reset_token_expires_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
 
     # Relationships
     organization: Mapped[Optional["Organization"]] = relationship("Organization", back_populates="users")
@@ -98,6 +106,9 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
     user_competencies: Mapped[List["UserCompetency"]] = relationship(
         "UserCompetency", back_populates="user", cascade="all, delete-orphan"
+    )
+    auth_sessions: Mapped[List["AuthSession"]] = relationship(
+        "AuthSession", back_populates="user", cascade="all, delete-orphan"
     )
 
 
@@ -240,3 +251,22 @@ class Certification(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     # Relationships
     user: Mapped["User"] = relationship("User", back_populates="certifications")
     course: Mapped[Optional["Course"]] = relationship("Course", back_populates="certifications")
+
+
+class AuthSession(Base, UUIDPrimaryKeyMixin, TimestampMixin):
+    """Tracks refresh token sessions and revocation status for active logins."""
+    __tablename__ = "auth_sessions"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    refresh_token_hash: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
+    user_agent: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_used_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Relationships
+    user: Mapped["User"] = relationship("User", back_populates="auth_sessions")
+

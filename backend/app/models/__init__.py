@@ -21,6 +21,7 @@ from app.models.user import (
     Skill,
     UserSkill,
     Certification,
+    AuthSession,
 )
 
 # Course & Learning Management
@@ -75,6 +76,7 @@ __all__ = [
     "Skill",
     "UserSkill",
     "Certification",
+    "AuthSession",
     # Course & Learning Management (7)
     "CourseCategory",
     "Course",
