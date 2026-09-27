@@ -192,3 +192,16 @@ The 16 core functional requirements mandated for the MVP are:
 - **Verification First**: Every service and endpoint must be validated with tests or live invocations before closing a phase.
 - **Deterministic Migrations**: All database schema changes must be driven through versioned Alembic revisions.
 - **Preserve System Boundaries**: Maintain clear abstraction boundaries between database models, business services, and public API schemas.
+
+---
+
+## 11. Phase Progress & Roadmap Status
+
+| Phase | Description | Status | Validation |
+| :--- | :--- | :--- | :--- |
+| **Phase 0** | System Architecture & Foundations | **COMPLETE** | FastAPI + Vite Dockerized, Health Endpoints Verified |
+| **Phase 1** | Database Schema & Core Data Models | **COMPLETE** | 31 Tables, UUID Primary Keys, Timestamp Mixins, Alembic Head |
+| **Phase 2** | Authentication, Security & RBAC | **COMPLETE** | Argon2id, JWT Tokens, Verification & Reset Flows, Role Guard |
+| **Phase 3** | Core Platform UI & Trainee Experience | **COMPLETE** | Dashboard, Profile, Courses Catalogue, Details, Enrollment, Syllabus, Real-time Progress (48 backend tests, 16 vitest tests) |
+| **Phase 4** | Assessments, Evaluations & Grading | *Upcoming* | Scheduled evaluations, randomized question pools |
+| **Phase 5** | Competency Universe & 3D Visualization | *Upcoming* | Interactive Three.js / React Three Fiber Constellations |

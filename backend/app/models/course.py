@@ -203,6 +203,9 @@ class Enrollment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     progress: Mapped[Optional["CourseProgress"]] = relationship(
         "CourseProgress", back_populates="enrollment", uselist=False, cascade="all, delete-orphan"
     )
+    lesson_completions: Mapped[List["LessonCompletion"]] = relationship(
+        "LessonCompletion", back_populates="enrollment", cascade="all, delete-orphan"
+    )
 
 
 class CourseProgress(Base, UUIDPrimaryKeyMixin, TimestampMixin):
@@ -225,3 +228,27 @@ class CourseProgress(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     # Relationships
     enrollment: Mapped["Enrollment"] = relationship("Enrollment", back_populates="progress")
     last_accessed_lesson: Mapped[Optional["Lesson"]] = relationship("Lesson")
+
+
+class LessonCompletion(Base, UUIDPrimaryKeyMixin, TimestampMixin):
+    """Tracks completed individual lessons for each course enrollment."""
+    __tablename__ = "lesson_completions"
+
+    enrollment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("enrollments.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    lesson_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("lessons.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("enrollment_id", "lesson_id", name="uq_enrollment_lesson_completion"),
+    )
+
+    # Relationships
+    enrollment: Mapped["Enrollment"] = relationship("Enrollment", back_populates="lesson_completions")
+    lesson: Mapped["Lesson"] = relationship("Lesson")
+

@@ -30,7 +30,7 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-slate-900 dark:text-white tracking-tight">Capacity Connect</span>
                 <Badge variant="outline" className="text-[10px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200">
-                  Phase 2
+                  Phase 3
                 </Badge>
               </div>
               <p className="text-[11px] text-slate-500 leading-none hidden sm:block">
@@ -52,6 +52,16 @@ export const Navbar: React.FC = () => {
               Overview
             </Link>
             <Link
+              to="/courses"
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                isActive("/courses")
+                  ? "bg-slate-100 text-blue-600 font-semibold dark:bg-slate-800 dark:text-blue-400"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
+              }`}
+            >
+              Courses
+            </Link>
+            <Link
               to="/health"
               className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                 isActive("/health")
@@ -64,15 +74,15 @@ export const Navbar: React.FC = () => {
             </Link>
             {isAuthenticated && (
               <Link
-                to="/dashboard"
+                to="/trainee/dashboard"
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  isActive("/dashboard")
+                  location.pathname.startsWith("/trainee") || location.pathname === "/dashboard"
                     ? "bg-slate-100 text-blue-600 font-semibold dark:bg-slate-800 dark:text-blue-400"
                     : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
                 }`}
               >
                 <LayoutDashboard className="h-3.5 w-3.5 text-blue-500" />
-                Workspace
+                Trainee Portal
               </Link>
             )}
           </nav>

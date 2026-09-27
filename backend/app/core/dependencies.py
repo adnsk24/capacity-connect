@@ -15,6 +15,11 @@ oauth2_scheme = OAuth2PasswordBearer(
     auto_error=True,
 )
 
+oauth2_scheme_optional = OAuth2PasswordBearer(
+    tokenUrl="/api/v1/auth/login",
+    auto_error=False,
+)
+
 
 def get_current_user(
     token: str = Depends(oauth2_scheme),
@@ -46,6 +51,27 @@ def get_current_user(
         )
 
     return user
+
+
+def get_optional_current_user(
+    token: Optional[str] = Depends(oauth2_scheme_optional),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """Retrieves authenticated User if valid token is provided, else returns None."""
+    if not token:
+        return None
+    try:
+        payload = decode_access_token(token)
+        user_id_str: Optional[str] = payload.get("sub")
+        if not user_id_str:
+            return None
+        user_id = uuid.UUID(user_id_str)
+        user = db.query(User).filter(User.id == user_id).first()
+        if user and user.is_active:
+            return user
+        return None
+    except Exception:
+        return None
 
 
 def get_current_active_user(
