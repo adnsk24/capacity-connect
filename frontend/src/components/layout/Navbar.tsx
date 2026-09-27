@@ -28,24 +28,23 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto flex min-h-[68px] sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
-        <Link to="/" className="flex items-center gap-3 flex-shrink-0 py-1">
+        <Link to="/" className="flex items-center gap-3.5 flex-shrink-0 py-1.5">
           <img
             src="/branding/imd-emblem.svg"
             alt="India Meteorological Department Emblem"
-            className="h-10 w-10 object-contain flex-shrink-0"
-            width="40"
-            height="40"
+            className="h-11 sm:h-[60px] w-auto object-contain flex-shrink-0"
+            height="60"
           />
-          <div className="flex flex-col">
-            <span className="text-[14px] font-bold text-slate-900 tracking-tight leading-tight">
+          <div className="flex flex-col justify-center">
+            <span className="text-[15px] sm:text-[16px] font-bold text-slate-900 tracking-tight leading-tight">
               CAPACITY CONNECT
             </span>
-            <span className="text-[11px] font-semibold text-[#1557A6] leading-tight">
+            <span className="text-[12px] sm:text-[13px] font-semibold text-[#1557A6] leading-tight mt-0.5">
               India Meteorological Department
             </span>
-            <span className="text-[10px] text-slate-500 leading-tight hidden lg:block">
+            <span className="text-[10px] sm:text-[11px] text-slate-500 leading-tight hidden lg:block mt-0.5">
               Digital Capacity Building &amp; Learning Management Portal
             </span>
           </div>
