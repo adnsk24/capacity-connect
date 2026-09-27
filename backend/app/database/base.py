@@ -1,11 +1,21 @@
+import uuid
 from datetime import datetime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import DateTime, func
+from sqlalchemy import DateTime, func, UUID
 
 
 class Base(DeclarativeBase):
     """Base class for all SQLAlchemy ORM models."""
     pass
+
+
+class UUIDPrimaryKeyMixin:
+    """Reusable UUID primary key mixin."""
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
 
 
 class TimestampMixin:

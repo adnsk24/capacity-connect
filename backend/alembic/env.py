@@ -15,8 +15,7 @@ if parent_dir not in sys.path:
 
 from app.core.config import settings
 from app.database.base import Base
-# In future phases, import models here so Base.metadata is fully populated:
-# import app.models
+import app.models  # Registers all 29 models with Base.metadata
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

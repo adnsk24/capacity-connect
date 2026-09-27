@@ -136,9 +136,9 @@ The 16 core functional requirements mandated for the MVP are:
 
 ## 7. Development Phases
 
-- **Phase 0 (Current)**: Project Foundation & Architecture Setup (monorepo directory layout, frontend shell, backend skeleton, database session manager & migrations foundation, health endpoints, CI/CD and Docker presets).
-- **Phase 1**: Database Schema Modeling & Alembic Migrations (Users, Roles, Profiles, Courses, Modules, Assessments, Submissions, Competencies).
-- **Phase 2**: Authentication, Security & RBAC (Argon2id hashing, JWT access/refresh tokens, role authorization middleware).
+- **Phase 0 (Complete)**: Project Foundation & Architecture Setup (monorepo directory layout, frontend shell, backend skeleton, database session manager & migrations foundation, health endpoints, CI/CD and Docker presets).
+- **Phase 1 (Complete)**: Database Schema Modeling & Alembic Migrations (29 normalized domain entities across Organization, Users, Courses, Assessments, Feedback, Competencies, and Subject Requirements; UUID primary keys; Alembic revision 0001; validated on PostgreSQL; see `docs/DATABASE_SCHEMA.md`).
+- **Phase 2 (Upcoming)**: Authentication, Security & RBAC (Argon2id hashing, JWT access/refresh tokens, role authorization middleware).
 - **Phase 3**: Trainee, Trainer & Admin Profile Management.
 - **Phase 4**: Course Catalog & Learning Resource Management (file upload integration).
 - **Phase 5**: Assessment Engine & Automated Evaluation.
