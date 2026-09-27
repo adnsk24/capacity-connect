@@ -13,6 +13,9 @@ import {
   ChevronUp,
   AlertCircle,
   Sparkles,
+  Star,
+  MessageSquare,
+  Send,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -23,6 +26,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { ErrorState } from "@/components/ui/error-state"
 import { Skeleton } from "@/components/ui/loading-skeleton"
 import { coursesService } from "@/services/courses"
+import { feedbackService } from "@/services/feedback"
 import { useAuthStore } from "@/store/useAuthStore"
 
 export const CourseDetailPage: React.FC = () => {
@@ -32,6 +36,32 @@ export const CourseDetailPage: React.FC = () => {
   const { isAuthenticated } = useAuthStore()
   const [enrollError, setEnrollError] = useState<string | null>(null)
   const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({})
+
+  // Feedback State & Query
+  const [feedbackRating, setFeedbackRating] = useState<number>(5)
+  const [feedbackComment, setFeedbackComment] = useState<string>("")
+  const [feedbackSuccess, setFeedbackSuccess] = useState<boolean>(false)
+
+  const { data: feedbackData, refetch: refetchFeedback } = useQuery({
+    queryKey: ["course-feedback", courseId],
+    queryFn: () => feedbackService.getCourseFeedback(courseId!),
+    enabled: !!courseId,
+  })
+
+  const feedbackMutation = useMutation({
+    mutationFn: () =>
+      feedbackService.submitCourseFeedback(courseId!, {
+        course_rating: feedbackRating,
+        trainer_rating: feedbackRating,
+        content_rating: feedbackRating,
+        comments: feedbackComment,
+      }),
+    onSuccess: () => {
+      setFeedbackSuccess(true)
+      setFeedbackComment("")
+      refetchFeedback()
+    },
+  })
 
   const { data: course, isLoading, error, refetch } = useQuery({
     queryKey: ["course-detail", courseId],
@@ -84,7 +114,10 @@ export const CourseDetailPage: React.FC = () => {
 
   const breadcrumbItems = [
     { label: "Catalogue", href: "/courses" },
-    { label: course.category.name, href: `/courses?category_id=${course.category.id}` },
+    {
+      label: course.category?.name || "General Meteorology",
+      href: course.category?.id ? `/courses?category_id=${course.category.id}` : "/courses",
+    },
     { label: course.title },
   ]
 
@@ -300,6 +333,113 @@ export const CourseDetailPage: React.FC = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Course Feedback & Evaluation System (MVP Deliverable #8) */}
+          <Card className="border-slate-200/90 dark:border-slate-800">
+            <CardHeader className="p-5 pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-bold flex items-center gap-2">
+                  <Star className="h-5 w-5 text-amber-500 fill-amber-400" />
+                  <span>Course & Instructor Evaluations</span>
+                </CardTitle>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <span className="text-amber-500 font-bold">{feedbackData?.average_course_rating.toFixed(1) || "5.0"}</span>
+                  <span className="text-slate-400">/ 5.0</span>
+                  <span className="text-slate-400 text-[11px]">({feedbackData?.feedback_count || 0} reviews)</span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5 pt-0 space-y-4">
+              {/* If enrolled, allow submitting feedback */}
+              {course.is_enrolled && (
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                      <MessageSquare className="h-4 w-4 text-blue-600" />
+                      <span>Submit Your Evaluation</span>
+                    </span>
+                    {/* Star selector */}
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setFeedbackRating(star)}
+                          className="cursor-pointer focus:outline-none"
+                        >
+                          <Star
+                            className={`h-4 w-4 ${
+                              star <= feedbackRating
+                                ? "text-amber-500 fill-amber-400"
+                                : "text-slate-300 dark:text-slate-600"
+                            }`}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={feedbackComment}
+                      onChange={(e) => setFeedbackComment(e.target.value)}
+                      placeholder="Share your feedback on course materials, radar exercises, or instructor delivery..."
+                      className="flex-1 px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => feedbackMutation.mutate()}
+                      disabled={feedbackMutation.isPending || !feedbackComment.trim()}
+                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 cursor-pointer shrink-0"
+                    >
+                      <Send className="h-3.5 w-3.5 mr-1" />
+                      <span>Submit</span>
+                    </Button>
+                  </div>
+
+                  {feedbackSuccess && (
+                    <p className="text-[11px] text-emerald-600 font-medium">
+                      ✓ Thank you! Your feedback has been recorded and integrated into institutional metrics.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Feedbacks list */}
+              {feedbackData && feedbackData.feedbacks.length > 0 ? (
+                <div className="space-y-2.5 pt-1">
+                  {feedbackData.feedbacks.slice(0, 3).map((f) => (
+                    <div
+                      key={f.id}
+                      className="p-3 rounded-lg border border-slate-100 dark:border-slate-800 text-xs space-y-1 bg-white dark:bg-slate-900"
+                    >
+                      <div className="flex items-center justify-between text-slate-500">
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">
+                          {f.user_name || "Verified Trainee"}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 text-amber-500 fill-amber-400" />
+                          <span className="font-bold text-slate-700 dark:text-slate-300">
+                            {f.course_rating}.0
+                          </span>
+                        </div>
+                      </div>
+                      {f.comments && (
+                        <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                          "{f.comments}"
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-400 py-1">
+                  No trainee feedback recorded yet for this course. Be the first to review!
+                </p>
+              )}
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right Column (1 span): Enrollment Card & Competencies */}

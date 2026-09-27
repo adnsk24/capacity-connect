@@ -64,16 +64,60 @@ export const LoginPage: React.FC = () => {
         </div>
 
         <Card className="border-slate-200 dark:border-slate-800 shadow-md">
-          <CardHeader>
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Sign In</CardTitle>
               <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-200 bg-blue-50/50">
                 Argon2id + JWT
               </Badge>
             </div>
-            <CardDescription>
+            <CardDescription className="text-xs">
               Enter your official email or username and account password.
             </CardDescription>
+
+            {/* Evaluator Quick-Fill Bar */}
+            <div className="pt-2">
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <span className="text-amber-500">⚡</span> Demo Credentials Quick-Fill
+                  </span>
+                  <span className="text-[10px] text-slate-400">Click to autofill</span>
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsernameOrEmail("trainee.demo@imd.gov.in")
+                      setPassword("DemoTrainee123!")
+                    }}
+                    className="px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all cursor-pointer shadow-xs text-center"
+                  >
+                    Trainee
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsernameOrEmail("trainer.demo@imd.gov.in")
+                      setPassword("DemoTrainer123!")
+                    }}
+                    className="px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950 transition-all cursor-pointer shadow-xs text-center"
+                  >
+                    Trainer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsernameOrEmail("admin.demo@imd.gov.in")
+                      setPassword("DemoAdmin123!")
+                    }}
+                    className="px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all cursor-pointer shadow-xs text-center"
+                  >
+                    Admin
+                  </button>
+                </div>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             {errorMessage && (

@@ -9,6 +9,7 @@ from app.routers.assessments import router as assessments_router
 from app.routers.trainer import router as trainer_router
 from app.routers.notifications import router as notifications_router
 from app.routers.competencies import router as competencies_router
+from app.routers.feedback import router as feedback_router
 
 api_v1_router = APIRouter()
 
@@ -33,3 +34,6 @@ api_v1_router.include_router(notifications_router)
 
 # Phase 5 Competency Intelligence Engine & Trainer Recommendations
 api_v1_router.include_router(competencies_router)
+
+# Feedback & Course Evaluation System (MVP Item 8)
+api_v1_router.include_router(feedback_router)
