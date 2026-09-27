@@ -11,38 +11,31 @@ import {
   ArrowRight,
   Activity,
   Plus,
-  Loader2,
-  AlertCircle,
 } from "lucide-react"
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { DashboardSkeleton } from "@/components/ui/loading-skeleton"
+import { ErrorState } from "@/components/ui/error-state"
 import { trainerService } from "@/services/trainer"
 
 export const TrainerDashboardPage: React.FC = () => {
-  const { data: stats, isLoading, error } = useQuery({
+  const { data: stats, isLoading, error, refetch } = useQuery({
     queryKey: ["trainer-dashboard"],
     queryFn: () => trainerService.getDashboard(),
   })
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <Loader2 className="h-8 w-8 text-emerald-600 animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">Aggregating trainer telemetry from database...</p>
-      </div>
-    )
+    return <DashboardSkeleton />
   }
 
   if (error || !stats) {
     return (
-      <Card className="border-red-200 bg-red-50/50">
-        <CardContent className="pt-6 text-center">
-          <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-          <h3 className="font-semibold text-red-900">Dashboard Unavailable</h3>
-          <p className="text-sm text-red-700 mt-1">{(error as Error)?.message || "Failed to load statistics."}</p>
-        </CardContent>
-      </Card>
+      <ErrorState
+        title="Trainer Telemetry Unavailable"
+        message="Could not load your trainer metrics from the server. Please try again."
+        onRetry={() => refetch()}
+      />
     )
   }
 

@@ -14,6 +14,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ProgressBar } from "@/components/ui/progress-bar"
+import { Skeleton } from "@/components/ui/loading-skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
 import {
   competenciesService,
   SubjectDetail,
@@ -153,13 +155,26 @@ export const AdminTrainerRecommendationsPage: React.FC = () => {
         </div>
 
         {recsLoading ? (
-          <div className="py-12 text-center text-xs text-slate-400">
-            Evaluating multi-dimensional faculty matching algorithms...
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-5 rounded-lg border border-slate-200 bg-white space-y-3">
+                <div className="flex justify-between items-center">
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-5 w-48" />
+                    <Skeleton className="h-3.5 w-64" />
+                  </div>
+                  <Skeleton className="h-10 w-24" />
+                </div>
+                <Skeleton className="h-4 w-full" />
+              </div>
+            ))}
           </div>
         ) : !recommendations || recommendations.candidates.length === 0 ? (
-          <div className="py-12 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-lg">
-            No active trainers found for this subject domain.
-          </div>
+          <EmptyState
+            icon={<Users className="h-6 w-6" />}
+            title="No Matching Trainers Found"
+            description="No active faculty members currently meet the matching thresholds for this subject domain."
+          />
         ) : (
           <div className="space-y-4">
             {recommendations.candidates.map((cand: TrainerRecommendationCandidate, idx: number) => {

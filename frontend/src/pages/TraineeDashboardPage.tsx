@@ -1,6 +1,6 @@
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import {
   BookOpen,
   CheckCircle2,
@@ -22,6 +22,7 @@ import { traineeService } from "@/services/trainee"
 import { getCourseThumbnail } from "@/lib/courseImages"
 
 export const TraineeDashboardPage: React.FC = () => {
+  const navigate = useNavigate()
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["trainee-dashboard"],
     queryFn: () => traineeService.getDashboard(),
@@ -172,7 +173,7 @@ export const TraineeDashboardPage: React.FC = () => {
                   title="No Enrolled Courses"
                   description="Browse the IMD course catalogue to get started."
                   actionLabel="Explore Courses"
-                  onAction={() => window.location.assign("/courses")}
+                  onAction={() => navigate("/courses")}
                 />
               ) : (
                 data.recent_learning.map((item) => (

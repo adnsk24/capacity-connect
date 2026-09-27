@@ -1,14 +1,11 @@
 import React from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import {
-  BookOpen,
-  Archive,
-  AlertCircle,
-  Loader2,
-} from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+import { BookOpen, Archive } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { TableSkeleton } from "@/components/ui/loading-skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
+import { ErrorState } from "@/components/ui/error-state"
 import { adminService, AdminCourseItem } from "@/services/admin"
 
 export const AdminCoursesPage: React.FC = () => {
@@ -42,25 +39,19 @@ export const AdminCoursesPage: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-[#1557A6] animate-spin" />
-          <p className="text-xs text-slate-500 font-medium">Auditing course registry...</p>
-        </div>
+        <TableSkeleton rows={6} columns={7} />
       ) : error ? (
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-red-900">Failed to load courses</h3>
-            <p className="text-sm text-red-700 mt-1">{(error as Error).message}</p>
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Unable to load course catalogue"
+          message="Could not load the institutional course registry. Please try again."
+          onRetry={() => queryClient.invalidateQueries({ queryKey: ["admin-courses"] })}
+        />
       ) : (courses || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200">
-          <CardContent className="py-12 text-center">
-            <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">No courses registered in the database.</p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<BookOpen className="h-6 w-6" />}
+          title="No courses registered"
+          description="There are currently no training courses configured in the system."
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
           <table className="w-full text-left text-xs">

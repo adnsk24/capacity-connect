@@ -132,7 +132,16 @@ export const TraineeSkillGapPage: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0 divide-y divide-slate-100">
-          {gaps.map((item: SkillGapItem) => {
+          {gaps.length === 0 ? (
+            <div className="p-8 text-center">
+              <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
+              <h4 className="text-[14px] font-semibold text-slate-900 mb-1">No significant competency gaps have been identified</h4>
+              <p className="text-[13px] text-slate-500 max-w-sm mx-auto">
+                Your demonstrated proficiency levels meet or exceed the operational benchmarks for this domain.
+              </p>
+            </div>
+          ) : (
+            gaps.map((item: SkillGapItem) => {
             const percentageMet = Math.min(100, Math.round((item.current_level / item.required_level) * 100))
             return (
               <div
@@ -226,7 +235,7 @@ export const TraineeSkillGapPage: React.FC = () => {
                 </div>
               </div>
             )
-          })}
+          }))}
         </CardContent>
       </Card>
     </div>

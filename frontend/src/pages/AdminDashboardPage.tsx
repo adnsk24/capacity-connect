@@ -8,38 +8,31 @@ import {
   UserCheck,
   Activity,
   Layers,
-  Loader2,
-  AlertCircle,
 } from "lucide-react"
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { DashboardSkeleton } from "@/components/ui/loading-skeleton"
+import { ErrorState } from "@/components/ui/error-state"
 import { adminService } from "@/services/admin"
 
 export const AdminDashboardPage: React.FC = () => {
-  const { data: stats, isLoading, error } = useQuery({
+  const { data: stats, isLoading, error, refetch } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: () => adminService.getDashboard(),
   })
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">Aggregating institutional governance telemetry...</p>
-      </div>
-    )
+    return <DashboardSkeleton />
   }
 
   if (error || !stats) {
     return (
-      <Card className="border-red-200 bg-red-50/50">
-        <CardContent className="pt-6 text-center">
-          <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-          <h3 className="font-semibold text-red-900">Governance Telemetry Unavailable</h3>
-          <p className="text-sm text-red-700 mt-1">{(error as Error)?.message || "Failed to load telemetry."}</p>
-        </CardContent>
-      </Card>
+      <ErrorState
+        title="Governance Telemetry Unavailable"
+        message="Could not aggregate platform telemetry. Please check server connectivity."
+        onRetry={() => refetch()}
+      />
     )
   }
 

@@ -3,12 +3,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Users,
   Search,
-  AlertCircle,
-  Loader2,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { TableSkeleton } from "@/components/ui/loading-skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
+import { ErrorState } from "@/components/ui/error-state"
 import { adminService, AdminUserItem } from "@/services/admin"
 import { useAuthStore } from "@/store/useAuthStore"
 
@@ -125,25 +126,25 @@ export const AdminUsersPage: React.FC = () => {
 
       {/* Users Table */}
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-[#1557A6] animate-spin" />
-          <p className="text-xs text-slate-500 font-medium">Loading user records...</p>
-        </div>
+        <TableSkeleton rows={6} columns={6} />
       ) : error ? (
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-red-900">Failed to load users</h3>
-            <p className="text-sm text-red-700 mt-1">{(error as Error).message}</p>
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Unable to load user accounts"
+          message="Could not retrieve the user records from the server. Please check your connection and retry."
+          onRetry={() => queryClient.invalidateQueries({ queryKey: ["admin-users"] })}
+        />
       ) : (users || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200">
-          <CardContent className="py-12 text-center">
-            <Users className="h-10 w-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">No users match your selected criteria.</p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<Users className="h-6 w-6" />}
+          title="No users found"
+          description="No user accounts match your selected filter or search criteria."
+          actionLabel="Clear Filters"
+          onAction={() => {
+            setRoleFilter("")
+            setStatusFilter("")
+            setSearch("")
+          }}
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
           <table className="w-full text-left text-xs">

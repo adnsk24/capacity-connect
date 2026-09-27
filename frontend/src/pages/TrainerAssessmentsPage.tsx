@@ -8,14 +8,15 @@ import {
   Award,
   RotateCcw,
   ArrowRight,
-  Loader2,
   Trash2,
-  AlertCircle,
   X,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/loading-skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
+import { ErrorState } from "@/components/ui/error-state"
 import { trainerService } from "@/services/trainer"
 import { AssessmentListItem } from "@/services/assessments"
 
@@ -109,28 +110,36 @@ export const TrainerAssessmentsPage: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-emerald-700 animate-spin" />
-          <p className="text-xs text-slate-500 font-medium">Loading trainer assessments...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-64 rounded-lg border border-slate-200 bg-white p-5 space-y-3">
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-5 w-16 rounded" />
+              </div>
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ))}
         </div>
       ) : error ? (
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-red-900">Failed to load assessments</h3>
-            <p className="text-sm text-red-700 mt-1">{(error as Error).message}</p>
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Failed to load assessments"
+          message="Could not load your created assessments. Please try again."
+          onRetry={() => queryClient.invalidateQueries({ queryKey: ["trainer-assessments"] })}
+        />
       ) : (assessments || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200">
-          <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-            <ClipboardCheck className="h-12 w-12 text-slate-300 mb-3" />
-            <h3 className="font-semibold text-slate-800 text-base">No Assessments Created</h3>
-            <p className="text-xs text-slate-500 max-w-sm mt-1">
-              Click 'Create Assessment' to configure your first examination and add MCQ questions.
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<ClipboardCheck className="h-8 w-8" />}
+          title="No Assessments Created"
+          description="Click 'Create Assessment' to configure your first examination and add MCQ questions."
+          actionLabel="Create Assessment"
+          onAction={() => {
+            if (courses && courses.length > 0 && !courseId) setCourseId(courses[0].id)
+            setShowModal(true)
+          }}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {(assessments || []).map((ass: AssessmentListItem) => (

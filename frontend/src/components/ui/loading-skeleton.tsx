@@ -70,3 +70,26 @@ export const CourseCatalogSkeleton: React.FC = () => (
     </div>
   </div>
 )
+
+export const TableSkeleton: React.FC<{ rows?: number; columns?: number }> = ({
+  rows = 5,
+  columns = 4,
+}) => (
+  <div className="w-full bg-white border border-slate-200 rounded-lg overflow-hidden">
+    <div className="h-11 bg-slate-50 border-b border-slate-200 px-4 flex items-center gap-4">
+      {Array.from({ length: columns }).map((_, i) => (
+        <Skeleton key={i} className="h-4 flex-1" />
+      ))}
+    </div>
+    <div className="divide-y divide-slate-100">
+      {Array.from({ length: rows }).map((_, r) => (
+        <div key={r} className="h-14 px-4 flex items-center gap-4">
+          {Array.from({ length: columns }).map((_, c) => (
+            <Skeleton key={c} className="h-3.5 flex-1" />
+          ))}
+        </div>
+      ))}
+    </div>
+  </div>
+)
+

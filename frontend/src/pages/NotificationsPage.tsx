@@ -95,8 +95,8 @@ export const NotificationsPage: React.FC = () => {
       ) : notifications.length === 0 ? (
         <EmptyState
           icon={<CheckCheck className="h-8 w-8 text-emerald-500" />}
-          title="All Caught Up!"
-          description="You have no notifications right now. When you take tests or enroll in courses, alerts will appear here."
+          title="You're all caught up"
+          description="You have no new notifications right now. Alerts regarding course enrollments, assessments, and competency updates will appear here."
         />
       ) : (
         <div className="space-y-3">

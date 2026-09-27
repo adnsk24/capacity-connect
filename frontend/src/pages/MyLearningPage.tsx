@@ -1,6 +1,6 @@
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import {
   GraduationCap,
   Clock,
@@ -21,6 +21,7 @@ import { traineeService } from "@/services/trainee"
 import { getCourseThumbnail, getCourseThumbnailAlt } from "@/lib/courseImages"
 
 export const MyLearningPage: React.FC = () => {
+  const navigate = useNavigate()
   const { data: enrolledCourses, isLoading, error, refetch } = useQuery({
     queryKey: ["trainee-learning"],
     queryFn: () => traineeService.getMyLearning(),
@@ -77,7 +78,7 @@ export const MyLearningPage: React.FC = () => {
           title="No Active Enrollments"
           description="You have not enrolled in any operational meteorology courses yet. Explore our course catalogue to advance your competencies."
           actionLabel="Explore Course Catalogue"
-          onAction={() => window.location.assign("/courses")}
+          onAction={() => navigate("/courses")}
         />
       ) : (
         <div className="space-y-4">

@@ -1,4 +1,5 @@
 import React from "react"
+import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { Award, ShieldCheck } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -8,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { traineeService } from "@/services/trainee"
 
 export const CertificatesPage: React.FC = () => {
+  const navigate = useNavigate()
   const { data } = useQuery({
     queryKey: ["trainee-dashboard"],
     queryFn: () => traineeService.getDashboard(),
@@ -33,7 +35,7 @@ export const CertificatesPage: React.FC = () => {
           title="No Certificates Earned Yet"
           description="Certificates are automatically generated upon 100% syllabus completion and passing required course benchmarks."
           actionLabel="View My Learning"
-          onAction={() => window.location.assign("/trainee/learning")}
+          onAction={() => navigate("/trainee/learning")}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

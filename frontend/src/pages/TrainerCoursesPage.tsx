@@ -6,12 +6,14 @@ import {
   Plus,
   ArrowRight,
   Loader2,
-  AlertCircle,
   X,
 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/loading-skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
+import { ErrorState } from "@/components/ui/error-state"
 import { trainerService, TrainerCourseItem } from "@/services/trainer"
 import { coursesService } from "@/services/courses"
 
@@ -100,28 +102,36 @@ export const TrainerCoursesPage: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-emerald-700 animate-spin" />
-          <p className="text-xs text-slate-500 font-medium">Loading managed courses...</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-64 rounded-lg border border-slate-200 bg-white p-5 space-y-3">
+              <div className="flex justify-between items-center">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-5 w-16 rounded" />
+              </div>
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ))}
         </div>
       ) : error ? (
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-red-900">Failed to load courses</h3>
-            <p className="text-sm text-red-700 mt-1">{(error as Error).message}</p>
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Failed to load courses"
+          message="Could not load your authored curriculum. Please try again."
+          onRetry={() => queryClient.invalidateQueries({ queryKey: ["trainer-courses"] })}
+        />
       ) : (courses || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200">
-          <CardContent className="py-12 flex flex-col items-center justify-center text-center">
-            <BookOpen className="h-12 w-12 text-slate-300 mb-3" />
-            <h3 className="font-semibold text-slate-800 text-base">No Courses Managed Yet</h3>
-            <p className="text-xs text-slate-500 max-w-sm mt-1">
-              You haven't authored any courses. Click 'Create New Course' to establish your first syllabus.
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<BookOpen className="h-8 w-8" />}
+          title="No Courses Managed Yet"
+          description="You haven't authored any courses yet. Click 'Create New Course' to establish your first syllabus."
+          actionLabel="Create New Course"
+          onAction={() => {
+            if (categories.length > 0 && !categoryId) setCategoryId(categories[0].id)
+            setShowCreateModal(true)
+          }}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {(courses || []).map((c: TrainerCourseItem) => (

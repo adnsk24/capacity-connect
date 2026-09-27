@@ -1,12 +1,10 @@
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
-import {
-  ClipboardCheck,
-  AlertCircle,
-  Loader2,
-} from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+import { ClipboardCheck } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { TableSkeleton } from "@/components/ui/loading-skeleton"
+import { EmptyState } from "@/components/ui/empty-state"
+import { ErrorState } from "@/components/ui/error-state"
 import { adminService, AdminAssessmentItem } from "@/services/admin"
 
 export const AdminAssessmentsPage: React.FC = () => {
@@ -29,25 +27,18 @@ export const AdminAssessmentsPage: React.FC = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-          <p className="text-xs text-slate-500 font-medium">Aggregating examination telemetry...</p>
-        </div>
+        <TableSkeleton rows={6} columns={9} />
       ) : error ? (
-        <Card className="border-red-200 bg-red-50/50">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-10 w-10 text-red-500 mx-auto mb-2" />
-            <h3 className="font-semibold text-red-900">Failed to load assessments</h3>
-            <p className="text-sm text-red-700 mt-1">{(error as Error).message}</p>
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Unable to load examination telemetry"
+          message="Could not retrieve assessment performance metrics. Please try again."
+        />
       ) : (assessments || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
-          <CardContent className="py-12 text-center">
-            <ClipboardCheck className="h-10 w-10 text-slate-300 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">No assessments created in the system yet.</p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<ClipboardCheck className="h-6 w-6" />}
+          title="No assessments recorded"
+          description="There are currently no active assessments or examination records."
+        />
       ) : (
         <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
           <table className="w-full text-left text-xs">

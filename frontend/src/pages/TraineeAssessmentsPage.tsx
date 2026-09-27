@@ -130,7 +130,7 @@ export const TraineeAssessmentsPage: React.FC = () => {
           <CardContent className="py-12 flex flex-col items-center justify-center text-center">
             <ClipboardCheck className="h-12 w-12 text-slate-300 mb-3" />
             <h3 className="font-semibold text-slate-800 text-base">
-              {activeTab === "available" ? "No Available Assessments" : "No Completed Assessments"}
+              {activeTab === "available" ? "No assessments are currently available" : "No Completed Assessments"}
             </h3>
             <p className="text-xs text-slate-500 max-w-md mt-1">
               {activeTab === "available"
