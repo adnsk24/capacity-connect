@@ -12,6 +12,7 @@ import {
   X,
   CloudRain,
   ShieldCheck,
+  TrendingDown,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
@@ -52,7 +53,12 @@ export const TraineeSidebar: React.FC<TraineeSidebarProps> = ({ isOpen, onClose 
       to: "/trainee/competencies",
       label: "Competencies",
       icon: <Network className="h-4 w-4" />,
-      badge: "3D Soon",
+      badge: "3D Universe",
+    },
+    {
+      to: "/trainee/skill-gap",
+      label: "Skill Gap Audit",
+      icon: <TrendingDown className="h-4 w-4" />,
     },
     {
       to: "/trainee/certificates",

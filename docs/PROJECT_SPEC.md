@@ -138,14 +138,12 @@ The 16 core functional requirements mandated for the MVP are:
 
 - **Phase 0 (Complete)**: Project Foundation & Architecture Setup (monorepo directory layout, frontend shell, backend skeleton, database session manager & migrations foundation, health endpoints, CI/CD and Docker presets).
 - **Phase 1 (Complete)**: Database Schema Modeling & Alembic Migrations (29 normalized domain entities across Organization, Users, Courses, Assessments, Feedback, Competencies, and Subject Requirements; UUID primary keys; Alembic revision 0001; validated on PostgreSQL; see `docs/DATABASE_SCHEMA.md`).
-- **Phase 2 (Complete)**: Authentication, Security & Role-Based Access Control (RBAC) (Argon2id password hashing, JWT access & refresh token rotation with `auth_sessions` table, account status lifecycle [PENDING, ACTIVE, SUSPENDED, REJECTED], public admin registration lockdown, email verification tokens, forgot/reset password flows, FastAPI RBAC dependencies [`get_current_user`, `require_role`], admin user approval endpoints, React + Zustand frontend authentication flows with Framer Motion, 100% ₹0-cost open-source stack; see `docs/AUTHENTICATION_SECURITY.md`).
-- **Phase 3**: Trainee, Trainer & Admin Profile Management.
-- **Phase 4**: Course Catalog & Learning Resource Management (file upload integration).
-- **Phase 5**: Assessment Engine & Automated Evaluation.
-- **Phase 6**: Competency Framework & Evidence Engine.
-- **Phase 7**: Skill Gap Analysis & Recommendation Engine.
-- **Phase 8**: Analytics Dashboards & Reporting.
-- **Phase 9**: Quality Assurance, End-to-End Testing & Production Deployment.
+- **Phase 2 (Complete)**: Authentication, Security & Role-Based Access Control (RBAC) (Argon2id password hashing, JWT access & refresh token rotation with `auth_sessions` table, account status lifecycle, FastAPI RBAC dependencies, admin user approvals, React + Zustand frontend auth flows; see `docs/AUTHENTICATION_SECURITY.md`).
+- **Phase 3 (Complete)**: Trainee Vertical Slice & Learning Experience (Authenticated trainee dashboard, professional profile management, course catalogue with search & multi-facet filters, course syllabus view, enrollment lifecycle, lesson progress tracking, completion certificates; see `docs/reports/PHASE_03_REPORT.md`).
+- **Phase 4 (Complete)**: Trainer Portal + Admin Portal + MCQ Assessment Engine (Trainer course/assessment creation & grading, trainee timed MCQ examination runner, automatic scoring, performance analytics, institutional admin overview, notification system, strict RBAC; see `docs/reports/PHASE_04_REPORT.md`).
+- **Phase 5 (Complete)**: Competency Intelligence + Skill Gap + Trainer Matching + 3D Universe (Multi-source deterministic capability evaluation across exams, syllabus completion, skills, experience, certifications, and degrees; transparent Training Readiness Score; prioritized skill gap analysis; personalized course recommendations; 6-dimension trainer candidate recommendation engine; interactive 3D Competency Universe constellation with Three.js/R3F code-splitting and accessible 2D fallback; ₹0 cost, zero paid AI APIs; see `docs/COMPETENCY_ENGINE.md`, `docs/API_COMPETENCIES.md`, and `docs/reports/PHASE_05_REPORT.md`).
+- **Phase 6**: Advanced Institutional Analytics & Cohort Reporting.
+- **Phase 7**: Quality Assurance, End-to-End Stress Testing & Production Deployment.
 
 ---
 

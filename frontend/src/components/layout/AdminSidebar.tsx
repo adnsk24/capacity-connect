@@ -10,6 +10,7 @@ import {
   X,
   ShieldAlert,
   User,
+  Award,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
@@ -39,6 +40,11 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ isOpen, onClose }) =
       to: "/admin/assessments",
       label: "Assessment Oversight",
       icon: <ClipboardCheck className="h-4 w-4" />,
+    },
+    {
+      to: "/admin/trainer-recommendations",
+      label: "Trainer Matching",
+      icon: <Award className="h-4 w-4" />,
     },
     {
       to: "/trainee/notifications",

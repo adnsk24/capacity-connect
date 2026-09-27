@@ -105,3 +105,7 @@ def require_roles(allowed_roles: List[str]) -> Callable[[User], User]:
 def require_role(role_name: str) -> Callable[[User], User]:
     """Convenience dependency checking a single role requirement."""
     return require_roles([role_name])
+
+
+require_admin = require_role("ADMIN")
+require_trainer = require_roles(["TRAINER", "ADMIN"])

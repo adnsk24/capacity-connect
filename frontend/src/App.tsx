@@ -24,9 +24,13 @@ import { TraineeDashboardPage } from "@/pages/TraineeDashboardPage"
 import { TraineeProfilePage } from "@/pages/TraineeProfilePage"
 import { MyLearningPage } from "@/pages/MyLearningPage"
 import { LearningContentPage } from "@/pages/LearningContentPage"
-import { CompetenciesPlaceholderPage } from "@/pages/CompetenciesPlaceholderPage"
 import { CertificatesPage } from "@/pages/CertificatesPage"
 import { NotificationsPage } from "@/pages/NotificationsPage"
+
+// Phase 5 Competency Intelligence & 3D Universe Pages
+import { TraineeCompetenciesPage } from "@/pages/TraineeCompetenciesPage"
+import { TraineeSkillGapPage } from "@/pages/TraineeSkillGapPage"
+import { AdminTrainerRecommendationsPage } from "@/pages/AdminTrainerRecommendationsPage"
 
 // Phase 4 Assessment Engine Pages
 import { TraineeAssessmentsPage } from "@/pages/TraineeAssessmentsPage"
@@ -111,7 +115,8 @@ export const App: React.FC = () => {
             <Route path="assessments/:assessmentId" element={<AssessmentDetailPage />} />
             <Route path="assessments/:assessmentId/take/:attemptId" element={<AssessmentTakePage />} />
             <Route path="assessments/:assessmentId/result/:attemptId" element={<AssessmentResultPage />} />
-            <Route path="competencies" element={<CompetenciesPlaceholderPage />} />
+            <Route path="competencies" element={<TraineeCompetenciesPage />} />
+            <Route path="skill-gap" element={<TraineeSkillGapPage />} />
             <Route path="certificates" element={<CertificatesPage />} />
             <Route path="notifications" element={<NotificationsPage />} />
           </Route>
@@ -160,6 +165,7 @@ export const App: React.FC = () => {
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="courses" element={<AdminCoursesPage />} />
             <Route path="assessments" element={<AdminAssessmentsPage />} />
+            <Route path="trainer-recommendations" element={<AdminTrainerRecommendationsPage />} />
           </Route>
 
           {/* Convenience redirect for /dashboard */}

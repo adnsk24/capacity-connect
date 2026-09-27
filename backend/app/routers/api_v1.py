@@ -8,6 +8,7 @@ from app.routers.enrollments import router as enrollments_router
 from app.routers.assessments import router as assessments_router
 from app.routers.trainer import router as trainer_router
 from app.routers.notifications import router as notifications_router
+from app.routers.competencies import router as competencies_router
 
 api_v1_router = APIRouter()
 
@@ -29,3 +30,6 @@ api_v1_router.include_router(enrollments_router)
 api_v1_router.include_router(assessments_router)
 api_v1_router.include_router(trainer_router)
 api_v1_router.include_router(notifications_router)
+
+# Phase 5 Competency Intelligence Engine & Trainer Recommendations
+api_v1_router.include_router(competencies_router)
