@@ -1,18 +1,135 @@
 import uuid
-from typing import List
+from typing import List, Optional
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.core.dependencies import require_role
 from app.models.user import User, AuthSession
 from app.schemas.user import UserProfileResponse, AdminUserActionRequest
-from app.schemas.auth import MessageResponse
+from app.schemas.admin import (
+    AdminDashboardStats,
+    AdminUserUpdateStatus,
+    AdminUserUpdateRole,
+    AdminCourseItem,
+    AdminAssessmentItem,
+)
+from app.services.admin_service import AdminService
 
-router = APIRouter(prefix="/admin", tags=["Administration"])
+router = APIRouter(prefix="/admin", tags=["Administration & Governance"])
 
 
+@router.get(
+    "/dashboard",
+    response_model=AdminDashboardStats,
+    summary="Get platform operational telemetry and governance metrics (Admin Only)",
+)
+def get_admin_dashboard(
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> AdminDashboardStats:
+    return AdminService.get_dashboard_stats(db)
+
+
+@router.get(
+    "/analytics",
+    response_model=AdminDashboardStats,
+    summary="Get institutional analytics (Admin Only)",
+)
+def get_admin_analytics(
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> AdminDashboardStats:
+    return AdminService.get_dashboard_stats(db)
+
+
+@router.get(
+    "/users",
+    response_model=List[UserProfileResponse],
+    summary="List and filter users across the platform (Admin Only)",
+)
+def list_users(
+    role: Optional[str] = None,
+    status: Optional[str] = None,
+    search: Optional[str] = None,
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=50, ge=1, le=200),
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> List[UserProfileResponse]:
+    return AdminService.list_users(
+        db, role_filter=role, status_filter=status, search=search, page=page, page_size=page_size
+    )
+
+
+@router.patch(
+    "/users/{user_id}/status",
+    response_model=UserProfileResponse,
+    summary="Update user status with self-protection guard (Admin Only)",
+)
+def update_user_status(
+    user_id: uuid.UUID,
+    data: AdminUserUpdateStatus,
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> UserProfileResponse:
+    return AdminService.update_user_status(db, user_id, data.status, admin)
+
+
+@router.patch(
+    "/users/{user_id}/role",
+    response_model=UserProfileResponse,
+    summary="Update user role with self-demotion guard (Admin Only)",
+)
+def update_user_role(
+    user_id: uuid.UUID,
+    data: AdminUserUpdateRole,
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> UserProfileResponse:
+    return AdminService.update_user_role(db, user_id, data.role, admin)
+
+
+@router.get(
+    "/courses",
+    response_model=List[AdminCourseItem],
+    summary="List all courses across the institution (Admin Only)",
+)
+def list_courses(
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> List[AdminCourseItem]:
+    return AdminService.list_courses(db)
+
+
+@router.patch(
+    "/courses/{course_id}/status",
+    response_model=AdminCourseItem,
+    summary="Publish, unpublish, or archive a course (Admin Only)",
+)
+def update_course_status(
+    course_id: uuid.UUID,
+    status_payload: AdminUserUpdateStatus,
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> AdminCourseItem:
+    return AdminService.update_course_status(db, course_id, status_payload.status)
+
+
+@router.get(
+    "/assessments",
+    response_model=List[AdminAssessmentItem],
+    summary="List all assessments across the institution (Admin Only)",
+)
+def list_assessments(
+    admin: User = Depends(require_role("ADMIN")),
+    db: Session = Depends(get_db),
+) -> List[AdminAssessmentItem]:
+    return AdminService.list_assessments(db)
+
+
+# Existing routes for backward compatibility with Phase 2/3 tests
 @router.get(
     "/users/pending",
     response_model=List[UserProfileResponse],
@@ -22,33 +139,7 @@ def list_pending_users(
     admin: User = Depends(require_role("ADMIN")),
     db: Session = Depends(get_db),
 ) -> List[UserProfileResponse]:
-    """Retrieves all user registrations currently awaiting administrative approval."""
-    users = (
-        db.query(User)
-        .filter(User.account_status == "PENDING")
-        .order_by(User.created_at.asc())
-        .all()
-    )
-    return [
-        UserProfileResponse(
-            id=u.id,
-            email=u.email,
-            username=u.username,
-            first_name=u.first_name,
-            last_name=u.last_name,
-            phone_number=u.phone_number,
-            avatar_url=u.avatar_url,
-            role=u.role.name,
-            account_status=u.account_status,
-            is_active=u.is_active,
-            is_verified=u.is_verified,
-            organization_id=u.organization_id,
-            department_id=u.department_id,
-            created_at=u.created_at,
-            updated_at=u.updated_at,
-        )
-        for u in users
-    ]
+    return AdminService.list_users(db, status_filter="PENDING")
 
 
 @router.post(
@@ -61,36 +152,7 @@ def approve_user(
     admin: User = Depends(require_role("ADMIN")),
     db: Session = Depends(get_db),
 ) -> UserProfileResponse:
-    """Activates a pending user account."""
-    user = db.query(User).filter_by(id=user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found.",
-        )
-
-    user.account_status = "ACTIVE"
-    user.is_active = True
-    db.commit()
-    db.refresh(user)
-
-    return UserProfileResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        phone_number=user.phone_number,
-        avatar_url=user.avatar_url,
-        role=user.role.name,
-        account_status=user.account_status,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-        organization_id=user.organization_id,
-        department_id=user.department_id,
-        created_at=user.created_at,
-        updated_at=user.updated_at,
-    )
+    return AdminService.update_user_status(db, user_id, "ACTIVE", admin)
 
 
 @router.post(
@@ -104,36 +166,7 @@ def reject_user(
     admin: User = Depends(require_role("ADMIN")),
     db: Session = Depends(get_db),
 ) -> UserProfileResponse:
-    """Rejects a pending user registration."""
-    user = db.query(User).filter_by(id=user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found.",
-        )
-
-    user.account_status = "REJECTED"
-    user.is_active = False
-    db.commit()
-    db.refresh(user)
-
-    return UserProfileResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        phone_number=user.phone_number,
-        avatar_url=user.avatar_url,
-        role=user.role.name,
-        account_status=user.account_status,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-        organization_id=user.organization_id,
-        department_id=user.department_id,
-        created_at=user.created_at,
-        updated_at=user.updated_at,
-    )
+    return AdminService.update_user_status(db, user_id, "REJECTED", admin)
 
 
 @router.post(
@@ -147,43 +180,7 @@ def suspend_user(
     admin: User = Depends(require_role("ADMIN")),
     db: Session = Depends(get_db),
 ) -> UserProfileResponse:
-    """Suspends an active user account and immediately invalidates all active sessions."""
-    user = db.query(User).filter_by(id=user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found.",
-        )
-
-    user.account_status = "SUSPENDED"
-    user.is_active = False
-
-    # Revoke all active login sessions immediately
-    now = datetime.now(timezone.utc)
-    db.query(AuthSession).filter(
-        AuthSession.user_id == user.id, AuthSession.revoked_at.is_(None)
-    ).update({AuthSession.revoked_at: now}, synchronize_session=False)
-
-    db.commit()
-    db.refresh(user)
-
-    return UserProfileResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        phone_number=user.phone_number,
-        avatar_url=user.avatar_url,
-        role=user.role.name,
-        account_status=user.account_status,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-        organization_id=user.organization_id,
-        department_id=user.department_id,
-        created_at=user.created_at,
-        updated_at=user.updated_at,
-    )
+    return AdminService.update_user_status(db, user_id, "SUSPENDED", admin)
 
 
 @router.post(
@@ -196,33 +193,4 @@ def activate_user(
     admin: User = Depends(require_role("ADMIN")),
     db: Session = Depends(get_db),
 ) -> UserProfileResponse:
-    """Restores a suspended or inactive account back to ACTIVE status."""
-    user = db.query(User).filter_by(id=user_id).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found.",
-        )
-
-    user.account_status = "ACTIVE"
-    user.is_active = True
-    db.commit()
-    db.refresh(user)
-
-    return UserProfileResponse(
-        id=user.id,
-        email=user.email,
-        username=user.username,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        phone_number=user.phone_number,
-        avatar_url=user.avatar_url,
-        role=user.role.name,
-        account_status=user.account_status,
-        is_active=user.is_active,
-        is_verified=user.is_verified,
-        organization_id=user.organization_id,
-        department_id=user.department_id,
-        created_at=user.created_at,
-        updated_at=user.updated_at,
-    )
+    return AdminService.update_user_status(db, user_id, "ACTIVE", admin)

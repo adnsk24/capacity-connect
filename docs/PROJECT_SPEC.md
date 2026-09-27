@@ -203,5 +203,5 @@ The 16 core functional requirements mandated for the MVP are:
 | **Phase 1** | Database Schema & Core Data Models | **COMPLETE** | 31 Tables, UUID Primary Keys, Timestamp Mixins, Alembic Head |
 | **Phase 2** | Authentication, Security & RBAC | **COMPLETE** | Argon2id, JWT Tokens, Verification & Reset Flows, Role Guard |
 | **Phase 3** | Core Platform UI & Trainee Experience | **COMPLETE** | Dashboard, Profile, Courses Catalogue, Details, Enrollment, Syllabus, Real-time Progress (48 backend tests, 16 vitest tests) |
-| **Phase 4** | Assessments, Evaluations & Grading | *Upcoming* | Scheduled evaluations, randomized question pools |
+| **Phase 4** | Trainer + Admin Portals + Assessment Engine | **COMPLETE** | Full MCQ Engine (deterministic grading, attempt tracking, sanitized question retrieval), Trainer Portal (KPIs, Course/Syllabus Authoring, Question Builder, Cohort Performance), Admin Portal (System Telemetry, User Governance with Self-Protection, Course Moderation, Exam Integrity), In-App Notifications, Role-based Routing (67 backend tests, 26 vitest tests) |
 | **Phase 5** | Competency Universe & 3D Visualization | *Upcoming* | Interactive Three.js / React Three Fiber Constellations |

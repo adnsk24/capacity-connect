@@ -5,6 +5,9 @@ from app.routers.admin import router as admin_router
 from app.routers.courses import router as courses_router
 from app.routers.trainee import router as trainee_router
 from app.routers.enrollments import router as enrollments_router
+from app.routers.assessments import router as assessments_router
+from app.routers.trainer import router as trainer_router
+from app.routers.notifications import router as notifications_router
 
 api_v1_router = APIRouter()
 
@@ -14,10 +17,15 @@ api_v1_router.include_router(health_router)
 # Authentication & Session Management
 api_v1_router.include_router(auth_router)
 
-# Administrative User Approvals & Governance
+# Administrative User Approvals, Governance & Telemetry
 api_v1_router.include_router(admin_router)
 
 # Phase 3 Core Learning & Trainee Experience
 api_v1_router.include_router(courses_router)
 api_v1_router.include_router(trainee_router)
 api_v1_router.include_router(enrollments_router)
+
+# Phase 4 Assessment Engine, Trainer Portal & Notifications
+api_v1_router.include_router(assessments_router)
+api_v1_router.include_router(trainer_router)
+api_v1_router.include_router(notifications_router)

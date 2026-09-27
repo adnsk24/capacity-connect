@@ -62,6 +62,11 @@ from app.models.subject import (
     SubjectCompetencyRequirement,
 )
 
+# Notifications
+from app.models.notification import (
+    Notification,
+)
+
 __all__ = [
     "Base",
     # Organization & Users (11)
@@ -91,6 +96,8 @@ __all__ = [
     "QuestionOption",
     "AssessmentAttempt",
     "AssessmentAnswer",
+    # Notifications (1)
+    "Notification",
     # Feedback (1)
     "Feedback",
     # Competency System (3)
