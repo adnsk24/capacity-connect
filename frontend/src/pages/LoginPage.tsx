@@ -32,7 +32,18 @@ export const LoginPage: React.FC = () => {
         password,
       })
       setSession(data.access_token, data.refresh_token, data.user)
-      navigate(from, { replace: true })
+
+      // Derive strict destination based on authenticated user's actual role
+      let targetPath = "/dashboard"
+      if (data.user.role === "ADMIN") {
+        targetPath = from.startsWith("/admin") ? from : "/admin/dashboard"
+      } else if (data.user.role === "TRAINER") {
+        targetPath = from.startsWith("/trainer") ? from : "/trainer/dashboard"
+      } else {
+        // TRAINEE
+        targetPath = (from.startsWith("/trainee") || from.startsWith("/courses")) ? from : "/trainee/dashboard"
+      }
+      navigate(targetPath, { replace: true })
     } catch (err: unknown) {
       if (err instanceof Error) {
         setErrorMessage(err.message)
@@ -72,11 +83,9 @@ export const LoginPage: React.FC = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-4 mb-5">
             <img
-              src="/branding/imd-emblem.svg"
+              src="/branding/IMD_logo.png"
               alt="India Meteorological Department Emblem"
-              className="h-16 w-16 xl:h-20 xl:w-20 object-contain flex-shrink-0 drop-shadow-md"
-              width="80"
-              height="80"
+              className="h-20 xl:h-24 w-auto object-contain flex-shrink-0 drop-shadow-md"
             />
             <div className="border-l-2 border-white/30 pl-4">
               <div className="text-[12px] font-medium tracking-widest uppercase text-blue-200">
@@ -136,9 +145,9 @@ export const LoginPage: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-[#0C325F] via-[#0C325F]/60 to-transparent flex flex-col justify-end p-4 text-white">
               <div className="flex items-center gap-3">
                 <img
-                  src="/branding/imd-emblem.svg"
+                  src="/branding/IMD_logo.png"
                   alt="India Meteorological Department Emblem"
-                  className="h-11 w-11 object-contain drop-shadow"
+                  className="h-12 w-auto object-contain drop-shadow"
                 />
                 <div>
                   <div className="text-sm font-bold tracking-tight">CAPACITY CONNECT</div>
@@ -152,9 +161,9 @@ export const LoginPage: React.FC = () => {
           <div className="px-6 pt-6 pb-4 border-b border-[#E2E8F0]">
             <div className="hidden lg:flex items-center gap-2.5 mb-3">
               <img
-                src="/branding/imd-emblem.svg"
+                src="/branding/IMD_logo.png"
                 alt="IMD Emblem"
-                className="h-8 w-8 object-contain"
+                className="h-10 w-auto object-contain"
               />
               <div>
                 <div className="text-xs font-bold text-slate-900 tracking-tight leading-none">CAPACITY CONNECT</div>

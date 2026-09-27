@@ -49,12 +49,12 @@ export const TraineeSidebar: React.FC<TraineeSidebarProps> = ({ isOpen, onClose 
         }`}
       >
         {/* Brand Header */}
-        <div className="h-[72px] flex items-center justify-between px-4 border-b border-slate-200 flex-shrink-0">
+        <div className="h-[76px] flex items-center justify-between px-4 border-b border-slate-200 flex-shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <img
-              src="/branding/imd-emblem.svg"
+              src="/branding/IMD_logo.png"
               alt="India Meteorological Department"
-              className="w-10 h-10 object-contain flex-shrink-0"
+              className="h-12 w-auto object-contain flex-shrink-0"
             />
             <div className="min-w-0">
               <div className="text-[13px] font-bold text-slate-900 leading-tight">CAPACITY CONNECT</div>

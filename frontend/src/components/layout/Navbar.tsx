@@ -28,14 +28,14 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
-      <div className="max-w-7xl mx-auto flex min-h-[68px] sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto flex min-h-[76px] sm:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <Link to="/" className="flex items-center gap-3.5 flex-shrink-0 py-1.5">
           <img
-            src="/branding/imd-emblem.svg"
+            src="/branding/IMD_logo.png"
             alt="India Meteorological Department Emblem"
-            className="h-11 sm:h-[60px] w-auto object-contain flex-shrink-0"
-            height="60"
+            className="h-12 sm:h-[64px] w-auto object-contain flex-shrink-0"
+            height="64"
           />
           <div className="flex flex-col justify-center">
             <span className="text-[15px] sm:text-[16px] font-bold text-slate-900 tracking-tight leading-tight">

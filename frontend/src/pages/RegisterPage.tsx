@@ -92,11 +92,9 @@ export const RegisterPage: React.FC = () => {
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center mx-auto mb-2">
             <img
-              src="/branding/imd-emblem.svg"
+              src="/branding/IMD_logo.png"
               alt="India Meteorological Department Emblem"
-              className="h-14 w-14 object-contain"
-              width="56"
-              height="56"
+              className="h-16 w-auto object-contain"
             />
           </div>
           <div>

@@ -28,6 +28,12 @@ const STORAGE_ACCESS_KEY = "cc_access_token"
 const STORAGE_REFRESH_KEY = "cc_refresh_token"
 const STORAGE_USER_KEY = "cc_auth_user"
 
+let onClearSessionCallback: (() => void) | null = null
+
+export function registerAuthCleanup(cb: () => void) {
+  onClearSessionCallback = cb
+}
+
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   accessToken: null,
@@ -57,8 +63,16 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.removeItem(STORAGE_ACCESS_KEY)
       localStorage.removeItem(STORAGE_REFRESH_KEY)
       localStorage.removeItem(STORAGE_USER_KEY)
+      sessionStorage.clear()
     } catch {
       // Ignore errors
+    }
+    if (onClearSessionCallback) {
+      try {
+        onClearSessionCallback()
+      } catch {
+        // Ignore cache clear errors
+      }
     }
     set({
       user: null,

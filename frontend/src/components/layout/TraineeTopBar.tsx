@@ -29,8 +29,29 @@ export const TraineeTopBar: React.FC<TraineeTopBarProps> = ({ onToggleSidebar })
     ? `${user.first_name?.[0] || ""}${user.last_name?.[0] || ""}`.toUpperCase() || "U"
     : "U"
 
+  const roleLabel =
+    user?.role === "ADMIN"
+      ? "Administrator"
+      : user?.role === "TRAINER"
+      ? "Trainer"
+      : "Trainee"
+
+  const profileLink =
+    user?.role === "ADMIN"
+      ? "/admin/dashboard"
+      : user?.role === "TRAINER"
+      ? "/trainer/dashboard"
+      : "/trainee/profile"
+
+  const notificationsLink =
+    user?.role === "ADMIN"
+      ? "/admin/dashboard"
+      : user?.role === "TRAINER"
+      ? "/trainer/dashboard"
+      : "/trainee/notifications"
+
   return (
-    <header className="sticky top-0 z-30 h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 flex-shrink-0">
+    <header className="sticky top-0 z-30 h-16 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 flex-shrink-0">
       {/* Left */}
       <div className="flex items-center gap-3">
         <button
@@ -42,11 +63,11 @@ export const TraineeTopBar: React.FC<TraineeTopBarProps> = ({ onToggleSidebar })
         </button>
 
         {/* Breadcrumb / context */}
-        <div className="hidden sm:flex items-center gap-2 text-xs">
+        <div className="hidden sm:flex items-center gap-2.5 text-xs">
           <img
-            src="/branding/imd-emblem.svg"
+            src="/branding/IMD_logo.png"
             alt="IMD"
-            className="w-5 h-5 object-contain"
+            className="h-8 w-auto object-contain flex-shrink-0"
           />
           <span className="font-semibold text-slate-800">India Meteorological Department</span>
           <span className="text-slate-300">/</span>
@@ -58,7 +79,7 @@ export const TraineeTopBar: React.FC<TraineeTopBarProps> = ({ onToggleSidebar })
       <div className="flex items-center gap-1.5">
         {/* Notifications */}
         <Link
-          to="/trainee/notifications"
+          to={notificationsLink}
           className="relative p-2 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
           title="Notifications"
           aria-label="Notifications"
@@ -70,7 +91,7 @@ export const TraineeTopBar: React.FC<TraineeTopBarProps> = ({ onToggleSidebar })
         {/* User avatar + name */}
         {user && (
           <Link
-            to="/trainee/profile"
+            to={profileLink}
             className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-slate-100 transition-colors"
           >
             <div className="w-7 h-7 rounded-full bg-[#1557A6] text-white flex items-center justify-center text-[11px] font-semibold flex-shrink-0">
@@ -80,7 +101,7 @@ export const TraineeTopBar: React.FC<TraineeTopBarProps> = ({ onToggleSidebar })
               <div className="text-[13px] font-semibold text-slate-800 leading-tight">
                 {user.first_name} {user.last_name}
               </div>
-              <div className="text-[11px] text-slate-500">Trainee</div>
+              <div className="text-[11px] text-slate-500">{roleLabel}</div>
             </div>
           </Link>
         )}

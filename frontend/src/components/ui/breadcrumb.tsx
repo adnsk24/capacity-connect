@@ -13,10 +13,10 @@ interface BreadcrumbProps {
 
 export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
   return (
-    <nav className="flex items-center text-xs text-slate-500 dark:text-slate-400 space-x-1.5 py-1">
+    <nav className="flex items-center text-xs text-slate-500 space-x-1.5 py-1">
       <Link
         to="/"
-        className="flex items-center hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        className="flex items-center hover:text-blue-600 transition-colors"
       >
         <Home className="h-3.5 w-3.5" />
       </Link>
@@ -28,12 +28,12 @@ export const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
             {item.href && !isLast ? (
               <Link
                 to={item.href}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium truncate max-w-[200px]"
+                className="hover:text-blue-600 transition-colors font-medium truncate max-w-[200px]"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[240px]">
+              <span className="font-semibold text-slate-800 truncate max-w-[240px]">
                 {item.label}
               </span>
             )}

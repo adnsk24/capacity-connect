@@ -17,11 +17,11 @@ export const AdminAssessmentsPage: React.FC = () => {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
           <ClipboardCheck className="h-6 w-6 text-blue-600" />
           <span>Cross-Institutional Examination Monitoring</span>
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-sm text-slate-500 mt-1">
           Monitor examination standards, passing rates, attempt volumes, and faculty question banks.
         </p>
       </div>
@@ -40,9 +40,9 @@ export const AdminAssessmentsPage: React.FC = () => {
           description="There are currently no active assessments or examination records."
         />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-3">Assessment Title</th>
                 <th className="p-3">Course</th>
@@ -55,22 +55,22 @@ export const AdminAssessmentsPage: React.FC = () => {
                 <th className="p-3">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100">
               {(assessments || []).map((a: AdminAssessmentItem) => (
-                <tr key={a.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
-                  <td className="p-3 font-bold text-slate-900 dark:text-white">
+                <tr key={a.id} className="hover:bg-slate-50/50">
+                  <td className="p-3 font-bold text-slate-900">
                     {a.title}
                   </td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400">{a.course_title}</td>
-                  <td className="p-3 font-medium text-slate-800 dark:text-slate-200">{a.trainer_name}</td>
+                  <td className="p-3 text-slate-600">{a.course_title}</td>
+                  <td className="p-3 font-medium text-slate-800">{a.trainer_name}</td>
                   <td className="p-3 text-slate-500">{a.duration_minutes ? `${a.duration_minutes}m` : "—"}</td>
-                  <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">{a.passing_percentage}%</td>
-                  <td className="p-3 font-bold text-slate-800 dark:text-slate-200">{a.attempts_count}</td>
-                  <td className="p-3 font-semibold text-slate-800 dark:text-slate-200">{a.average_score}%</td>
+                  <td className="p-3 font-semibold text-slate-700">{a.passing_percentage}%</td>
+                  <td className="p-3 font-bold text-slate-800">{a.attempts_count}</td>
+                  <td className="p-3 font-semibold text-slate-800">{a.average_score}%</td>
                   <td className="p-3">
                     <span
                       className={`font-bold ${
-                        a.pass_rate >= 60 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
+                        a.pass_rate >= 60 ? "text-emerald-600" : "text-amber-600"
                       }`}
                     >
                       {a.pass_rate}%

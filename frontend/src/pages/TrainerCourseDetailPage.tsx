@@ -114,19 +114,19 @@ export const TrainerCourseDetailPage: React.FC = () => {
       <div>
         <Link
           to="/trainer/courses"
-          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white"
+          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900"
         >
           <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back to My Courses
         </Link>
       </div>
 
       {/* Header Card */}
-      <Card className="border-slate-200 dark:border-slate-800">
+      <Card className="border-slate-200">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider">
                   {course.code}
                 </span>
                 <Badge
@@ -139,10 +139,10 @@ export const TrainerCourseDetailPage: React.FC = () => {
                   {course.difficulty_level}
                 </Badge>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
                 {course.title}
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-2xl">
+              <p className="text-xs text-slate-500 mt-1 max-w-2xl">
                 {course.description || "No description provided."}
               </p>
             </div>
@@ -167,7 +167,7 @@ export const TrainerCourseDetailPage: React.FC = () => {
 
       {/* Action Toolbar */}
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
           <Layers className="h-5 w-5 text-emerald-600" /> Syllabus Modules ({course.modules.length})
         </h2>
 
@@ -193,20 +193,20 @@ export const TrainerCourseDetailPage: React.FC = () => {
       {/* Modules List */}
       <div className="space-y-4">
         {course.modules.length === 0 ? (
-          <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
+          <Card className="border-dashed border-2 border-slate-200">
             <CardContent className="py-12 text-center">
               <p className="text-xs text-slate-500">No modules added yet. Add a module to begin assembling lessons.</p>
             </CardContent>
           </Card>
         ) : (
           course.modules.map((m: any, idx: number) => (
-            <Card key={m.id} className="border-slate-200 dark:border-slate-800">
-              <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+            <Card key={m.id} className="border-slate-200">
+              <CardHeader className="pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
                 <div>
                   <Badge variant="outline" className="text-[10px] mb-1">
                     Module {idx + 1}
                   </Badge>
-                  <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+                  <CardTitle className="text-base font-bold text-slate-900">
                     {m.title}
                   </CardTitle>
                   {m.description && (
@@ -235,12 +235,12 @@ export const TrainerCourseDetailPage: React.FC = () => {
                     {m.lessons.map((l: any, lIdx: number) => (
                       <div
                         key={l.id}
-                        className="p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/60 flex items-center justify-between text-xs"
+                        className="p-3 rounded-lg border border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs"
                       >
                         <div className="flex items-center gap-3">
                           <span className="font-bold text-slate-400 text-[11px]">{idx + 1}.{lIdx + 1}</span>
                           <div>
-                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">
+                            <span className="font-semibold text-slate-800 block">
                               {l.title}
                             </span>
                             <span className="text-[11px] text-slate-400">
@@ -265,32 +265,32 @@ export const TrainerCourseDetailPage: React.FC = () => {
       {/* Add Module Modal */}
       {showModuleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <Card className="max-w-md w-full p-6 shadow-xl border-slate-200 dark:border-slate-800">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Add Instructional Module</h3>
+          <Card className="max-w-md w-full p-6 shadow-xl border-slate-200">
+            <h3 className="text-base font-bold text-slate-900">Add Instructional Module</h3>
             <div className="space-y-3 pt-4 text-xs">
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Module Title *</label>
+                <label className="font-semibold text-slate-700">Module Title *</label>
                 <input
                   type="text"
                   required
                   value={moduleTitle}
                   onChange={(e) => setModuleTitle(e.target.value)}
                   placeholder="e.g. Atmospheric Thermodynamics"
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                <label className="font-semibold text-slate-700">Description</label>
                 <textarea
                   rows={2}
                   value={moduleDesc}
                   onChange={(e) => setModuleDesc(e.target.value)}
                   placeholder="Brief synopsis of topics covered..."
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <Button size="sm" variant="outline" onClick={() => setShowModuleModal(false)}>
                   Cancel
                 </Button>
@@ -317,27 +317,27 @@ export const TrainerCourseDetailPage: React.FC = () => {
       {/* Add Lesson Modal */}
       {showLessonModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <Card className="max-w-md w-full p-6 shadow-xl border-slate-200 dark:border-slate-800">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Add Lesson</h3>
+          <Card className="max-w-md w-full p-6 shadow-xl border-slate-200">
+            <h3 className="text-base font-bold text-slate-900">Add Lesson</h3>
             <div className="space-y-3 pt-4 text-xs">
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Lesson Title *</label>
+                <label className="font-semibold text-slate-700">Lesson Title *</label>
                 <input
                   type="text"
                   required
                   value={lessonTitle}
                   onChange={(e) => setLessonTitle(e.target.value)}
                   placeholder="e.g. Dry and Moist Adiabatic Lapse Rates"
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Content Type</label>
+                  <label className="font-semibold text-slate-700">Content Type</label>
                   <select
                     value={contentType}
                     onChange={(e) => setContentType(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border rounded-md"
                   >
                     <option value="TEXT">TEXT</option>
                     <option value="VIDEO">VIDEO</option>
@@ -345,29 +345,29 @@ export const TrainerCourseDetailPage: React.FC = () => {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Duration (Mins)</label>
+                  <label className="font-semibold text-slate-700">Duration (Mins)</label>
                   <input
                     type="number"
                     min="1"
                     max="180"
                     value={durationMins}
                     onChange={(e) => setDurationMins(Number(e.target.value))}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border rounded-md"
                   />
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Instructional Content / Markdown</label>
+                <label className="font-semibold text-slate-700">Instructional Content / Markdown</label>
                 <textarea
                   rows={4}
                   value={contentBody}
                   onChange={(e) => setContentBody(e.target.value)}
                   placeholder="Lesson text, meteorological formulas, or video links..."
-                  className="w-full px-3 py-2 border rounded-md font-mono text-[11px] dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md font-mono text-[11px]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <Button size="sm" variant="outline" onClick={() => setShowLessonModal(false)}>
                   Cancel
                 </Button>
@@ -399,26 +399,26 @@ export const TrainerCourseDetailPage: React.FC = () => {
       {/* Add Resource Modal */}
       {showResourceModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-          <Card className="max-w-md w-full p-6 shadow-xl border-slate-200 dark:border-slate-800">
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">Add Learning Resource</h3>
+          <Card className="max-w-md w-full p-6 shadow-xl border-slate-200">
+            <h3 className="text-base font-bold text-slate-900">Add Learning Resource</h3>
             <div className="space-y-3 pt-4 text-xs">
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Resource Title *</label>
+                <label className="font-semibold text-slate-700">Resource Title *</label>
                 <input
                   type="text"
                   required
                   value={resTitle}
                   onChange={(e) => setResTitle(e.target.value)}
                   placeholder="e.g. IMD Radar Operations Manual"
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Resource Type</label>
+                <label className="font-semibold text-slate-700">Resource Type</label>
                 <select
                   value={resType}
                   onChange={(e) => setResType(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md"
                 >
                   <option value="DOCUMENT">DOCUMENT</option>
                   <option value="PDF">PDF</option>
@@ -426,18 +426,18 @@ export const TrainerCourseDetailPage: React.FC = () => {
                 </select>
               </div>
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">URL or File Path *</label>
+                <label className="font-semibold text-slate-700">URL or File Path *</label>
                 <input
                   type="text"
                   required
                   value={resUrl}
                   onChange={(e) => setResUrl(e.target.value)}
                   placeholder="https://mausam.imd.gov.in/docs/manual.pdf"
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border rounded-md"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
                 <Button size="sm" variant="outline" onClick={() => setShowResourceModal(false)}>
                   Cancel
                 </Button>

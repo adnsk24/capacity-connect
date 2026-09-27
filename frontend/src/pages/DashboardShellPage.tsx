@@ -66,10 +66,10 @@ export const DashboardShellPage: React.FC = () => {
   return (
     <div className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6 w-full">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
               Authenticated Workspace
             </h1>
             <Badge variant={roleBadgeVariants[user.role] || "default"}>
@@ -106,19 +106,19 @@ export const DashboardShellPage: React.FC = () => {
       </div>
 
       {logoutMessage && (
-        <div className="p-3 rounded-lg bg-blue-50 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 text-xs">
+        <div className="p-3 rounded-lg bg-blue-50 text-blue-800 border border-blue-200 text-xs">
           {logoutMessage}
         </div>
       )}
 
       {/* Verification Notice */}
       {!user.is_verified && (
-        <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 flex items-start justify-between gap-4">
+        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start justify-between gap-4">
           <div className="flex items-start gap-3">
-            <MailCheck className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <MailCheck className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="space-y-0.5">
-              <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200">Email Verification Pending</h4>
-              <p className="text-xs text-amber-800 dark:text-amber-300">
+              <h4 className="text-xs font-bold text-amber-900">Email Verification Pending</h4>
+              <p className="text-xs text-amber-800">
                 Your account email has not been verified yet. Please enter your verification token to complete registration.
               </p>
             </div>
@@ -137,7 +137,7 @@ export const DashboardShellPage: React.FC = () => {
       {/* User Information & Session Details */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Profile Card */}
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <UserIcon className="h-5 w-5 text-blue-600" />
@@ -148,21 +148,21 @@ export const DashboardShellPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2 text-xs">
-            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Full Name</span>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">
+              <span className="font-semibold text-slate-800">
                 {user.first_name} {user.last_name}
               </span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Email</span>
-              <span className="font-mono text-slate-800 dark:text-slate-200">{user.email}</span>
+              <span className="font-mono text-slate-800">{user.email}</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Username</span>
-              <span className="font-mono text-slate-800 dark:text-slate-200">{user.username}</span>
+              <span className="font-mono text-slate-800">{user.username}</span>
             </div>
-            <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500">Account Status</span>
               <Badge variant="success" className="text-[10px] capitalize">
                 {user.account_status}
@@ -178,7 +178,7 @@ export const DashboardShellPage: React.FC = () => {
         </Card>
 
         {/* Security & RBAC Guard Card */}
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <Shield className="h-5 w-5 text-emerald-600" />
@@ -189,16 +189,16 @@ export const DashboardShellPage: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 text-xs">
-            <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 space-y-1">
+            <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
               <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">
                 Assigned Role
               </span>
-              <div className="font-bold text-sm text-slate-900 dark:text-white">
+              <div className="font-bold text-sm text-slate-900">
                 {user.role}
               </div>
             </div>
 
-            <div className="space-y-1.5 text-[11px] text-slate-600 dark:text-slate-300">
+            <div className="space-y-1.5 text-[11px] text-slate-600">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                 <span>JWT Access Token (30 min lifetime)</span>
@@ -216,7 +216,7 @@ export const DashboardShellPage: React.FC = () => {
         </Card>
 
         {/* Next Phase Notice */}
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
               <ShieldAlert className="h-5 w-5 text-blue-600" />

@@ -35,11 +35,9 @@ export const ForgotPasswordPage: React.FC = () => {
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center mb-3">
             <img
-              src="/branding/imd-emblem.svg"
+              src="/branding/IMD_logo.png"
               alt="India Meteorological Department Emblem"
-              className="h-16 w-16 object-contain"
-              width="64"
-              height="64"
+              className="h-16 w-auto object-contain"
             />
           </div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">CAPACITY CONNECT</h1>

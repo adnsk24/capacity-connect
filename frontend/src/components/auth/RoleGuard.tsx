@@ -15,11 +15,11 @@ export const RoleGuard: React.FC<RoleGuardProps> = ({ allowedRoles, children }) 
   if (!user || !allowedRoles.includes(user.role)) {
     return (
       <div className="flex-1 flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-8 text-center space-y-4 shadow-sm">
-          <div className="h-12 w-12 rounded-full bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400 mx-auto flex items-center justify-center">
+        <div className="max-w-md w-full bg-white border border-slate-200 rounded-xl p-8 text-center space-y-4 shadow-sm">
+          <div className="h-12 w-12 rounded-full bg-red-100 text-red-600 mx-auto flex items-center justify-center">
             <ShieldAlert className="h-6 w-6" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+          <h3 className="text-lg font-bold text-slate-900">
             Access Restricted
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">

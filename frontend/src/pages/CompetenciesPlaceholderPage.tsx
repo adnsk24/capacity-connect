@@ -17,9 +17,9 @@ export const CompetenciesPlaceholderPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-5xl mx-auto py-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2.5">
             <Network className="h-6 w-6 text-blue-600" />
             <span>Organizational Competency Framework</span>
           </h1>
@@ -29,13 +29,13 @@ export const CompetenciesPlaceholderPage: React.FC = () => {
         </div>
 
         {/* View Switcher: Prepared for Future 3D Competency Universe */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
           <button
             onClick={() => setViewMode("grid")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
               viewMode === "grid"
-                ? "bg-white dark:bg-slate-900 text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-900"
             }`}
           >
             <Grid className="h-3.5 w-3.5" />
@@ -45,8 +45,8 @@ export const CompetenciesPlaceholderPage: React.FC = () => {
             onClick={() => setViewMode("universe")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
               viewMode === "universe"
-                ? "bg-white dark:bg-slate-900 text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-900"
             }`}
           >
             <Box className="h-3.5 w-3.5 text-indigo-500" />
@@ -60,7 +60,7 @@ export const CompetenciesPlaceholderPage: React.FC = () => {
 
       {viewMode === "universe" ? (
         /* Future 3D Competency Universe Viewport */
-        <Card className="border-slate-200 dark:border-slate-800 p-8 text-center bg-slate-950 text-white rounded-2xl relative overflow-hidden min-h-[400px] flex flex-col items-center justify-center">
+        <Card className="border-slate-200 p-8 text-center bg-slate-950 text-white rounded-2xl relative overflow-hidden min-h-[400px] flex flex-col items-center justify-center">
           <div className="relative z-10 space-y-3 max-w-md">
             <div className="w-16 h-16 rounded-full bg-indigo-600/30 text-indigo-400 border border-indigo-500/40 flex items-center justify-center mx-auto shadow-lg shadow-indigo-500/20">
               <Box className="h-8 w-8 animate-pulse" />
@@ -84,17 +84,17 @@ export const CompetenciesPlaceholderPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {data?.competencies && data.competencies.length > 0 ? (
             data.competencies.map((comp) => (
-              <Card key={comp.id} className="border-slate-200 dark:border-slate-800">
+              <Card key={comp.id} className="border-slate-200">
                 <CardHeader className="p-4 pb-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-mono text-slate-400 uppercase font-semibold">
                       {comp.code}
                     </span>
-                    <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded">
+                    <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
                       Level {comp.current_level} of {comp.target_level}
                     </span>
                   </div>
-                  <CardTitle className="text-sm font-bold text-slate-900 dark:text-white pt-1">
+                  <CardTitle className="text-sm font-bold text-slate-900 pt-1">
                     {comp.name}
                   </CardTitle>
                 </CardHeader>

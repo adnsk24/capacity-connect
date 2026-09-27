@@ -35,10 +35,10 @@ export const TraineeAssessmentsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-64 bg-slate-200 dark:bg-slate-800 rounded animate-pulse" />
+        <div className="h-8 w-64 bg-slate-200 rounded animate-pulse" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-64 bg-slate-100 dark:bg-slate-800/60 rounded-xl animate-pulse" />
+            <div key={i} className="h-64 bg-slate-100 rounded-xl animate-pulse" />
           ))}
         </div>
       </div>
@@ -47,11 +47,11 @@ export const TraineeAssessmentsPage: React.FC = () => {
 
   if (error) {
     return (
-      <Card className="border-red-200 bg-red-50/50 dark:bg-red-950/20">
+      <Card className="border-red-200 bg-red-50/50">
         <CardContent className="pt-6 flex flex-col items-center text-center">
           <AlertCircle className="h-10 w-10 text-red-500 mb-2" />
-          <h3 className="font-semibold text-red-900 dark:text-red-200">Failed to load assessments</h3>
-          <p className="text-sm text-red-700 dark:text-red-300 mt-1">{(error as Error).message}</p>
+          <h3 className="font-semibold text-red-900">Failed to load assessments</h3>
+          <p className="text-sm text-red-700 mt-1">{(error as Error).message}</p>
         </CardContent>
       </Card>
     )

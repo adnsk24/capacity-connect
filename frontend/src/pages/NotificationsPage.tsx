@@ -105,26 +105,26 @@ export const NotificationsPage: React.FC = () => {
               key={n.id}
               className={`border transition-colors ${
                 n.is_read
-                  ? "border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900"
-                  : "border-blue-300 dark:border-blue-800 bg-blue-50/40 dark:bg-blue-950/20 shadow-xs"
+                  ? "border-slate-200 bg-white"
+                  : "border-blue-300 bg-blue-50/40 shadow-xs"
               }`}
             >
               <CardContent className="p-4 flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 shrink-0 mt-0.5">
+                  <div className="p-2 rounded-lg bg-slate-100 shrink-0 mt-0.5">
                     {getNotificationIcon(n.notification_type)}
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-white">
+                      <span className="font-semibold text-xs sm:text-sm text-slate-900">
                         {n.title}
                       </span>
                       {!n.is_read && (
                         <span className="h-2 w-2 rounded-full bg-blue-600 shrink-0" />
                       )}
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       {n.message}
                     </p>
                     <div className="flex items-center gap-3 pt-1 text-[11px] text-slate-400">
@@ -140,7 +140,7 @@ export const NotificationsPage: React.FC = () => {
                       {n.link_url && (
                         <Link
                           to={n.link_url}
-                          className="font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 flex items-center gap-0.5"
+                          className="font-medium text-blue-600 hover:text-blue-700 flex items-center gap-0.5"
                         >
                           View Details <ArrowRight className="h-3 w-3" />
                         </Link>

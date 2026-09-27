@@ -149,8 +149,8 @@ export const CourseCataloguePage: React.FC = () => {
         <div className="space-y-6">
           <div className="flex items-center justify-between text-xs text-slate-500">
             <span>
-              Showing <strong className="text-slate-800 dark:text-slate-200">{data?.items.length}</strong> of{" "}
-              <strong className="text-slate-800 dark:text-slate-200">{data?.total}</strong> operational courses
+              Showing <strong className="text-slate-800">{data?.items.length}</strong> of{" "}
+              <strong className="text-slate-800">{data?.total}</strong> operational courses
             </span>
           </div>
 

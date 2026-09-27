@@ -123,8 +123,8 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <Loader2 className="h-8 w-8 text-emerald-600 animate-spin" />
-        <p className="text-xs text-slate-500 font-medium">Loading assessment question bank...</p>
+        <Loader2 className="h-8 w-8 text-[#1557A6] animate-spin" />
+        <p className="text-xs text-[#64748B] font-medium">Loading assessment question bank...</p>
       </div>
     )
   }
@@ -149,29 +149,29 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
       <div>
         <Link
           to="/trainer/assessments"
-          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white"
+          className="inline-flex items-center text-xs font-semibold text-[#64748B] hover:text-[#172033]"
         >
           <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back to Assessments
         </Link>
       </div>
 
       {/* Header Summary */}
-      <Card className="border-slate-200 dark:border-slate-800">
+      <Card className="border-[#E2E8F0] bg-white shadow-sm">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
-                <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#1557A6] uppercase tracking-wider">
                   {assessment.course_title}
                 </span>
                 <Badge variant={isPublished ? "success" : "secondary"} className="text-[10px]">
                   {assessment.status}
                 </Badge>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-xl sm:text-2xl font-bold text-[#172033]">
                 {assessment.title}
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs text-[#64748B] mt-1">
                 {assessment.questions_count} Questions • {assessment.duration_minutes || "—"} mins • Passing:{" "}
                 {assessment.passing_percentage}%
               </p>
@@ -182,7 +182,9 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
               onClick={() => toggleStatusMutation.mutate(isPublished ? "DRAFT" : "PUBLISHED")}
               disabled={toggleStatusMutation.isPending}
               className={`text-xs font-bold ${
-                isPublished ? "bg-amber-600 hover:bg-amber-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white"
+                isPublished
+                  ? "bg-amber-600 hover:bg-amber-700 text-white"
+                  : "bg-[#1557A6] hover:bg-[#0C325F] text-white"
               }`}
             >
               {isPublished ? "Revert to Draft" : "Publish to Trainees"}
@@ -194,12 +196,12 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Question Authoring Form (5 cols) */}
         <div className="lg:col-span-5 space-y-4">
-          <Card className="border-slate-200 dark:border-slate-800">
-            <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
-              <CardTitle className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Plus className="h-4 w-4 text-emerald-600" /> Add MCQ Question
+          <Card className="border-[#E2E8F0] bg-white shadow-sm">
+            <CardHeader className="pb-3 border-b border-[#E2E8F0]">
+              <CardTitle className="text-sm font-bold text-[#172033] flex items-center gap-1.5">
+                <Plus className="h-4 w-4 text-[#1557A6]" /> Add MCQ Question
               </CardTitle>
-              <CardDescription className="text-xs">
+              <CardDescription className="text-xs text-[#64748B]">
                 Author question text, choices, marks, and explanation
               </CardDescription>
             </CardHeader>
@@ -213,19 +215,19 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                 )}
 
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Question Prompt *</label>
+                  <label className="font-semibold text-[#172033]">Question Prompt *</label>
                   <textarea
                     rows={3}
                     required
                     value={questionText}
                     onChange={(e) => setQuestionText(e.target.value)}
                     placeholder="e.g. Which layer of the atmosphere contains the ozone layer?"
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700 leading-relaxed"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md bg-white text-[#172033] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6] leading-relaxed"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Marks Awarded</label>
+                  <label className="font-semibold text-[#172033]">Marks Awarded</label>
                   <input
                     type="number"
                     step="0.5"
@@ -233,14 +235,14 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                     max="10"
                     value={marks}
                     onChange={(e) => setMarks(Number(e.target.value))}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md bg-white text-[#172033] focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                   />
                 </div>
 
                 {/* Options with Correct Choice Radio */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="font-semibold text-[#172033]">
                       Answer Choices (Select the correct one) *
                     </label>
                   </div>
@@ -254,8 +256,8 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                           onClick={() => handleSetCorrect(idx)}
                           className={`h-7 w-7 rounded-full flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
                             opt.isCorrect
-                              ? "bg-emerald-600 text-white"
-                              : "bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800"
+                              ? "bg-[#1557A6] text-white"
+                              : "bg-slate-100 text-[#64748B] hover:bg-slate-200 border border-[#CBD5E1]"
                           }`}
                           title={opt.isCorrect ? "Correct answer" : "Click to mark as correct"}
                         >
@@ -266,10 +268,10 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                           value={opt.text}
                           onChange={(e) => handleOptionTextChange(idx, e.target.value)}
                           placeholder={`Option ${letter}`}
-                          className={`flex-1 px-3 py-1.5 border rounded-md dark:bg-slate-900 ${
+                          className={`flex-1 px-3 py-1.5 border rounded-md bg-white text-[#172033] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1557A6] ${
                             opt.isCorrect
-                              ? "border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20"
-                              : "dark:border-slate-700"
+                              ? "border-[#1557A6] bg-blue-50/30"
+                              : "border-[#CBD5E1]"
                           }`}
                         />
                       </div>
@@ -278,7 +280,7 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">
+                  <label className="font-semibold text-[#172033]">
                     Scientific Explanation (Revealed on Evaluation)
                   </label>
                   <textarea
@@ -286,7 +288,7 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                     value={explanation}
                     onChange={(e) => setExplanation(e.target.value)}
                     placeholder="Provide physics/meteorology justification..."
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-[#CBD5E1] rounded-md bg-white text-[#172033] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                   />
                 </div>
 
@@ -294,7 +296,7 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                   type="submit"
                   size="sm"
                   disabled={addQuestionMutation.isPending}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                  className="w-full bg-[#1557A6] hover:bg-[#0C325F] text-white font-bold"
                 >
                   {addQuestionMutation.isPending ? "Adding..." : "Save Question to Bank"}
                 </Button>
@@ -306,41 +308,41 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
         {/* Existing Question Bank (7 cols) */}
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 className="text-base font-bold text-[#172033]">
               Configured Questions ({assessment.questions.length})
             </h2>
           </div>
 
           {assessment.questions.length === 0 ? (
-            <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
+            <Card className="border-dashed border-2 border-[#CBD5E1] bg-white">
               <CardContent className="py-12 text-center">
                 <HelpCircle className="h-10 w-10 text-slate-300 mx-auto mb-2" />
-                <p className="text-xs text-slate-500">No questions in this assessment yet. Use the form to add questions.</p>
+                <p className="text-xs text-[#64748B]">No questions in this assessment yet. Use the form to add questions.</p>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-3">
               {assessment.questions.map((q, idx) => (
-                <Card key={q.id} className="border-slate-200 dark:border-slate-800">
+                <Card key={q.id} className="border-[#E2E8F0] bg-white shadow-sm">
                   <CardContent className="p-4 space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-[10px] font-bold">
+                        <Badge variant="outline" className="text-[10px] font-bold border-[#CBD5E1] text-[#172033]">
                           Q{idx + 1}
                         </Badge>
-                        <span className="text-[11px] text-slate-500">{q.marks} Mark(s)</span>
+                        <span className="text-[11px] text-[#64748B]">{q.marks} Mark(s)</span>
                       </div>
                       <Button
                         size="icon"
                         variant="ghost"
                         onClick={() => deleteQuestionMutation.mutate(q.id)}
-                        className="h-6 w-6 text-slate-400 hover:text-red-600"
+                        className="h-6 w-6 text-slate-400 hover:text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
 
-                    <p className="text-xs font-semibold text-slate-900 dark:text-white leading-relaxed">
+                    <p className="text-xs font-semibold text-[#172033] leading-relaxed">
                       {q.question_text}
                     </p>
 
@@ -351,8 +353,8 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                           key={opt.id}
                           className={`px-2.5 py-1 rounded text-[11px] flex items-center justify-between ${
                             opt.is_correct
-                              ? "bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300"
-                              : "text-slate-600 dark:text-slate-400"
+                              ? "bg-blue-50 text-[#1557A6] font-semibold border border-blue-200"
+                              : "text-[#64748B] bg-slate-50 border border-slate-100"
                           }`}
                         >
                           <div className="flex items-center gap-2">
@@ -360,7 +362,7 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                             <span>{opt.option_text}</span>
                           </div>
                           {opt.is_correct && (
-                            <span className="text-[10px] text-emerald-600 dark:text-emerald-400 flex items-center gap-0.5">
+                            <span className="text-[10px] text-[#1557A6] flex items-center gap-0.5">
                               <Check className="h-3 w-3" /> Correct
                             </span>
                           )}
@@ -369,7 +371,7 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
                     </div>
 
                     {q.explanation && (
-                      <p className="text-[11px] text-slate-500 italic pt-1 border-t border-slate-100 dark:border-slate-800">
+                      <p className="text-[11px] text-[#64748B] italic pt-1 border-t border-[#E2E8F0]">
                         Explanation: {q.explanation}
                       </p>
                     )}
@@ -383,3 +385,4 @@ export const TrainerAssessmentBuilderPage: React.FC = () => {
     </div>
   )
 }
+

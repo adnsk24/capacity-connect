@@ -88,9 +88,9 @@ export const HomePage: React.FC = () => {
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-blue-200 bg-blue-50 text-[#1557A6] text-[12px] font-semibold mb-5">
                 <img
-                  src="/branding/imd-emblem.svg"
+                  src="/branding/IMD_logo.png"
                   alt="IMD Emblem"
-                  className="w-4 h-4 object-contain"
+                  className="h-5 w-auto object-contain"
                 />
                 Capacity Connect • IMD Digital Capacity Building Portal
               </div>

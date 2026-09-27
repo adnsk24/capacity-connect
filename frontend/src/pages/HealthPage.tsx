@@ -20,7 +20,7 @@ export const HealthPage: React.FC = () => {
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
               <Activity className="h-6 w-6 text-blue-600" /> System Health Diagnostics
             </h1>
             <p className="text-sm text-slate-500">
@@ -40,22 +40,22 @@ export const HealthPage: React.FC = () => {
         </div>
 
         {/* API Target Information */}
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm font-semibold uppercase tracking-wider text-slate-500">
               Connection Target
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs">
-            <div className="flex items-center justify-between py-1 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center justify-between py-1 border-b border-slate-100">
               <span className="text-slate-500 font-medium">Gateway Base URL</span>
-              <code className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-blue-600 dark:text-blue-400 font-mono">
+              <code className="bg-slate-100 px-2 py-0.5 rounded text-blue-600 font-mono">
                 {API_BASE_URL}
               </code>
             </div>
             <div className="flex items-center justify-between py-1">
               <span className="text-slate-500 font-medium">Versioned Health Endpoint</span>
-              <code className="bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300 font-mono">
+              <code className="bg-slate-100 px-2 py-0.5 rounded text-slate-700 font-mono">
                 GET /api/v1/health
               </code>
             </div>
@@ -63,7 +63,7 @@ export const HealthPage: React.FC = () => {
         </Card>
 
         {/* Live Diagnostics Card */}
-        <Card className="border-slate-200 dark:border-slate-800 shadow-sm">
+        <Card className="border-slate-200 shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -92,31 +92,31 @@ export const HealthPage: React.FC = () => {
                 Initiating connection to FastAPI backend...
               </div>
             ) : error ? (
-              <div className="p-4 rounded-lg bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-300 border border-red-200 dark:border-red-900 text-sm space-y-1">
+              <div className="p-4 rounded-lg bg-red-50 text-red-800 border border-red-200 text-sm space-y-1">
                 <div className="font-semibold flex items-center gap-1.5">
                   <XCircle className="h-4 w-4" /> Backend Server Not Detected
                 </div>
                 <p className="text-xs">
                   Ensure the FastAPI backend is running via:
                 </p>
-                <code className="block bg-red-100 dark:bg-red-900/60 p-2 rounded text-xs font-mono">
+                <code className="block bg-red-100 p-2 rounded text-xs font-mono">
                   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
                 </code>
               </div>
             ) : data ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 space-y-2">
+                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase">
                     <Server className="h-4 w-4 text-blue-600" /> Service Details
                   </div>
                   <div className="text-xs space-y-1.5">
                     <div className="flex justify-between">
                       <span className="text-slate-500">Service:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{data.app}</span>
+                      <span className="font-semibold text-slate-800">{data.app}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Version:</span>
-                      <span className="font-mono text-slate-800 dark:text-slate-200">v{data.version}</span>
+                      <span className="font-mono text-slate-800">v{data.version}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Environment:</span>
@@ -126,14 +126,14 @@ export const HealthPage: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Server Time (UTC):</span>
-                      <span className="font-mono text-[11px] text-slate-700 dark:text-slate-300">
+                      <span className="font-mono text-[11px] text-slate-700">
                         {new Date(data.timestamp).toLocaleString()}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/60 space-y-2">
+                <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase">
                     <Database className="h-4 w-4 text-blue-600" /> Database Connection
                   </div>
@@ -150,12 +150,12 @@ export const HealthPage: React.FC = () => {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-slate-500">Target Engine:</span>
-                      <span className="font-medium text-slate-800 dark:text-slate-200">
+                      <span className="font-medium text-slate-800">
                         {data.database?.database || "PostgreSQL / Supabase"}
                       </span>
                     </div>
                     {data.database?.error && (
-                      <p className="text-[11px] text-amber-600 dark:text-amber-400 pt-1">
+                      <p className="text-[11px] text-amber-600 pt-1">
                         Note: Local PostgreSQL service not started yet (standard for Phase 0 before Docker/DB launch).
                       </p>
                     )}

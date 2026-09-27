@@ -5,9 +5,7 @@ import {
   BookOpen,
   ClipboardCheck,
   Users,
-  Bell,
   X,
-  User,
 } from "lucide-react"
 
 interface TrainerSidebarProps {
@@ -20,8 +18,6 @@ const navItems = [
   { to: "/trainer/courses", label: "My Courses", icon: BookOpen },
   { to: "/trainer/assessments", label: "Assessments", icon: ClipboardCheck },
   { to: "/trainer/performance", label: "Trainee Performance", icon: Users },
-  { to: "/trainee/notifications", label: "Notifications", icon: Bell },
-  { to: "/trainee/profile", label: "My Profile", icon: User },
 ]
 
 export const TrainerSidebar: React.FC<TrainerSidebarProps> = ({ isOpen, onClose }) => {
@@ -43,12 +39,12 @@ export const TrainerSidebar: React.FC<TrainerSidebarProps> = ({ isOpen, onClose 
         }`}
       >
         {/* Brand Header */}
-        <div className="h-[72px] flex items-center justify-between px-4 border-b border-slate-200 flex-shrink-0">
+        <div className="h-[76px] flex items-center justify-between px-4 border-b border-slate-200 flex-shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
             <img
-              src="/branding/imd-emblem.svg"
+              src="/branding/IMD_logo.png"
               alt="India Meteorological Department"
-              className="w-10 h-10 object-contain flex-shrink-0"
+              className="h-12 w-auto object-contain flex-shrink-0"
             />
             <div className="min-w-0">
               <div className="text-[13px] font-bold text-slate-900 leading-tight">CAPACITY CONNECT</div>

@@ -54,15 +54,20 @@ import { AdminAssessmentsPage } from "@/pages/AdminAssessmentsPage"
 
 // Guards & State
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute"
-import { useAuthStore } from "@/store/useAuthStore"
+import { useAuthStore, registerAuthCleanup } from "@/store/useAuthStore"
 
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 30,
       retry: 1,
     },
   },
+})
+
+// Clear cached queries on session termination to guarantee clean role isolation
+registerAuthCleanup(() => {
+  queryClient.clear()
 })
 
 // Dynamic redirect component based on active user role
@@ -102,7 +107,7 @@ export const App: React.FC = () => {
           <Route
             path="/trainee"
             element={
-              <ProtectedRoute allowedRoles={["TRAINEE", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["TRAINEE"]}>
                 <TraineeLayout />
               </ProtectedRoute>
             }
@@ -125,7 +130,7 @@ export const App: React.FC = () => {
           <Route
             path="/courses/:courseId/learn"
             element={
-              <ProtectedRoute allowedRoles={["TRAINEE", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["TRAINEE", "TRAINER", "ADMIN"]}>
                 <TraineeLayout />
               </ProtectedRoute>
             }
@@ -137,7 +142,7 @@ export const App: React.FC = () => {
           <Route
             path="/trainer"
             element={
-              <ProtectedRoute allowedRoles={["TRAINER", "ADMIN"]}>
+              <ProtectedRoute allowedRoles={["TRAINER"]}>
                 <TrainerLayout />
               </ProtectedRoute>
             }

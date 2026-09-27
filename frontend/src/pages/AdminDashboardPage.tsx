@@ -48,7 +48,7 @@ export const AdminDashboardPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-[#1557A6] border border-blue-200 mb-1.5">
-              <img src="/branding/imd-emblem.svg" alt="IMD" className="w-3.5 h-3.5 object-contain" />
+              <img src="/branding/IMD_logo.png" alt="IMD" className="h-4 w-auto object-contain" />
               India Meteorological Department · Administration
             </div>
             <h1 className="text-[22px] font-bold text-slate-900">Administrative Governance</h1>
@@ -74,68 +74,68 @@ export const AdminDashboardPage: React.FC = () => {
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardContent className="p-4 space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span>Total Users</span>
               <Users className="h-4 w-4 text-blue-500" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total_users}</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.total_users}</p>
             <p className="text-[11px] text-slate-400">Platform accounts</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardContent className="p-4 space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span>Pending</span>
               <UserCheck className="h-4 w-4 text-amber-500" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.pending_users}</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.pending_users}</p>
             <p className="text-[11px] text-slate-400">Awaiting approval</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardContent className="p-4 space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span>Active Trainees</span>
               <Activity className="h-4 w-4 text-emerald-500" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.active_trainees}</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.active_trainees}</p>
             <p className="text-[11px] text-slate-400">Verified learners</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardContent className="p-4 space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span>Courses</span>
               <BookOpen className="h-4 w-4 text-indigo-500" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total_courses}</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.total_courses}</p>
             <p className="text-[11px] text-slate-400">{stats.published_courses} published</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardContent className="p-4 space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span>Enrollments</span>
               <Layers className="h-4 w-4 text-purple-500" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total_enrollments}</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.total_enrollments}</p>
             <p className="text-[11px] text-slate-400">Total course seats</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardContent className="p-4 space-y-1">
             <div className="flex items-center justify-between text-slate-500 text-xs">
               <span>Exams Taken</span>
               <ClipboardCheck className="h-4 w-4 text-teal-500" />
             </div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.assessment_attempts}</p>
+            <p className="text-2xl font-bold text-slate-900">{stats.assessment_attempts}</p>
             <p className="text-[11px] text-slate-400">{stats.overall_completion_rate}% pass rate</p>
           </CardContent>
         </Card>
