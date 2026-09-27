@@ -1,8 +1,6 @@
 import React from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { Menu, Bell, LogOut, Radio, User as UserIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Menu, Bell, LogOut } from "lucide-react"
 import { useAuthStore } from "@/store/useAuthStore"
 import { authService } from "@/services/auth"
 
@@ -20,80 +18,82 @@ export const TraineeTopBar: React.FC<TraineeTopBarProps> = ({ onToggleSidebar })
         await authService.logout(refreshToken)
       }
     } catch {
-      // Ignore network errors on logout
+      // Ignore errors on logout
     } finally {
       clearSession()
       navigate("/login", { replace: true })
     }
   }
 
+  const initials = user
+    ? `${user.first_name?.[0] || ""}${user.last_name?.[0] || ""}`.toUpperCase() || "U"
+    : "U"
+
   return (
-    <header className="sticky top-0 z-30 h-16 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6">
-      {/* Left: Mobile Toggle & Context */}
+    <header className="sticky top-0 z-30 h-14 w-full bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 flex-shrink-0">
+      {/* Left */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleSidebar}
-          className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 lg:hidden"
+          className="p-1.5 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 lg:hidden transition-colors"
+          aria-label="Toggle sidebar"
         >
           <Menu className="h-5 w-5" />
         </button>
 
+        {/* Breadcrumb / context */}
         <div className="hidden sm:flex items-center gap-2 text-xs">
-          <Badge
-            variant="outline"
-            className="flex items-center gap-1.5 py-0.5 px-2 bg-blue-50/60 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800"
-          >
-            <Radio className="h-3 w-3 text-blue-500 animate-pulse" />
-            <span>IMD Central Learning Grid</span>
-          </Badge>
-          <span className="text-slate-400">|</span>
-          <span className="text-slate-500 font-medium">Phase 3 Active</span>
+          <img
+            src="/branding/imd-emblem.svg"
+            alt="IMD"
+            className="w-5 h-5 object-contain"
+          />
+          <span className="font-semibold text-slate-800">India Meteorological Department</span>
+          <span className="text-slate-300">/</span>
+          <span className="text-[#1557A6] font-medium">Capacity Connect</span>
         </div>
       </div>
 
-      {/* Right: Actions, Notifications, User Profile */}
-      <div className="flex items-center gap-3">
-        {/* Notifications Icon Link */}
-        <Link to="/trainee/notifications">
-          <button
-            className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 relative transition-colors"
-            title="Notifications"
-          >
-            <Bell className="h-4 w-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600" />
-          </button>
+      {/* Right */}
+      <div className="flex items-center gap-1.5">
+        {/* Notifications */}
+        <Link
+          to="/trainee/notifications"
+          className="relative p-2 rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+          title="Notifications"
+          aria-label="Notifications"
+        >
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#1557A6]" aria-label="Unread notifications" />
         </Link>
 
-        {/* User Mini Profile */}
+        {/* User avatar + name */}
         {user && (
           <Link
             to="/trainee/profile"
-            className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-slate-100 transition-colors"
           >
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm">
-              {user.first_name?.[0] || <UserIcon className="h-4 w-4" />}
+            <div className="w-7 h-7 rounded-full bg-[#1557A6] text-white flex items-center justify-center text-[11px] font-semibold flex-shrink-0">
+              {initials}
             </div>
             <div className="hidden md:block text-left">
-              <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+              <div className="text-[13px] font-semibold text-slate-800 leading-tight">
                 {user.first_name} {user.last_name}
               </div>
-              <div className="text-[10px] text-slate-400 font-mono">
-                {user.role}
-              </div>
+              <div className="text-[11px] text-slate-500">Trainee</div>
             </div>
           </Link>
         )}
 
-        {/* Sign Out Button */}
-        <Button
-          variant="outline"
-          size="sm"
+        {/* Sign Out */}
+        <button
           onClick={handleLogout}
-          className="text-xs flex items-center gap-1.5 text-slate-600 hover:text-red-600 hover:border-red-200 hover:bg-red-50"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] text-slate-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+          title="Sign Out"
         >
           <LogOut className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Sign Out</span>
-        </Button>
+          <span className="hidden sm:inline font-medium">Sign Out</span>
+        </button>
       </div>
     </header>
   )

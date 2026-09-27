@@ -7,13 +7,10 @@ import {
   TrendingUp,
   Award,
   ArrowRight,
-  Sparkles,
   ClipboardList,
-  Compass,
-  Building,
-  GraduationCap,
+  Network,
+  ChevronRight,
 } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/ui/stat-card"
 import { ProgressBar } from "@/components/ui/progress-bar"
@@ -22,6 +19,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { DashboardSkeleton } from "@/components/ui/loading-skeleton"
 import { ErrorState } from "@/components/ui/error-state"
 import { traineeService } from "@/services/trainee"
+import { getCourseThumbnail } from "@/lib/courseImages"
 
 export const TraineeDashboardPage: React.FC = () => {
   const { data, isLoading, error, refetch } = useQuery({
@@ -29,15 +27,13 @@ export const TraineeDashboardPage: React.FC = () => {
     queryFn: () => traineeService.getDashboard(),
   })
 
-  if (isLoading) {
-    return <DashboardSkeleton />
-  }
+  if (isLoading) return <DashboardSkeleton />
 
   if (error || !data) {
     return (
       <ErrorState
-        title="Dashboard Offline"
-        message={error instanceof Error ? error.message : "Failed to load trainee telemetry"}
+        title="Dashboard Unavailable"
+        message={error instanceof Error ? error.message : "Failed to load dashboard data."}
         onRetry={() => refetch()}
       />
     )
@@ -45,299 +41,292 @@ export const TraineeDashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* 1. Welcome & Meteorological Institutional Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 sm:p-8 text-white shadow-md">
-        {/* Subtle decorative grid lines */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="dashboard-grid" width="30" height="30" patternUnits="userSpaceOnUse">
-                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="currentColor" strokeWidth="0.8" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#dashboard-grid)" />
-          </svg>
-        </div>
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                IMD TRAINEE PORTAL
-              </span>
-              <span className="text-xs text-slate-300 flex items-center gap-1.5">
-                <Building className="h-3.5 w-3.5 text-blue-400" />
-                {data.user_summary.department || "National Weather Forecasting Centre"}
-              </span>
+      {/* Dashboard Hero Area */}
+      <div className="bg-white border border-slate-200 rounded-lg p-5 sm:p-6 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          {/* Left: Content (58-65%) */}
+          <div className="md:col-span-7 lg:col-span-7 space-y-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-[#1557A6] border border-blue-200 mb-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1557A6]" />
+                India Meteorological Department · Capacity Portal
+              </div>
+              <h1 className="text-[22px] sm:text-2xl font-bold text-slate-900 leading-tight">
+                {data.welcome_message}
+              </h1>
+              <p className="text-[13px] text-slate-500 mt-1 max-w-xl">
+                Continue your professional learning and competency development.
+                {data.user_summary.department && (
+                  <span className="ml-1 text-slate-400">· {data.user_summary.department}</span>
+                )}
+              </p>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-              {data.welcome_message}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 max-w-2xl leading-relaxed">
-              Active in the India Meteorological Department capacity building network. Track your learning progression, operational competencies, and certified meteorological standards.
-            </p>
-          </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Link to="/courses">
-              <Button size="sm" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold text-xs shadow-sm flex items-center gap-1.5">
-                <Compass className="h-4 w-4" />
-                <span>Browse Courses</span>
-              </Button>
-            </Link>
-            <Link to="/trainee/profile">
-              <Button size="sm" variant="outline" className="border-white/30 text-white hover:bg-white/10 text-xs font-semibold">
-                View Profile
-              </Button>
-            </Link>
-          </div>
-        </div>
+            {/* Profile completion bar */}
+            {data.profile_completion_percentage < 100 && (
+              <div className="p-3 rounded-md bg-amber-50 border border-amber-200 flex items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between text-[12px] font-medium mb-1.5">
+                    <span className="text-amber-800">Profile Completion</span>
+                    <span className="font-bold text-amber-900">{data.profile_completion_percentage}%</span>
+                  </div>
+                  <ProgressBar value={data.profile_completion_percentage} size="sm" variant="warning" />
+                </div>
+                <Link to="/trainee/profile" className="text-[12px] font-semibold text-amber-700 hover:underline flex-shrink-0">
+                  Complete Profile →
+                </Link>
+              </div>
+            )}
 
-        {/* 2. Profile Completion Bar */}
-        <div className="relative z-10 mt-6 pt-5 border-t border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1 flex-1 max-w-md">
-            <div className="flex justify-between text-xs font-medium">
-              <span className="text-slate-300 flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5 text-amber-300" />
-                Profile Completion
-              </span>
-              <span className="font-bold text-white font-mono">
-                {data.profile_completion_percentage}%
-              </span>
+            {/* Actions */}
+            <div className="flex items-center gap-2 pt-1">
+              <Link to="/courses">
+                <Button size="sm" className="gap-1.5">
+                  <BookOpen className="h-3.5 w-3.5" />
+                  Browse Courses
+                </Button>
+              </Link>
+              <Link to="/trainee/profile">
+                <Button size="sm" variant="outline">
+                  View Profile
+                </Button>
+              </Link>
             </div>
-            <ProgressBar value={data.profile_completion_percentage} size="sm" variant="meteorological" />
           </div>
-          {data.profile_completion_percentage < 100 && (
-            <Link to="/trainee/profile" className="text-xs text-blue-300 hover:text-white underline underline-offset-4 shrink-0 font-medium">
-              Complete your profile for full credentialing →
-            </Link>
-          )}
+
+          {/* Right: Authentic Meteorological Observation Facility Image (35-42%) */}
+          <div className="md:col-span-5 lg:col-span-5">
+            <div className="relative overflow-hidden rounded-lg border border-slate-200 shadow-xs h-48 sm:h-52 w-full bg-slate-100">
+              <img
+                src="/images/imd-radar-facility.jpg"
+                alt="IMD Doppler Weather Radar Station"
+                className="w-full h-full object-cover"
+                loading="eager"
+                width="640"
+                height="360"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/80 via-slate-900/40 to-transparent p-2.5 pt-6 flex items-center justify-between text-white">
+                <div className="text-[11px] font-medium truncate">IMD Doppler Weather Radar Station</div>
+                <span className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-emerald-600/90 rounded text-white flex-shrink-0">
+                  Active Station
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* 3. Real Telemetry Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Stats row */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Courses Enrolled"
           value={data.courses_enrolled_count}
-          subtitle="Active curriculum tracks"
-          icon={<BookOpen className="h-5 w-5" />}
+          subtitle="Active tracks"
+          icon={<BookOpen className="h-4 w-4" />}
           accentColor="blue"
         />
         <StatCard
-          title="Courses Completed"
+          title="Completed"
           value={data.courses_completed_count}
-          subtitle="Fully certified completions"
-          icon={<CheckCircle2 className="h-5 w-5" />}
+          subtitle="Certified completions"
+          icon={<CheckCircle2 className="h-4 w-4" />}
           accentColor="emerald"
         />
         <StatCard
-          title="Average Progress"
+          title="Avg. Progress"
           value={`${data.average_progress_percentage}%`}
-          subtitle="Across all enrolled courses"
-          icon={<TrendingUp className="h-5 w-5" />}
-          accentColor="cyan"
+          subtitle="Across enrolled"
+          icon={<TrendingUp className="h-4 w-4" />}
+          accentColor="indigo"
         />
         <StatCard
-          title="Certifications"
+          title="Certificates"
           value={data.certificates.length}
           subtitle="Verified credentials"
-          icon={<Award className="h-5 w-5" />}
-          accentColor="indigo"
+          icon={<Award className="h-4 w-4" />}
+          accentColor="amber"
         />
       </div>
 
-      {/* 4. Main Two-Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 spans): Recent Learning & In-Progress Tracks */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="border-slate-200/90 dark:border-slate-800">
-            <CardHeader className="p-5 pb-3 flex flex-row items-center justify-between">
+      {/* Main 2-column grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Left: 2/3 width */}
+        <div className="lg:col-span-2 space-y-5">
+          {/* Recent Learning */}
+          <div className="bg-white border border-slate-200 rounded-lg shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <div>
-                <CardTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <GraduationCap className="h-5 w-5 text-blue-600" />
-                  <span>Recent Learning</span>
-                </CardTitle>
-                <p className="text-xs text-slate-500">
-                  Your ongoing operational courses and syllabus progression
-                </p>
+                <h2 className="text-[14px] font-semibold text-slate-900">My Learning</h2>
+                <p className="text-[12px] text-slate-500 mt-0.5">Ongoing courses and progression</p>
               </div>
               <Link to="/trainee/learning">
-                <Button variant="ghost" size="sm" className="text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-semibold flex items-center gap-1">
-                  <span>View All</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
+                <Button variant="ghost" size="sm" className="gap-1 text-[12px] text-[#1557A6]">
+                  View All <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
-            </CardHeader>
-            <CardContent className="p-5 pt-0 space-y-3">
+            </div>
+            <div className="p-5 space-y-3">
               {data.recent_learning.length === 0 ? (
                 <EmptyState
                   icon={<BookOpen className="h-6 w-6" />}
-                  title="No Enrolled Courses Yet"
-                  description="You are not enrolled in any operational courses. Browse the IMD course catalogue to get started."
-                  actionLabel="Explore Course Catalogue"
+                  title="No Enrolled Courses"
+                  description="Browse the IMD course catalogue to get started."
+                  actionLabel="Explore Courses"
                   onAction={() => window.location.assign("/courses")}
                 />
               ) : (
                 data.recent_learning.map((item) => (
                   <div
                     key={item.enrollment_id}
-                    className="p-4 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:border-blue-300 dark:hover:border-blue-800 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    className="p-4 rounded-md border border-slate-200 bg-slate-50 hover:bg-white hover:border-blue-200 transition-all flex flex-col sm:flex-row gap-3.5 items-start sm:items-center"
                   >
-                    <div className="space-y-1.5 flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                          {item.code}
-                        </span>
-                        <StatusBadge status={item.status} />
-                        <span className="text-[11px] text-slate-400">· {item.category_name}</span>
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                        {item.title}
-                      </h4>
-                      <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
-                        <span>{item.completed_lessons_count} of {item.total_lessons_count} lessons</span>
-                        <span>·</span>
-                        <span>{item.progress_percentage}% complete</span>
-                      </div>
-                      <div className="pt-1 max-w-sm">
+                    <div className="w-16 h-16 shrink-0 rounded overflow-hidden border border-slate-200 bg-slate-100 hidden sm:block">
+                      <img
+                        src={getCourseThumbnail(item.title, item.category_name)}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                        width="64"
+                        height="64"
+                      />
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-1 w-full min-w-0">
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600">
+                            {item.code}
+                          </span>
+                          <StatusBadge status={item.status} />
+                          <span className="text-[11px] text-slate-400">{item.category_name}</span>
+                        </div>
+                        <h4 className="text-[13px] font-semibold text-slate-900 truncate">{item.title}</h4>
+                        <div className="flex items-center gap-2 text-[12px] text-slate-500">
+                          <span>{item.completed_lessons_count} of {item.total_lessons_count} lessons</span>
+                          <span>·</span>
+                          <span>{item.progress_percentage}% complete</span>
+                        </div>
                         <ProgressBar value={item.progress_percentage} size="sm" />
                       </div>
-                    </div>
-
-                    <div className="shrink-0 flex items-center gap-2">
-                      <Link to={`/courses/${item.course_id}/learn`}>
-                        <Button size="sm" className="text-xs bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center gap-1.5">
-                          <span>Continue</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
+                      <Link to={`/courses/${item.course_id}/learn`} className="flex-shrink-0">
+                        <Button size="sm" className="gap-1.5 text-[12px]">
+                          Continue <ArrowRight className="h-3 w-3" />
                         </Button>
                       </Link>
                     </div>
                   </div>
                 ))
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Upcoming Assessments (Honest Placeholder) */}
-          <Card className="border-slate-200/90 dark:border-slate-800">
-            <CardHeader className="p-5 pb-3">
-              <CardTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <ClipboardList className="h-5 w-5 text-indigo-600" />
-                <span>Upcoming Assessments</span>
-              </CardTitle>
-              <p className="text-xs text-slate-500">
-                Examination schedule and diagnostic testing
-              </p>
-            </CardHeader>
-            <CardContent className="p-5 pt-0">
-              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40 text-center py-6">
-                <ClipboardList className="h-8 w-8 text-slate-400 mx-auto mb-2 opacity-60" />
-                <h4 className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  No Assessments Scheduled
-                </h4>
-                <p className="text-[11px] text-slate-400 max-w-sm mx-auto mt-1">
-                  Assessments are scheduled upon course completion or cadre evaluation cycles in Phase 4.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Right Column (1 span): Competencies & Verified Credentials */}
-        <div className="space-y-6">
-          {/* Competency Overview */}
-          <Card className="border-slate-200/90 dark:border-slate-800">
-            <CardHeader className="p-5 pb-3 flex flex-row items-center justify-between">
+          {/* Assessments */}
+          <div className="bg-white border border-slate-200 rounded-lg shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
               <div>
-                <CardTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-amber-500" />
-                  <span>Competencies</span>
-                </CardTitle>
-                <p className="text-xs text-slate-500">
-                  Evaluated operational proficiencies
-                </p>
+                <h2 className="text-[14px] font-semibold text-slate-900">Assessments</h2>
+                <p className="text-[12px] text-slate-500 mt-0.5">Available and pending evaluations</p>
               </div>
-              <Link to="/trainee/competencies">
-                <Button variant="ghost" size="sm" className="text-xs text-blue-600 hover:text-blue-700 font-semibold p-1">
-                  Universe →
+              <Link to="/trainee/assessments">
+                <Button variant="ghost" size="sm" className="gap-1 text-[12px] text-[#1557A6]">
+                  View All <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
               </Link>
-            </CardHeader>
-            <CardContent className="p-5 pt-0 space-y-3">
+            </div>
+            <div className="p-5">
+              <div className="flex items-center justify-center py-8 text-center">
+                <div>
+                  <ClipboardList className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                  <p className="text-[13px] font-medium text-slate-600">View your assessments</p>
+                  <p className="text-[12px] text-slate-400 mt-0.5">Timed MCQs and graded evaluations.</p>
+                  <Link to="/trainee/assessments" className="mt-3 inline-block">
+                    <Button size="sm" variant="outline" className="mt-2 gap-1.5">
+                      Go to Assessments <ChevronRight className="h-3.5 w-3.5" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: 1/3 width */}
+        <div className="space-y-5">
+          {/* Competencies */}
+          <div className="bg-white border border-slate-200 rounded-lg shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <div>
+                <h2 className="text-[14px] font-semibold text-slate-900">Competencies</h2>
+                <p className="text-[12px] text-slate-500 mt-0.5">Evaluated proficiencies</p>
+              </div>
+              <Link to="/trainee/competencies">
+                <Button variant="ghost" size="sm" className="text-[12px] text-[#1557A6] gap-1">
+                  Full View <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+            <div className="p-5 space-y-3">
               {data.competencies.length === 0 ? (
-                <p className="text-xs text-slate-400 text-center py-4">
-                  No evaluated competencies yet. Enrolling and completing courses unlocks verified proficiencies.
-                </p>
+                <div className="text-center py-4">
+                  <Network className="h-6 w-6 text-slate-300 mx-auto mb-2" />
+                  <p className="text-[12px] text-slate-500">Complete courses to build competency scores.</p>
+                </div>
               ) : (
-                data.competencies.map((comp) => (
-                  <div
-                    key={comp.id}
-                    className="p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 space-y-1.5"
-                  >
+                data.competencies.slice(0, 4).map((comp) => (
+                  <div key={comp.id} className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 line-clamp-1">
-                        {comp.name}
-                      </span>
-                      <span className="text-[10px] font-mono font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded">
-                        Lvl {comp.current_level}/5
+                      <span className="text-[13px] font-medium text-slate-800 truncate max-w-[70%]">{comp.name}</span>
+                      <span className="text-[11px] font-semibold text-[#1557A6] bg-blue-50 px-1.5 py-0.5 rounded">
+                        L{comp.current_level}/5
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-[10px] text-slate-400">
-                      <span>{comp.category}</span>
-                      <span>Confidence: {Math.round(comp.confidence_score * 100)}%</span>
-                    </div>
-                    <ProgressBar
-                      value={(comp.current_level / 5) * 100}
-                      size="sm"
-                      variant="meteorological"
-                    />
+                    <ProgressBar value={(comp.current_level / 5) * 100} size="sm" />
+                    <div className="text-[11px] text-slate-400">{comp.category}</div>
                   </div>
                 ))
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Certificates Summary */}
-          <Card className="border-slate-200/90 dark:border-slate-800">
-            <CardHeader className="p-5 pb-3">
-              <CardTitle className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Award className="h-5 w-5 text-emerald-600" />
-                <span>Certificates</span>
-              </CardTitle>
-              <p className="text-xs text-slate-500">
-                Official accreditation & verified credentials
-              </p>
-            </CardHeader>
-            <CardContent className="p-5 pt-0 space-y-2.5">
+          {/* Certificates */}
+          <div className="bg-white border border-slate-200 rounded-lg shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <div>
+                <h2 className="text-[14px] font-semibold text-slate-900">Certificates</h2>
+                <p className="text-[12px] text-slate-500 mt-0.5">Issued credentials</p>
+              </div>
+              <Link to="/trainee/certificates">
+                <Button variant="ghost" size="sm" className="text-[12px] text-[#1557A6] gap-1">
+                  View <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </Link>
+            </div>
+            <div className="p-5 space-y-2">
               {data.certificates.length === 0 ? (
-                <div className="text-center py-4 text-xs text-slate-400">
-                  <Award className="h-6 w-6 text-slate-300 mx-auto mb-1 opacity-60" />
-                  <span>Complete courses to earn official IMD certificates.</span>
+                <div className="text-center py-4">
+                  <Award className="h-6 w-6 text-slate-300 mx-auto mb-2" />
+                  <p className="text-[12px] text-slate-500">Complete courses to earn certificates.</p>
                 </div>
               ) : (
                 data.certificates.map((cert) => (
                   <div
                     key={cert.id}
-                    className="p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-emerald-50/30 dark:bg-emerald-950/10 space-y-1"
+                    className="p-3 rounded-md border border-slate-200 bg-green-50 space-y-1"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h5 className="text-xs font-bold text-slate-800 dark:text-slate-200 line-clamp-1">
-                        {cert.title}
-                      </h5>
-                      <StatusBadge status={cert.verification_status} className="text-[9px] py-0 px-1" />
+                      <h5 className="text-[12px] font-semibold text-slate-800 line-clamp-1">{cert.title}</h5>
+                      <StatusBadge status={cert.verification_status} className="text-[9px]" />
                     </div>
                     <p className="text-[10px] text-slate-500 font-mono truncate">
-                      ID: {cert.credential_id || "IMD-VERIFIED"}
+                      {cert.credential_id || "IMD-VERIFIED"}
                     </p>
-                    <p className="text-[10px] text-slate-400">
-                      Issued: {new Date(cert.issue_date).toLocaleDateString()}
+                    <p className="text-[11px] text-slate-400">
+                      Issued: {new Date(cert.issue_date).toLocaleDateString("en-IN")}
                     </p>
                   </div>
                 ))
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

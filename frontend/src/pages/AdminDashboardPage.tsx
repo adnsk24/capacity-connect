@@ -13,7 +13,6 @@ import {
 } from "lucide-react"
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { adminService } from "@/services/admin"
 
@@ -50,37 +49,33 @@ export const AdminDashboardPage: React.FC = () => {
   }))
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-              IMD Institutional Administration
-            </span>
-            <Badge variant="outline" className="text-[10px] bg-blue-50 text-blue-700 border-blue-200">
-              System Wide Metrics
-            </Badge>
+    <div className="space-y-6">
+      {/* Page header */}
+      <div className="pb-5 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-blue-50 text-[#1557A6] border border-blue-200 mb-1.5">
+              <img src="/branding/imd-emblem.svg" alt="IMD" className="w-3.5 h-3.5 object-contain" />
+              India Meteorological Department · Administration
+            </div>
+            <h1 className="text-[22px] font-bold text-slate-900">Administrative Governance</h1>
+            <p className="text-[13px] text-slate-500 mt-0.5">
+              Platform-wide metrics, user management, course oversight, and assessment governance.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Administrative Governance
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Centralized portal monitoring, user approvals, course oversight, and examination integrity.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2">
-          <Link to="/admin/users">
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white text-xs gap-1.5 font-semibold">
-              <UserCheck className="h-3.5 w-3.5" /> Manage Users
-            </Button>
-          </Link>
-          <Link to="/admin/courses">
-            <Button size="sm" variant="outline" className="text-xs gap-1.5 font-semibold">
-              <BookOpen className="h-3.5 w-3.5" /> Course Audit
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/admin/users">
+              <Button size="sm" className="gap-1.5">
+                <UserCheck className="h-3.5 w-3.5" /> Manage Users
+              </Button>
+            </Link>
+            <Link to="/admin/courses">
+              <Button size="sm" variant="outline" className="gap-1.5">
+                <BookOpen className="h-3.5 w-3.5" /> Courses
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -156,9 +151,9 @@ export const AdminDashboardPage: React.FC = () => {
       {/* Analytics Visuals */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Role Distribution Chart */}
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+            <CardTitle className="text-base font-bold text-slate-900">
               Platform Users by Role
             </CardTitle>
             <CardDescription className="text-xs">Distribution across Trainees, Trainers, and Administrators</CardDescription>
@@ -168,19 +163,20 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="h-56 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={roleChartData} margin={{ top: 10, right: 20, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                  <XAxis dataKey="role" tick={{ fontSize: 12 }} stroke="#64748b" />
-                  <YAxis tick={{ fontSize: 12 }} stroke="#64748b" allowDecimals={false} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                  <XAxis dataKey="role" tick={{ fontSize: 12, fill: "#64748b" }} stroke="#cbd5e1" />
+                  <YAxis tick={{ fontSize: 12, fill: "#64748b" }} stroke="#cbd5e1" allowDecimals={false} />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: "#0f172a",
-                      borderColor: "#334155",
-                      color: "#fff",
-                      borderRadius: "8px",
+                      backgroundColor: "#ffffff",
+                      borderColor: "#e2e8f0",
+                      color: "#1e293b",
+                      borderRadius: "6px",
                       fontSize: "12px",
+                      boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.08)",
                     }}
                   />
-                  <Bar dataKey="count" fill="#2563eb" radius={[6, 6, 0, 0]} maxBarSize={50} />
+                  <Bar dataKey="count" fill="#1557A6" radius={[4, 4, 0, 0]} maxBarSize={48} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -188,9 +184,9 @@ export const AdminDashboardPage: React.FC = () => {
         </Card>
 
         {/* Course Category Breakdown */}
-        <Card className="border-slate-200 dark:border-slate-800">
+        <Card className="border-slate-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+            <CardTitle className="text-base font-bold text-slate-900">
               Course Categories Distribution
             </CardTitle>
             <CardDescription className="text-xs">Offerings per meteorological specialization taxonomy</CardDescription>
@@ -200,15 +196,15 @@ export const AdminDashboardPage: React.FC = () => {
             <div className="space-y-3">
               {stats.category_distribution.map((cat, idx) => (
                 <div key={idx} className="flex items-center justify-between text-xs">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">{cat.category}</span>
+                  <span className="font-medium text-slate-700">{cat.category}</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-28 h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                    <div className="w-28 h-2 rounded-full bg-slate-100 overflow-hidden">
                       <div
-                        className="h-full bg-blue-600 rounded-full"
+                        className="h-full bg-[#1557A6] rounded-full"
                         style={{ width: `${Math.min(100, (cat.count / (stats.total_courses || 1)) * 100)}%` }}
                       />
                     </div>
-                    <span className="font-bold text-slate-900 dark:text-white min-w-6 text-right">
+                    <span className="font-bold text-slate-900 min-w-6 text-right">
                       {cat.count}
                     </span>
                   </div>
@@ -220,9 +216,9 @@ export const AdminDashboardPage: React.FC = () => {
       </div>
 
       {/* Recent Platform Activity Stream */}
-      <Card className="border-slate-200 dark:border-slate-800">
-        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800">
-          <CardTitle className="text-base font-bold text-slate-900 dark:text-white">
+      <Card className="border-slate-200">
+        <CardHeader className="pb-3 border-b border-slate-100">
+          <CardTitle className="text-base font-bold text-slate-900">
             System Event Audit Trail
           </CardTitle>
           <CardDescription className="text-xs">
@@ -234,12 +230,12 @@ export const AdminDashboardPage: React.FC = () => {
           {stats.recent_activity.length === 0 ? (
             <p className="text-xs text-slate-400 py-6 text-center">No platform events logged yet.</p>
           ) : (
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-slate-100">
               {stats.recent_activity.map((act, idx) => (
                 <div key={idx} className="py-2.5 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-3">
-                    <span className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
-                    <span className="font-medium text-slate-800 dark:text-slate-200">{act.title}</span>
+                    <span className="h-2 w-2 rounded-full bg-[#1557A6] shrink-0" />
+                    <span className="font-medium text-slate-800">{act.title}</span>
                   </div>
                   <span className="text-[11px] text-slate-400 shrink-0">
                     {act.timestamp

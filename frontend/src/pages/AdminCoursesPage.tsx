@@ -31,19 +31,19 @@ export const AdminCoursesPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-          <BookOpen className="h-6 w-6 text-blue-600" />
+      <div className="pb-5 border-b border-slate-200">
+        <h1 className="text-[22px] font-bold text-slate-900 flex items-center gap-2.5">
+          <BookOpen className="h-6 w-6 text-[#1557A6]" />
           <span>Institutional Course Governance</span>
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Review curriculum offerings across all IMD divisions, inspect assigned trainers, and control publishing state.
         </p>
       </div>
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-[#1557A6] animate-spin" />
           <p className="text-xs text-slate-500 font-medium">Auditing course registry...</p>
         </div>
       ) : error ? (
@@ -55,16 +55,16 @@ export const AdminCoursesPage: React.FC = () => {
           </CardContent>
         </Card>
       ) : (courses || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
+        <Card className="border-dashed border-2 border-slate-200">
           <CardContent className="py-12 text-center">
             <BookOpen className="h-10 w-10 text-slate-300 mx-auto mb-2" />
             <p className="text-xs text-slate-500">No courses registered in the database.</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-3">Course Code & Title</th>
                 <th className="p-3">Category</th>
@@ -76,26 +76,26 @@ export const AdminCoursesPage: React.FC = () => {
                 <th className="p-3 text-right">Governance Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100">
               {(courses || []).map((c: AdminCourseItem) => (
-                <tr key={c.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                <tr key={c.id} className="hover:bg-slate-50/80 transition-colors">
                   <td className="p-3">
-                    <span className="font-bold text-slate-900 dark:text-white block">
+                    <span className="font-semibold text-slate-900 block">
                       {c.title}
                     </span>
-                    <span className="font-mono text-[11px] text-blue-600 dark:text-blue-400">{c.code}</span>
+                    <span className="font-mono text-[11px] text-[#1557A6]">{c.code}</span>
                   </td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400">{c.category_name}</td>
-                  <td className="p-3 font-medium text-slate-800 dark:text-slate-200">{c.trainer_name}</td>
+                  <td className="p-3 text-slate-600">{c.category_name}</td>
+                  <td className="p-3 font-medium text-slate-800">{c.trainer_name}</td>
                   <td className="p-3">
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge variant="outline" className="text-[10px] bg-slate-50 border-slate-200 text-slate-700">
                       {c.difficulty_level}
                     </Badge>
                   </td>
-                  <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">
+                  <td className="p-3 font-semibold text-slate-700">
                     {c.enrollments_count}
                   </td>
-                  <td className="p-3 font-semibold text-slate-700 dark:text-slate-300">
+                  <td className="p-3 font-semibold text-slate-700">
                     {c.completion_rate}%
                   </td>
                   <td className="p-3">
@@ -124,7 +124,7 @@ export const AdminCoursesPage: React.FC = () => {
                           variant="ghost"
                           onClick={() => updateStatusMutation.mutate({ courseId: c.id, status: "DRAFT" })}
                           disabled={updateStatusMutation.isPending}
-                          className="h-7 text-xs text-amber-600 hover:text-amber-700"
+                          className="h-7 text-xs text-amber-700 hover:text-amber-800"
                         >
                           Unpublish
                         </Button>

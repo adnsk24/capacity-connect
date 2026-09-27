@@ -2,7 +2,6 @@ import React from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import {
-  Bell,
   CheckCheck,
   Check,
   ArrowRight,
@@ -13,7 +12,6 @@ import {
   Loader2,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/ui/empty-state"
 import { notificationsService, NotificationItem } from "@/services/notifications"
@@ -57,35 +55,36 @@ export const NotificationsPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto py-4">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-4 border-b border-slate-200 dark:border-slate-800 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-            <Bell className="h-6 w-6 text-blue-600" />
-            <span>Notification Center</span>
-            {unreadCount > 0 && (
-              <Badge variant="default" className="text-xs bg-blue-600">
-                {unreadCount} New
-              </Badge>
-            )}
-          </h1>
-          <p className="text-xs text-slate-500 mt-1">
-            Real-time examination alerts, assessment results, and course enrollment notices.
-          </p>
-        </div>
+      <div className="pb-5 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-[22px] font-bold text-slate-900 flex items-center gap-2">
+              Notifications
+              {unreadCount > 0 && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#1557A6] text-white text-[11px] font-semibold">
+                  {unreadCount} new
+                </span>
+              )}
+            </h1>
+            <p className="text-[13px] text-slate-500 mt-0.5">
+              Assessment results, course enrollment updates, and system alerts.
+            </p>
+          </div>
 
-        {unreadCount > 0 && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => markAllReadMutation.mutate()}
-            disabled={markAllReadMutation.isPending}
-            className="text-xs gap-1.5 self-start sm:self-auto"
-          >
-            <CheckCheck className="h-3.5 w-3.5 text-blue-600" /> Mark All as Read
-          </Button>
-        )}
+          {unreadCount > 0 && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => markAllReadMutation.mutate()}
+              disabled={markAllReadMutation.isPending}
+              className="gap-1.5"
+            >
+              <CheckCheck className="h-3.5 w-3.5" /> Mark All as Read
+            </Button>
+          )}
+        </div>
       </div>
 
       {isLoading ? (

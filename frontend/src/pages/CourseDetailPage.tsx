@@ -28,6 +28,7 @@ import { Skeleton } from "@/components/ui/loading-skeleton"
 import { coursesService } from "@/services/courses"
 import { feedbackService } from "@/services/feedback"
 import { useAuthStore } from "@/store/useAuthStore"
+import { getCourseThumbnail, getCourseThumbnailAlt } from "@/lib/courseImages"
 
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
@@ -126,48 +127,69 @@ export const CourseDetailPage: React.FC = () => {
       <Breadcrumb items={breadcrumbItems} />
 
       {/* Hero Banner */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-md relative overflow-hidden">
-        <div className="relative z-10 space-y-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-400/30">
-              {course.code}
-            </span>
-            <Badge className="bg-white/10 text-white border-white/20 text-xs">
-              {course.category.name}
-            </Badge>
-            <StatusBadge status={course.difficulty_level} />
+      <div className="rounded-lg border border-slate-200 bg-white p-5 sm:p-6 shadow-xs">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          {/* Details (65-70%) */}
+          <div className="md:col-span-8 space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-blue-50 text-[#1557A6] border border-blue-200">
+                {course.code}
+              </span>
+              <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 text-xs">
+                {course.category.name}
+              </Badge>
+              <StatusBadge status={course.difficulty_level} />
+            </div>
+
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              {course.title}
+            </h1>
+
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              {course.description}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-6 pt-3 text-xs text-slate-500 border-t border-slate-100">
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4 text-[#1557A6]" />
+                <span>{course.duration_hours} hours total</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <BookOpen className="h-4 w-4 text-[#1557A6]" />
+                <span>{course.modules.length} modules · {course.total_lessons_count} lessons</span>
+              </div>
+              {course.trainer && (
+                <div className="flex items-center gap-1.5">
+                  <UserIcon className="h-4 w-4 text-emerald-700" />
+                  <span>Instructor: {course.trainer.first_name} {course.trainer.last_name}</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            {course.title}
-          </h1>
-
-          <p className="text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed">
-            {course.description}
-          </p>
-
-          <div className="flex flex-wrap items-center gap-6 pt-2 text-xs text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-blue-400" />
-              <span>{course.duration_hours} hours total</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <BookOpen className="h-4 w-4 text-indigo-400" />
-              <span>{course.modules.length} modules · {course.total_lessons_count} lessons</span>
-            </div>
-            {course.trainer && (
-              <div className="flex items-center gap-1.5">
-                <UserIcon className="h-4 w-4 text-emerald-400" />
-                <span>Instructor: {course.trainer.first_name} {course.trainer.last_name}</span>
+          {/* Authentic Course Thumbnail (30-35%) */}
+          <div className="md:col-span-4">
+            <div className="relative overflow-hidden rounded-lg border border-slate-200 shadow-2xs h-40 sm:h-44 w-full bg-slate-100">
+              <img
+                src={getCourseThumbnail(course.title, course.category?.name)}
+                alt={getCourseThumbnailAlt(course.title)}
+                className="w-full h-full object-cover"
+                loading="eager"
+                width="360"
+                height="220"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/80 to-transparent p-2 text-white text-[10px] font-medium flex items-center justify-between">
+                <span>IMD Operational Syllabus</span>
+                <span className="font-mono text-[9px] bg-slate-800/80 px-1 py-0.5 rounded">{course.category.code}</span>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Enrollment Status Notice / Action Bar */}
       {enrollError && (
-        <div className="p-3 rounded-xl bg-red-50 text-red-800 border border-red-200 text-xs flex items-center gap-2">
+        <div className="p-3 rounded-md bg-red-50 text-red-800 border border-red-200 text-xs flex items-center gap-2">
           <AlertCircle className="h-4 w-4 text-red-600 shrink-0" />
           <span>{enrollError}</span>
         </div>
@@ -178,11 +200,11 @@ export const CourseDetailPage: React.FC = () => {
         {/* Left Column (2 spans): Curriculum & Objectives */}
         <div className="lg:col-span-2 space-y-6">
           {/* Syllabus / Curriculum */}
-          <Card className="border-slate-200/90 dark:border-slate-800">
+          <Card className="border-slate-200 bg-white shadow-xs">
             <CardHeader className="p-5 pb-3">
               <CardTitle className="text-base font-bold flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-blue-600" />
+                  <BookOpen className="h-5 w-5 text-[#1557A6]" />
                   <span>Curriculum & Lessons</span>
                 </span>
                 <span className="text-xs font-normal text-slate-500">
@@ -196,17 +218,17 @@ export const CourseDetailPage: React.FC = () => {
                 return (
                   <div
                     key={module.id}
-                    className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-white dark:bg-slate-900"
+                    className="border border-slate-200 rounded-lg overflow-hidden bg-white"
                   >
                     <button
                       onClick={() => toggleModule(module.id)}
-                      className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                      className="w-full p-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors"
                     >
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-mono font-semibold uppercase text-blue-600 tracking-wider">
+                        <span className="text-[10px] font-mono font-semibold uppercase text-[#1557A6] tracking-wider">
                           Module {mIdx + 1}
                         </span>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900">
                           {module.title}
                         </h4>
                         {module.description && (
@@ -222,26 +244,26 @@ export const CourseDetailPage: React.FC = () => {
                     </button>
 
                     {isExpanded && (
-                      <div className="divide-y divide-slate-100 dark:divide-slate-800/80 bg-slate-50/50 dark:bg-slate-950/40 p-2 space-y-1">
+                      <div className="divide-y divide-slate-100 bg-slate-50/60 p-2 space-y-1">
                         {module.lessons.map((lesson, lIdx) => (
                           <div
                             key={lesson.id}
-                            className="p-3 rounded-lg flex items-center justify-between gap-3 text-xs"
+                            className="p-3 rounded-md flex items-center justify-between gap-3 text-xs"
                           >
                             <div className="flex items-center gap-3">
                               {lesson.is_completed ? (
-                                <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+                                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                               ) : (
                                 <span className="w-4 h-4 rounded-full border border-slate-300 text-[10px] font-mono flex items-center justify-center text-slate-400">
                                   {lIdx + 1}
                                 </span>
                               )}
                               <div>
-                                <span className={`font-medium ${lesson.is_completed ? "text-slate-500 line-through" : "text-slate-800 dark:text-slate-200"}`}>
+                                <span className={`font-medium ${lesson.is_completed ? "text-slate-500 line-through" : "text-slate-800"}`}>
                                   {lesson.title}
                                 </span>
                                 {lesson.description && (
-                                  <p className="text-[10px] text-slate-400 line-clamp-1">
+                                  <p className="text-[10px] text-slate-500 line-clamp-1">
                                     {lesson.description}
                                   </p>
                                 )}
@@ -262,27 +284,27 @@ export const CourseDetailPage: React.FC = () => {
 
           {/* Objectives and Prerequisites */}
           {(course.objectives || course.prerequisites) && (
-            <Card className="border-slate-200/90 dark:border-slate-800">
+            <Card className="border-slate-200 bg-white shadow-xs">
               <CardHeader className="p-5 pb-3">
-                <CardTitle className="text-base font-bold">Objectives & Prerequisites</CardTitle>
+                <CardTitle className="text-base font-bold text-slate-900">Objectives & Prerequisites</CardTitle>
               </CardHeader>
               <CardContent className="p-5 pt-0 space-y-4 text-xs">
                 {course.objectives && (
                   <div>
-                    <h5 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+                    <h5 className="font-semibold text-slate-800 mb-1">
                       Learning Objectives
                     </h5>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-slate-600 leading-relaxed">
                       {course.objectives}
                     </p>
                   </div>
                 )}
                 {course.prerequisites && (
                   <div>
-                    <h5 className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
+                    <h5 className="font-semibold text-slate-800 mb-1">
                       Target Audience & Prerequisites
                     </h5>
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-slate-600 leading-relaxed">
                       {course.prerequisites}
                     </p>
                   </div>
@@ -293,10 +315,10 @@ export const CourseDetailPage: React.FC = () => {
 
           {/* Learning Resources */}
           {course.resources.length > 0 && (
-            <Card className="border-slate-200/90 dark:border-slate-800">
+            <Card className="border-slate-200 bg-white shadow-xs">
               <CardHeader className="p-5 pb-3">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-indigo-600" />
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                  <FileText className="h-5 w-5 text-[#1557A6]" />
                   <span>Downloadable Reference Material</span>
                 </CardTitle>
               </CardHeader>
@@ -304,12 +326,12 @@ export const CourseDetailPage: React.FC = () => {
                 {course.resources.map((res) => (
                   <div
                     key={res.id}
-                    className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    className="p-3 rounded-md border border-slate-200 flex items-center justify-between text-xs hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <FileText className="h-4 w-4 text-red-500 shrink-0" />
+                      <FileText className="h-4 w-4 text-[#1557A6] shrink-0" />
                       <div>
-                        <div className="font-semibold text-slate-800 dark:text-slate-200">
+                        <div className="font-semibold text-slate-800">
                           {res.title}
                         </div>
                         <div className="text-[10px] text-slate-400">
@@ -322,7 +344,7 @@ export const CourseDetailPage: React.FC = () => {
                         href={res.storage_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                        className="text-xs font-semibold text-[#1557A6] hover:underline flex items-center gap-1"
                       >
                         <Download className="h-3.5 w-3.5" />
                         <span>View</span>
@@ -334,16 +356,16 @@ export const CourseDetailPage: React.FC = () => {
             </Card>
           )}
 
-          {/* Course Feedback & Evaluation System (MVP Deliverable #8) */}
-          <Card className="border-slate-200/90 dark:border-slate-800">
+          {/* Course Feedback & Evaluation System */}
+          <Card className="border-slate-200 bg-white shadow-xs">
             <CardHeader className="p-5 pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
                   <Star className="h-5 w-5 text-amber-500 fill-amber-400" />
                   <span>Course & Instructor Evaluations</span>
                 </CardTitle>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
-                  <span className="text-amber-500 font-bold">{feedbackData?.average_course_rating.toFixed(1) || "5.0"}</span>
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <span className="text-amber-600 font-bold">{feedbackData?.average_course_rating.toFixed(1) || "5.0"}</span>
                   <span className="text-slate-400">/ 5.0</span>
                   <span className="text-slate-400 text-[11px]">({feedbackData?.feedback_count || 0} reviews)</span>
                 </div>
@@ -352,10 +374,10 @@ export const CourseDetailPage: React.FC = () => {
             <CardContent className="p-5 pt-0 space-y-4">
               {/* If enrolled, allow submitting feedback */}
               {course.is_enrolled && (
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-3">
+                <div className="p-4 rounded-md bg-slate-50 border border-slate-200 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                      <MessageSquare className="h-4 w-4 text-blue-600" />
+                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <MessageSquare className="h-4 w-4 text-[#1557A6]" />
                       <span>Submit Your Evaluation</span>
                     </span>
                     {/* Star selector */}
@@ -371,7 +393,7 @@ export const CourseDetailPage: React.FC = () => {
                             className={`h-4 w-4 ${
                               star <= feedbackRating
                                 ? "text-amber-500 fill-amber-400"
-                                : "text-slate-300 dark:text-slate-600"
+                                : "text-slate-300"
                             }`}
                           />
                         </button>
@@ -385,13 +407,13 @@ export const CourseDetailPage: React.FC = () => {
                       value={feedbackComment}
                       onChange={(e) => setFeedbackComment(e.target.value)}
                       placeholder="Share your feedback on course materials, radar exercises, or instructor delivery..."
-                      className="flex-1 px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2 text-xs rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6]"
                     />
                     <Button
                       size="sm"
                       onClick={() => feedbackMutation.mutate()}
                       disabled={feedbackMutation.isPending || !feedbackComment.trim()}
-                      className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 cursor-pointer shrink-0"
+                      className="text-xs px-3 cursor-pointer shrink-0"
                     >
                       <Send className="h-3.5 w-3.5 mr-1" />
                       <span>Submit</span>
@@ -399,7 +421,7 @@ export const CourseDetailPage: React.FC = () => {
                   </div>
 
                   {feedbackSuccess && (
-                    <p className="text-[11px] text-emerald-600 font-medium">
+                    <p className="text-[11px] text-emerald-700 font-medium">
                       ✓ Thank you! Your feedback has been recorded and integrated into institutional metrics.
                     </p>
                   )}
@@ -412,21 +434,21 @@ export const CourseDetailPage: React.FC = () => {
                   {feedbackData.feedbacks.slice(0, 3).map((f) => (
                     <div
                       key={f.id}
-                      className="p-3 rounded-lg border border-slate-100 dark:border-slate-800 text-xs space-y-1 bg-white dark:bg-slate-900"
+                      className="p-3 rounded-md border border-slate-100 text-xs space-y-1 bg-white"
                     >
                       <div className="flex items-center justify-between text-slate-500">
-                        <span className="font-semibold text-slate-800 dark:text-slate-200">
+                        <span className="font-semibold text-slate-800">
                           {f.user_name || "Verified Trainee"}
                         </span>
                         <div className="flex items-center gap-1">
                           <Star className="h-3 w-3 text-amber-500 fill-amber-400" />
-                          <span className="font-bold text-slate-700 dark:text-slate-300">
+                          <span className="font-bold text-slate-700">
                             {f.course_rating}.0
                           </span>
                         </div>
                       </div>
                       {f.comments && (
-                        <p className="text-slate-600 dark:text-slate-300 text-[11px] leading-relaxed">
+                        <p className="text-slate-600 text-[11px] leading-relaxed">
                           "{f.comments}"
                         </p>
                       )}
@@ -445,25 +467,25 @@ export const CourseDetailPage: React.FC = () => {
         {/* Right Column (1 span): Enrollment Card & Competencies */}
         <div className="space-y-6">
           {/* Enrollment Action Box */}
-          <Card className="border-blue-200 dark:border-blue-900 bg-white dark:bg-slate-900 shadow-md">
+          <Card className="border-slate-200 bg-white shadow-xs">
             <CardHeader className="p-5 pb-3">
-              <CardTitle className="text-base font-bold">Course Access</CardTitle>
+              <CardTitle className="text-base font-bold text-slate-900">Course Access</CardTitle>
             </CardHeader>
             <CardContent className="p-5 pt-0 space-y-4">
               {course.is_enrolled ? (
                 <div className="space-y-3">
-                  <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-emerald-800 dark:text-emerald-300">
+                  <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-xs space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-emerald-800">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                       <span>You are enrolled in this course</span>
                     </div>
-                    <p className="text-slate-600 dark:text-slate-300 text-[11px]">
+                    <p className="text-slate-600 text-[11px]">
                       {course.completed_lessons_count} of {course.total_lessons_count} lessons completed ({course.progress_percentage || 0}%)
                     </p>
                   </div>
                   <ProgressBar value={course.progress_percentage || 0} size="md" variant="meteorological" />
                   <Link to={`/courses/${course.id}/learn`} className="block w-full">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs flex items-center justify-center gap-1.5 py-2.5">
+                    <Button className="w-full font-semibold text-xs flex items-center justify-center gap-1.5 py-2.5 shadow-xs">
                       <span>Continue Learning</span>
                       <ArrowRight className="h-4 w-4" />
                     </Button>
@@ -471,13 +493,13 @@ export const CourseDetailPage: React.FC = () => {
                 </div>
               ) : isAuthenticated ? (
                 <div className="space-y-3">
-                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  <p className="text-xs text-slate-600 leading-relaxed">
                     Enroll now to unlock lesson modules, operational datasets, and receive certified IMD competency credits upon completion.
                   </p>
                   <Button
                     onClick={() => enrollMutation.mutate()}
                     disabled={enrollMutation.isPending}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5 flex items-center justify-center gap-2 shadow-sm"
+                    className="w-full font-semibold text-xs py-2.5 flex items-center justify-center gap-2 shadow-xs"
                   >
                     <BookOpen className="h-4 w-4" />
                     <span>{enrollMutation.isPending ? "Enrolling..." : "Enroll in Course"}</span>
@@ -489,7 +511,7 @@ export const CourseDetailPage: React.FC = () => {
                     Please log in with your IMD trainee credentials to enroll in this course.
                   </p>
                   <Link to="/login" className="block w-full">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs py-2.5">
+                    <Button className="w-full font-semibold text-xs py-2.5 shadow-xs">
                       Sign In to Enroll
                     </Button>
                   </Link>
@@ -500,10 +522,10 @@ export const CourseDetailPage: React.FC = () => {
 
           {/* Competency Mapping Box */}
           {course.competencies.length > 0 && (
-            <Card className="border-slate-200 dark:border-slate-800">
+            <Card className="border-slate-200 bg-white shadow-xs">
               <CardHeader className="p-5 pb-3">
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-amber-500" />
+                <CardTitle className="text-base font-bold flex items-center gap-2 text-slate-900">
+                  <Sparkles className="h-4 w-4 text-[#1557A6]" />
                   <span>Competencies Acquired</span>
                 </CardTitle>
               </CardHeader>
@@ -511,17 +533,17 @@ export const CourseDetailPage: React.FC = () => {
                 {course.competencies.map((comp) => (
                   <div
                     key={comp.id}
-                    className="p-3 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-1"
+                    className="p-3 rounded-md border border-slate-200 bg-slate-50 space-y-1"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">
+                      <span className="font-semibold text-slate-800">
                         {comp.name}
                       </span>
-                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold">
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-[#1557A6] font-bold">
                         Target Lvl {comp.target_level}
                       </span>
                     </div>
-                    <p className="text-[10px] text-slate-400">
+                    <p className="text-[10px] text-slate-500">
                       Discipline: {comp.category} · Weight: {Math.round(comp.contribution_weight * 100)}%
                     </p>
                   </div>
@@ -532,17 +554,17 @@ export const CourseDetailPage: React.FC = () => {
 
           {/* Instructor Box */}
           {course.trainer && (
-            <Card className="border-slate-200 dark:border-slate-800">
+            <Card className="border-slate-200 bg-white shadow-xs">
               <CardHeader className="p-5 pb-3">
-                <CardTitle className="text-base font-bold">Lead Instructor</CardTitle>
+                <CardTitle className="text-base font-bold text-slate-900">Lead Instructor</CardTitle>
               </CardHeader>
               <CardContent className="p-5 pt-0 space-y-2 text-xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm">
+                  <div className="w-10 h-10 rounded-full bg-blue-100 text-[#1557A6] flex items-center justify-center font-bold text-sm">
                     {course.trainer.first_name?.[0]}
                   </div>
                   <div>
-                    <h5 className="font-bold text-slate-900 dark:text-white">
+                    <h5 className="font-bold text-slate-900">
                       {course.trainer.first_name} {course.trainer.last_name}
                     </h5>
                     <p className="text-[11px] text-slate-500">
@@ -551,7 +573,7 @@ export const CourseDetailPage: React.FC = () => {
                   </div>
                 </div>
                 {course.trainer.specialization && (
-                  <p className="text-[11px] text-slate-600 dark:text-slate-400 pt-1">
+                  <p className="text-[11px] text-slate-600 pt-1">
                     Specialization: {course.trainer.specialization}
                   </p>
                 )}

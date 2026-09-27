@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { Link, useSearchParams, useNavigate } from "react-router-dom"
-import { KeyRound, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { authService } from "@/services/auth"
 
@@ -58,37 +57,43 @@ export const ResetPasswordPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
-            <KeyRound className="h-6 w-6" />
+    <div className="flex-1 flex items-center justify-center py-12 px-4 bg-[#F7F9FC]">
+      <div className="w-full max-w-sm">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center mb-3">
+            <img
+              src="/branding/imd-emblem.svg"
+              alt="India Meteorological Department Emblem"
+              className="h-16 w-16 object-contain"
+              width="64"
+              height="64"
+            />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Set New Password
-          </h1>
-          <p className="text-xs text-slate-500">
-            Choose a strong, compliant password for your account
-          </p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">CAPACITY CONNECT</h1>
+          <p className="text-[13px] font-semibold text-[#1557A6] mt-0.5">India Meteorological Department</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Digital Capacity Building &amp; Learning Management Portal</p>
         </div>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-md">
-          <CardHeader>
-            <CardTitle className="text-lg">Update Password</CardTitle>
-            <CardDescription>
-              Enter your reset token and your new chosen password.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Card */}
+        <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="px-6 pt-6 pb-4 border-b border-slate-100">
+            <h2 className="text-[15px] font-semibold text-slate-900">Set New Password</h2>
+            <p className="text-[12px] text-slate-500 mt-0.5">
+              Enter your recovery token and define new security credentials
+            </p>
+          </div>
+
+          <div className="p-6">
             {success ? (
-              <div className="p-4 rounded-lg bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 space-y-3 text-center">
-                <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                <h4 className="font-semibold text-sm">Password Updated!</h4>
-                <p className="text-xs text-emerald-800 dark:text-emerald-300">
-                  Your credentials have been securely updated using Argon2id. All prior sessions have been revoked.
+              <div className="p-4 rounded-md bg-emerald-50 text-slate-800 border border-emerald-200 space-y-3 text-center">
+                <CheckCircle2 className="h-7 w-7 text-emerald-600 mx-auto" />
+                <h4 className="font-semibold text-[13px] text-slate-900">Password Updated</h4>
+                <p className="text-[12px] text-slate-600 leading-relaxed">
+                  Your credentials have been securely updated. All prior sessions have been invalidated.
                 </p>
                 <div className="pt-2">
-                  <Button size="sm" onClick={() => navigate("/login")} className="w-full text-xs">
+                  <Button size="sm" onClick={() => navigate("/login")} className="w-full text-xs bg-[#1557A6] hover:bg-[#0f4282] text-white">
                     Sign In with New Password
                   </Button>
                 </div>
@@ -96,14 +101,14 @@ export const ResetPasswordPage: React.FC = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {errorMessage && (
-                  <div className="p-3 rounded-lg bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-300 border border-red-200 dark:border-red-900 flex items-start gap-2 text-xs">
-                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-600 dark:text-red-400" />
+                  <div className="p-3 rounded-md bg-red-50 text-red-800 border border-red-200 flex items-start gap-2 text-[12px]">
+                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-600" />
                     <span>{errorMessage}</span>
                   </div>
                 )}
 
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300" htmlFor="reset-token">
+                <div className="space-y-1.5">
+                  <label className="text-[12px] font-medium text-slate-700" htmlFor="reset-token">
                     Reset Token
                   </label>
                   <input
@@ -112,14 +117,14 @@ export const ResetPasswordPage: React.FC = () => {
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
                     placeholder="Enter security token"
-                    className="w-full px-3 py-2 text-sm font-mono rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full h-9 px-3 text-[13px] font-mono rounded-md border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                     disabled={isSubmitting}
                     required
                   />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300" htmlFor="new-password">
+                <div className="space-y-1.5">
+                  <label className="text-[12px] font-medium text-slate-700" htmlFor="new-password">
                     New Password
                   </label>
                   <div className="relative">
@@ -129,7 +134,7 @@ export const ResetPasswordPage: React.FC = () => {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full h-9 px-3 pr-10 text-[13px] rounded-md border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                       disabled={isSubmitting}
                       required
                     />
@@ -148,14 +153,14 @@ export const ResetPasswordPage: React.FC = () => {
                   <div className="space-y-1">
                     <div className="flex justify-between items-center text-[10px]">
                       <span className="text-slate-500">Strength:</span>
-                      <span className="font-semibold text-slate-700 dark:text-slate-300">
+                      <span className="font-semibold text-slate-700">
                         {strength >= 75 ? "Strong" : strength >= 50 ? "Good" : "Fair"}
                       </span>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${
-                          strength >= 75 ? "bg-emerald-500" : strength >= 50 ? "bg-blue-500" : "bg-amber-500"
+                          strength >= 75 ? "bg-emerald-500" : strength >= 50 ? "bg-blue-600" : "bg-amber-500"
                         }`}
                         style={{ width: `${strength}%` }}
                       />
@@ -163,8 +168,8 @@ export const ResetPasswordPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300" htmlFor="confirm-new-password">
+                <div className="space-y-1.5">
+                  <label className="text-[12px] font-medium text-slate-700" htmlFor="confirm-new-password">
                     Confirm New Password
                   </label>
                   <input
@@ -173,13 +178,17 @@ export const ResetPasswordPage: React.FC = () => {
                     value={newPasswordConfirm}
                     onChange={(e) => setNewPasswordConfirm(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full h-9 px-3 text-[13px] rounded-md border border-slate-200 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                     disabled={isSubmitting}
                     required
                   />
                 </div>
 
-                <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-9 mt-2 text-[13px] font-medium bg-[#1557A6] hover:bg-[#0f4282] text-white" 
+                  disabled={isSubmitting}
+                >
                   {isSubmitting ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin" /> Updating...
@@ -190,17 +199,19 @@ export const ResetPasswordPage: React.FC = () => {
                 </Button>
               </form>
             )}
-          </CardContent>
-          <CardFooter className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800/80 pt-4 text-xs text-slate-500">
-            <Link to="/login" className="hover:text-blue-600">
+          </div>
+
+          <div className="px-6 py-3.5 bg-slate-50/60 border-t border-slate-100 flex items-center justify-between text-[12px] text-slate-500 rounded-b-lg">
+            <Link to="/login" className="hover:text-slate-900 transition-colors">
               Back to Sign In
             </Link>
-            <Link to="/forgot-password" className="text-blue-600 hover:underline">
+            <Link to="/forgot-password" className="text-[#1557A6] hover:underline">
               Request New Token
             </Link>
-          </CardFooter>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
+

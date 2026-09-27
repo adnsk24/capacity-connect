@@ -1,143 +1,188 @@
-import React from "react"
+import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Layers, Activity, LogIn, UserPlus, LogOut, LayoutDashboard } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Menu, X, LogIn, UserPlus, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuthStore } from "@/store/useAuthStore"
 
 export const Navbar: React.FC = () => {
   const location = useLocation()
   const { user, isAuthenticated, clearSession } = useAuthStore()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const isActive = (path: string) => location.pathname === path
 
-  const roleBadgeVariants: Record<string, "default" | "success" | "warning"> = {
-    ADMIN: "default",
-    TRAINER: "success",
-    TRAINEE: "warning",
-  }
+  const portalLink =
+    user?.role === "ADMIN"
+      ? "/admin/dashboard"
+      : user?.role === "TRAINER"
+      ? "/trainer/dashboard"
+      : "/trainee/dashboard"
+
+  const roleName =
+    user?.role === "ADMIN" ? "Admin" : user?.role === "TRAINER" ? "Trainer" : "Trainee"
+
+  const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/courses", label: "Courses" },
+  ]
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
-        <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm transition-transform group-hover:scale-105">
-              <Layers className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-slate-900 dark:text-white tracking-tight">Capacity Connect</span>
-                <Badge variant="outline" className="text-[10px] py-0 px-1.5 bg-blue-50 text-blue-700 border-blue-200">
-                  Phase 4
-                </Badge>
-              </div>
-              <p className="text-[11px] text-slate-500 leading-none hidden sm:block">
-                Digital Capacity Building Portal
-              </p>
-            </div>
-          </Link>
+        <Link to="/" className="flex items-center gap-3 flex-shrink-0 py-1">
+          <img
+            src="/branding/imd-emblem.svg"
+            alt="India Meteorological Department Emblem"
+            className="h-10 w-10 object-contain flex-shrink-0"
+            width="40"
+            height="40"
+          />
+          <div className="flex flex-col">
+            <span className="text-[14px] font-bold text-slate-900 tracking-tight leading-tight">
+              CAPACITY CONNECT
+            </span>
+            <span className="text-[11px] font-semibold text-[#1557A6] leading-tight">
+              India Meteorological Department
+            </span>
+            <span className="text-[10px] text-slate-500 leading-tight hidden lg:block">
+              Digital Capacity Building &amp; Learning Management Portal
+            </span>
+          </div>
+        </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1">
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-0.5">
+          {navLinks.map((link) => (
             <Link
-              to="/"
-              className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                isActive("/")
-                  ? "bg-slate-100 text-blue-600 font-semibold dark:bg-slate-800 dark:text-blue-400"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
+              key={link.to}
+              to={link.to}
+              className={`px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors ${
+                isActive(link.to)
+                  ? "text-[#1557A6] bg-blue-50"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Overview
+              {link.label}
             </Link>
+          ))}
+          {isAuthenticated && user && (
             <Link
-              to="/courses"
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                isActive("/courses")
-                  ? "bg-slate-100 text-blue-600 font-semibold dark:bg-slate-800 dark:text-blue-400"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
+              to={portalLink}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium rounded-md transition-colors ${
+                location.pathname.startsWith("/trainee") ||
+                location.pathname.startsWith("/trainer") ||
+                location.pathname.startsWith("/admin")
+                  ? "text-[#1557A6] bg-blue-50"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Courses
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              {roleName} Portal
             </Link>
-            <Link
-              to="/health"
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                isActive("/health")
-                  ? "bg-slate-100 text-blue-600 font-semibold dark:bg-slate-800 dark:text-blue-400"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
-              }`}
-            >
-              <Activity className="h-3.5 w-3.5 text-emerald-500" />
-              API Health
-            </Link>
-            {isAuthenticated && user && (
-              <Link
-                to={user.role === "ADMIN" ? "/admin/dashboard" : user.role === "TRAINER" ? "/trainer/dashboard" : "/trainee/dashboard"}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  location.pathname.startsWith("/trainee") ||
-                  location.pathname.startsWith("/trainer") ||
-                  location.pathname.startsWith("/admin") ||
-                  location.pathname === "/dashboard"
-                    ? "bg-slate-100 text-blue-600 font-semibold dark:bg-slate-800 dark:text-blue-400"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-800"
-                }`}
-              >
-                <LayoutDashboard className="h-3.5 w-3.5 text-blue-500" />
-                {user.role === "ADMIN" ? "Admin Portal" : user.role === "TRAINER" ? "Trainer Portal" : "Trainee Portal"}
-              </Link>
-            )}
-          </nav>
-        </div>
+          )}
+        </nav>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           {isAuthenticated && user ? (
-            <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2">
-                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-                  {user.first_name}
-                </span>
-                <Badge variant={roleBadgeVariants[user.role] || "default"} className="text-[10px]">
-                  {user.role}
-                </Badge>
+            <div className="hidden md:flex items-center gap-2">
+              <div className="flex items-center gap-2 px-2 py-1 rounded border border-slate-200 bg-slate-50">
+                <div className="w-6 h-6 rounded-full bg-[#1557A6] text-white flex items-center justify-center text-[10px] font-semibold">
+                  {user.first_name?.[0]}{user.last_name?.[0]}
+                </div>
+                <span className="text-[13px] font-medium text-slate-700">{user.first_name} {user.last_name}</span>
+                <span className="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-semibold">{roleName}</span>
               </div>
-
-              <Link to={user.role === "ADMIN" ? "/admin/dashboard" : user.role === "TRAINER" ? "/trainer/dashboard" : "/trainee/dashboard"}>
-                <Button size="sm" variant="outline" className="hidden sm:flex items-center gap-1.5 text-xs">
-                  <LayoutDashboard className="h-3.5 w-3.5" /> Workspace
-                </Button>
-              </Link>
-
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => clearSession()}
-                className="text-xs text-slate-500 hover:text-red-600 flex items-center gap-1"
+                className="text-[12px] text-slate-500 hover:text-red-600 hover:bg-red-50 gap-1"
               >
                 <LogOut className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Sign Out</span>
+                Sign Out
               </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="hidden md:flex items-center gap-2">
               <Link to="/login">
-                <Button size="sm" variant="ghost" className="text-xs flex items-center gap-1">
+                <Button size="sm" variant="ghost" className="text-[13px] gap-1.5">
                   <LogIn className="h-3.5 w-3.5" />
-                  <span>Sign In</span>
+                  Sign In
                 </Button>
               </Link>
               <Link to="/register">
-                <Button size="sm" variant="default" className="text-xs flex items-center gap-1">
+                <Button size="sm" className="text-[13px] gap-1.5">
                   <UserPlus className="h-3.5 w-3.5" />
-                  <span>Register</span>
+                  Register
                 </Button>
               </Link>
             </div>
           )}
+
+          {/* Mobile menu toggle */}
+          <button
+            className="md:hidden p-1.5 rounded text-slate-600 hover:bg-slate-100"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileOpen && (
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-1">
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="block px-3 py-2 text-[13px] font-medium text-slate-700 rounded hover:bg-slate-50"
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+          {isAuthenticated && user ? (
+            <>
+              <Link
+                to={portalLink}
+                className="flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-slate-700 rounded hover:bg-slate-50"
+                onClick={() => setMobileOpen(false)}
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                {roleName} Portal
+              </Link>
+              <button
+                className="flex items-center gap-2 px-3 py-2 text-[13px] font-medium text-red-600 rounded hover:bg-red-50 w-full text-left"
+                onClick={() => { clearSession(); setMobileOpen(false) }}
+              >
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="block px-3 py-2 text-[13px] font-medium text-slate-700 rounded hover:bg-slate-50"
+                onClick={() => setMobileOpen(false)}
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="block px-3 py-2 text-[13px] font-medium text-[#1557A6] rounded hover:bg-blue-50"
+                onClick={() => setMobileOpen(false)}
+              >
+                Register
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </header>
   )
 }

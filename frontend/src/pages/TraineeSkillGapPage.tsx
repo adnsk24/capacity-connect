@@ -41,54 +41,48 @@ export const TraineeSkillGapPage: React.FC = () => {
   const metGaps = gaps.filter((g: SkillGapItem) => g.gap <= 0.2)
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto py-2">
+    <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">
-              Diagnostic Audit
-            </span>
-            <Badge className="text-[10px] bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300">
-              Gap Matrix
-            </Badge>
+      <div className="pb-5 border-b border-slate-200">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-[22px] font-bold text-slate-900 flex items-center gap-2">
+              <TrendingDown className="h-5 w-5 text-red-600" />
+              <span>Skill Gap & Capability Deficiency Analysis</span>
+            </h1>
+            <p className="text-[13px] text-slate-500 mt-0.5">
+              Comparative analysis of your proficiencies against institutional operational benchmarks.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-            <TrendingDown className="h-7 w-7 text-rose-600" />
-            <span>Skill Gap & Capability Deficiency Analysis</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Comparative analysis evaluating your demonstrated proficiencies against institutional operational benchmarks.
-          </p>
-        </div>
 
-        {/* Subject Domain Selector */}
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-slate-400" />
-          <select
-            value={selectedSubjectId}
-            onChange={(e) => setSelectedSubjectId(e.target.value)}
-            className="text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-800 dark:text-slate-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">Baseline: General Operational Meteorology (All 7)</option>
-            {subjects.map((s: SubjectDetail) => (
-              <option key={s.id} value={s.id}>
-                Subject: {s.name}
-              </option>
-            ))}
-          </select>
+          {/* Subject Domain Selector */}
+          <div className="flex items-center gap-2">
+            <Filter className="h-3.5 w-3.5 text-slate-400" />
+            <select
+              value={selectedSubjectId}
+              onChange={(e) => setSelectedSubjectId(e.target.value)}
+              className="text-[13px] rounded border border-slate-300 bg-white px-3 h-9 text-slate-800 focus:outline-none focus:border-[#1557A6] focus:ring-1 focus:ring-[#1557A6]"
+            >
+              <option value="">Baseline: General Operational Meteorology (All 7)</option>
+              {subjects.map((s: SubjectDetail) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Summary Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Readiness for this domain */}
-        <Card className="border-slate-200 dark:border-slate-800 p-4 space-y-2">
+        <Card className="border-slate-200 p-4 space-y-2 bg-white shadow-xs">
           <div className="flex items-center justify-between text-xs text-slate-500">
             <span>Domain Training Readiness</span>
-            <ShieldCheck className="h-4 w-4 text-blue-500" />
+            <ShieldCheck className="h-4 w-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <div className="text-2xl font-bold text-slate-900">
             {readiness?.overall_readiness_percentage.toFixed(1) ?? "0.0"}%
           </div>
           <ProgressBar
@@ -99,12 +93,12 @@ export const TraineeSkillGapPage: React.FC = () => {
         </Card>
 
         {/* High Priority Deficiencies */}
-        <Card className="border-slate-200 dark:border-slate-800 p-4 space-y-2">
+        <Card className="border-slate-200 p-4 space-y-2 bg-white shadow-xs">
           <div className="flex items-center justify-between text-xs text-slate-500">
             <span>High Priority Gaps (Deficit &gt; 1.0)</span>
             <AlertTriangle className="h-4 w-4 text-rose-500" />
           </div>
-          <div className="text-2xl font-bold text-rose-600 dark:text-rose-400">
+          <div className="text-2xl font-bold text-rose-600">
             {highGaps.length}
           </div>
           <p className="text-[11px] text-slate-500">
@@ -113,12 +107,12 @@ export const TraineeSkillGapPage: React.FC = () => {
         </Card>
 
         {/* Satisfied Benchmarks */}
-        <Card className="border-slate-200 dark:border-slate-800 p-4 space-y-2">
+        <Card className="border-slate-200 p-4 space-y-2 bg-white shadow-xs">
           <div className="flex items-center justify-between text-xs text-slate-500">
             <span>Satisfied Benchmarks</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            <CheckCircle2 className="h-4 w-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+          <div className="text-2xl font-bold text-emerald-600">
             {metGaps.length}
           </div>
           <p className="text-[11px] text-slate-500">
@@ -128,42 +122,42 @@ export const TraineeSkillGapPage: React.FC = () => {
       </div>
 
       {/* Main Gaps Table / Card Breakdown */}
-      <Card className="border-slate-200 dark:border-slate-800">
-        <CardHeader className="p-4 border-b border-slate-100 dark:border-slate-800/80">
-          <CardTitle className="text-sm font-bold text-slate-900 dark:text-white flex items-center justify-between">
+      <Card className="border-slate-200 bg-white shadow-xs">
+        <CardHeader className="p-4 border-b border-slate-200 bg-slate-50/50">
+          <CardTitle className="text-sm font-bold text-slate-900 flex items-center justify-between">
             <span>Competency Gap Audit Table</span>
             <span className="text-xs text-slate-500 font-normal">
               Showing {gaps.length} competency requirements
             </span>
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 divide-y divide-slate-100 dark:divide-slate-800">
+        <CardContent className="p-0 divide-y divide-slate-100">
           {gaps.map((item: SkillGapItem) => {
             const percentageMet = Math.min(100, Math.round((item.current_level / item.required_level) * 100))
             return (
               <div
                 key={item.competency_id}
-                className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/50 dark:hover:bg-slate-900/50 transition-colors"
+                className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50/60 transition-colors"
               >
                 {/* Left: Competency Info */}
                 <div className="space-y-1 md:max-w-xs">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono font-bold text-slate-400">
+                    <span className="text-[10px] font-mono font-bold text-slate-500">
                       {item.code}
                     </span>
                     <Badge
                       className={`text-[9px] font-semibold ${
                         item.priority === "HIGH"
-                          ? "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300"
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
                           : item.priority === "MEDIUM"
-                          ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300"
-                          : "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300"
+                          ? "bg-amber-50 text-amber-700 border-amber-200"
+                          : "bg-blue-50 text-blue-700 border-blue-200"
                       }`}
                     >
                       {item.priority} PRIORITY
                     </Badge>
                   </div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-sm font-semibold text-slate-900">
                     {item.name}
                   </h3>
                   <p className="text-[11px] text-slate-500 line-clamp-1">
@@ -174,18 +168,18 @@ export const TraineeSkillGapPage: React.FC = () => {
                 {/* Center: Comparison Visualizer */}
                 <div className="flex-1 max-w-md space-y-1.5">
                   <div className="flex justify-between text-xs">
-                    <span className="text-slate-600 dark:text-slate-300 font-medium">
+                    <span className="text-slate-600 font-medium">
                       Demonstrated:{" "}
-                      <strong className="text-blue-600">L{item.current_level.toFixed(1)}</strong>
+                      <strong className="text-blue-600 font-semibold">L{item.current_level.toFixed(1)}</strong>
                     </span>
-                    <span className="text-slate-600 dark:text-slate-300 font-medium">
+                    <span className="text-slate-600 font-medium">
                       Required:{" "}
-                      <strong className="text-slate-900 dark:text-white">
+                      <strong className="text-slate-900 font-semibold">
                         L{item.required_level.toFixed(1)}
                       </strong>
                     </span>
                   </div>
-                  <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden flex">
+                  <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden flex">
                     <div
                       className={`h-full transition-all ${
                         item.gap <= 0.2
@@ -210,7 +204,7 @@ export const TraineeSkillGapPage: React.FC = () => {
                       Deficit Gap
                     </span>
                     <span
-                      className={`text-base font-extrabold ${
+                      className={`text-sm font-bold ${
                         item.gap <= 0.2
                           ? "text-emerald-600"
                           : item.priority === "HIGH"

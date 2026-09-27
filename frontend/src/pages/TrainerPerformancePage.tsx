@@ -42,19 +42,19 @@ export const TrainerPerformancePage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-          <Users className="h-6 w-6 text-emerald-600" />
+      <div className="pb-5 border-b border-slate-200">
+        <h1 className="text-[22px] font-bold text-slate-900 flex items-center gap-2.5">
+          <Users className="h-6 w-6 text-emerald-700" />
           <span>Trainee Competency & Performance</span>
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Monitor student progression, lesson completions, and assessment scores across all supervised courses.
         </p>
       </div>
 
       {/* Filter and Search Bar */}
-      <Card className="border-slate-200 dark:border-slate-800">
-        <CardContent className="p-4">
+      <Card className="border-slate-200 shadow-xs">
+        <CardContent className="p-3.5">
           <div className="flex flex-col sm:flex-row items-center gap-3">
             {/* Search */}
             <div className="relative flex-1 w-full">
@@ -67,7 +67,7 @@ export const TrainerPerformancePage: React.FC = () => {
                   setPage(1)
                 }}
                 placeholder="Search trainees by name or email..."
-                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-900"
+                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
               />
             </div>
 
@@ -80,7 +80,7 @@ export const TrainerPerformancePage: React.FC = () => {
                   setCourseFilter(e.target.value)
                   setPage(1)
                 }}
-                className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-900 w-full sm:w-60"
+                className="text-xs px-3 py-1.5 rounded-md border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-emerald-700 w-full sm:w-60"
               >
                 <option value="">All Managed Courses</option>
                 {(courses || []).map((c: any) => (
@@ -97,7 +97,7 @@ export const TrainerPerformancePage: React.FC = () => {
       {/* Trainee Table */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-emerald-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-emerald-700 animate-spin" />
           <p className="text-xs text-slate-500 font-medium">Aggregating trainee records...</p>
         </div>
       ) : error ? (
@@ -109,7 +109,7 @@ export const TrainerPerformancePage: React.FC = () => {
           </CardContent>
         </Card>
       ) : items.length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
+        <Card className="border-dashed border-2 border-slate-200">
           <CardContent className="py-12 text-center">
             <Users className="h-10 w-10 text-slate-300 mx-auto mb-2" />
             <p className="text-xs text-slate-500">No trainee records match your current filter parameters.</p>
@@ -117,9 +117,9 @@ export const TrainerPerformancePage: React.FC = () => {
         </Card>
       ) : (
         <div className="space-y-4">
-          <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+          <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
+              <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
                 <tr>
                   <th className="p-3">Trainee</th>
                   <th className="p-3">Course</th>
@@ -131,16 +131,16 @@ export const TrainerPerformancePage: React.FC = () => {
                   <th className="p-3">Verdict</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-slate-100">
                 {items.map((t: TraineePerformanceItem) => (
-                  <tr key={`${t.trainee_id}-${t.course_id}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                  <tr key={`${t.trainee_id}-${t.course_id}`} className="hover:bg-slate-50/80 transition-colors">
                     <td className="p-3">
-                      <span className="font-semibold text-slate-900 dark:text-white block">
+                      <span className="font-semibold text-slate-900 block">
                         {t.trainee_name}
                       </span>
-                      <span className="text-[11px] text-slate-400">{t.trainee_email}</span>
+                      <span className="text-[11px] text-slate-500">{t.trainee_email}</span>
                     </td>
-                    <td className="p-3 font-medium text-slate-700 dark:text-slate-300">
+                    <td className="p-3 font-medium text-slate-700">
                       {t.course_title}
                     </td>
                     <td className="p-3">
@@ -153,21 +153,21 @@ export const TrainerPerformancePage: React.FC = () => {
                     </td>
                     <td className="p-3 min-w-36">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                        <div className="flex-1 h-2 rounded-full bg-slate-100 overflow-hidden">
                           <div
-                            className="h-full bg-emerald-500 rounded-full"
+                            className="h-full bg-emerald-600 rounded-full"
                             style={{ width: `${Math.min(100, t.progress_percentage)}%` }}
                           />
                         </div>
-                        <span className="font-bold text-[11px] text-slate-700 dark:text-slate-300 shrink-0">
+                        <span className="font-bold text-[11px] text-slate-700 shrink-0">
                           {t.progress_percentage}%
                         </span>
                       </div>
                     </td>
-                    <td className="p-3 text-slate-600 dark:text-slate-400">
+                    <td className="p-3 text-slate-600">
                       {t.completed_lessons} / {t.total_lessons}
                     </td>
-                    <td className="p-3 text-slate-700 dark:text-slate-300 font-semibold">
+                    <td className="p-3 text-slate-700 font-semibold">
                       {t.assessment_attempts_count}
                     </td>
                     <td className="p-3 font-semibold">
@@ -209,7 +209,7 @@ export const TrainerPerformancePage: React.FC = () => {
               >
                 Previous
               </Button>
-              <span className="font-semibold text-slate-800 dark:text-slate-200">
+              <span className="font-semibold text-slate-800">
                 Page {page} of {totalPages}
               </span>
               <Button

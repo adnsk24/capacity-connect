@@ -1,7 +1,7 @@
 import React from "react"
 
 export const Skeleton: React.FC<{ className?: string }> = ({ className = "" }) => (
-  <div className={`animate-pulse rounded-md bg-slate-200/80 dark:bg-slate-800 ${className}`} />
+  <div className={`animate-pulse rounded bg-slate-200 ${className}`} />
 )
 
 export const DashboardSkeleton: React.FC = () => (
@@ -16,7 +16,7 @@ export const DashboardSkeleton: React.FC = () => (
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-3 bg-white dark:bg-slate-900">
+        <div key={i} className="p-4 rounded-lg border border-slate-200 space-y-3 bg-white">
           <div className="flex justify-between items-center">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-8 w-8 rounded-lg" />
@@ -60,7 +60,7 @@ export const CourseCatalogSkeleton: React.FC = () => (
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="h-80 rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-4 bg-white dark:bg-slate-900">
+        <div key={i} className="h-72 rounded-lg border border-slate-200 p-4 space-y-3 bg-white">
           <Skeleton className="h-32 rounded-lg" />
           <Skeleton className="h-5 w-3/4" />
           <Skeleton className="h-4 w-full" />

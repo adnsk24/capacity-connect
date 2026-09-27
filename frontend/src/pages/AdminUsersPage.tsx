@@ -69,19 +69,19 @@ export const AdminUsersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2.5">
-          <Users className="h-6 w-6 text-blue-600" />
+      <div className="pb-5 border-b border-slate-200">
+        <h1 className="text-[22px] font-bold text-slate-900 flex items-center gap-2.5">
+          <Users className="h-6 w-6 text-[#1557A6]" />
           <span>User Access & Role Governance</span>
         </h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p className="text-xs text-slate-500 mt-1">
           Verify registrations, approve operational staff accounts, enforce role restrictions, and audit account states.
         </p>
       </div>
 
       {/* Filter and Search Bar */}
-      <Card className="border-slate-200 dark:border-slate-800">
-        <CardContent className="p-4">
+      <Card className="border-slate-200 shadow-xs">
+        <CardContent className="p-3.5">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Search */}
             <div className="relative">
@@ -91,7 +91,7 @@ export const AdminUsersPage: React.FC = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search by name, email, or username..."
-                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-900"
+                className="w-full pl-9 pr-3 py-1.5 text-xs rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
               />
             </div>
 
@@ -99,7 +99,7 @@ export const AdminUsersPage: React.FC = () => {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-900"
+              className="text-xs px-3 py-1.5 rounded-md border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#1557A6]"
             >
               <option value="">All Roles</option>
               <option value="TRAINEE">TRAINEE</option>
@@ -111,7 +111,7 @@ export const AdminUsersPage: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="text-xs px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 dark:bg-slate-900"
+              className="text-xs px-3 py-1.5 rounded-md border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#1557A6]"
             >
               <option value="">All Account Statuses</option>
               <option value="PENDING">PENDING</option>
@@ -126,7 +126,7 @@ export const AdminUsersPage: React.FC = () => {
       {/* Users Table */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-[#1557A6] animate-spin" />
           <p className="text-xs text-slate-500 font-medium">Loading user records...</p>
         </div>
       ) : error ? (
@@ -138,16 +138,16 @@ export const AdminUsersPage: React.FC = () => {
           </CardContent>
         </Card>
       ) : (users || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
+        <Card className="border-dashed border-2 border-slate-200">
           <CardContent className="py-12 text-center">
             <Users className="h-10 w-10 text-slate-300 mx-auto mb-2" />
             <p className="text-xs text-slate-500">No users match your selected criteria.</p>
           </CardContent>
         </Card>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs">
+        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-xs">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-semibold border-b border-slate-200 dark:border-slate-700">
+            <thead className="bg-slate-50 text-slate-700 font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-3">User</th>
                 <th className="p-3">Username</th>
@@ -157,26 +157,26 @@ export const AdminUsersPage: React.FC = () => {
                 <th className="p-3 text-right">Administrative Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100">
               {(users || []).map((u: AdminUserItem) => {
                 const isSelf = currentAdmin?.id === u.id
 
                 return (
-                  <tr key={u.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                  <tr key={u.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="p-3">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900 dark:text-white">
+                        <span className="font-semibold text-slate-900">
                           {u.first_name} {u.last_name}
                         </span>
                         {isSelf && (
-                          <Badge variant="outline" className="text-[9px] py-0">
+                          <Badge variant="outline" className="text-[9px] py-0 bg-blue-50 text-[#1557A6] border-blue-200">
                             You
                           </Badge>
                         )}
                       </div>
-                      <span className="text-[11px] text-slate-400 block">{u.email}</span>
+                      <span className="text-[11px] text-slate-500 block">{u.email}</span>
                     </td>
-                    <td className="p-3 font-mono text-slate-600 dark:text-slate-400">{u.username}</td>
+                    <td className="p-3 font-mono text-slate-600">{u.username}</td>
                     <td className="p-3">
                       <select
                         value={u.role}
@@ -184,7 +184,7 @@ export const AdminUsersPage: React.FC = () => {
                         onChange={(e) =>
                           updateRoleMutation.mutate({ userId: u.id, role: e.target.value })
                         }
-                        className="text-xs px-2 py-1 rounded border border-slate-200 dark:border-slate-700 dark:bg-slate-900 font-semibold text-slate-800 dark:text-slate-200 disabled:opacity-60"
+                        className="text-xs px-2 py-1 rounded border border-slate-200 bg-white font-medium text-slate-800 disabled:opacity-60"
                       >
                         <option value="TRAINEE">TRAINEE</option>
                         <option value="TRAINER">TRAINER</option>
@@ -230,7 +230,7 @@ export const AdminUsersPage: React.FC = () => {
                             variant="ghost"
                             onClick={() => updateStatusMutation.mutate({ userId: u.id, status: "SUSPENDED" })}
                             disabled={isSelf || updateStatusMutation.isPending}
-                            className="h-7 text-xs text-amber-600 hover:text-amber-700 disabled:opacity-40"
+                            className="h-7 text-xs text-amber-700 hover:text-amber-800 disabled:opacity-40"
                             title={isSelf ? "You cannot suspend your own administrative account" : undefined}
                           >
                             Suspend
@@ -243,7 +243,7 @@ export const AdminUsersPage: React.FC = () => {
                             variant="ghost"
                             onClick={() => updateStatusMutation.mutate({ userId: u.id, status: "ACTIVE" })}
                             disabled={updateStatusMutation.isPending}
-                            className="h-7 text-xs text-emerald-600 hover:text-emerald-700"
+                            className="h-7 text-xs text-emerald-700 hover:text-emerald-800"
                           >
                             Reactivate
                           </Button>

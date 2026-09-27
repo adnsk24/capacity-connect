@@ -1,5 +1,4 @@
 import React from "react"
-import { Badge } from "./badge"
 
 export interface StatusBadgeProps {
   status: string
@@ -9,78 +8,98 @@ export interface StatusBadgeProps {
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, className = "" }) => {
   const normalized = status.toUpperCase().trim()
 
+  const baseClass = `inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-semibold ${className}`
+
   switch (normalized) {
     case "COMPLETED":
     case "VERIFIED":
     case "ACTIVE":
       return (
-        <Badge
-          variant="outline"
-          className={`bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 ${className}`}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 inline-block" />
+        <span className={`${baseClass} bg-green-50 text-green-700 border-green-200`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block" />
           {normalized === "COMPLETED" ? "Completed" : normalized === "VERIFIED" ? "Verified" : "Active"}
-        </Badge>
+        </span>
       )
 
     case "IN_PROGRESS":
       return (
-        <Badge
-          variant="outline"
-          className={`bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800 ${className}`}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-1.5 inline-block animate-pulse" />
+        <span className={`${baseClass} bg-blue-50 text-[#1557A6] border-blue-200`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#1557A6] inline-block" />
           In Progress
-        </Badge>
+        </span>
       )
 
     case "ENROLLED":
       return (
-        <Badge
-          variant="outline"
-          className={`bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/40 dark:text-sky-300 dark:border-sky-800 ${className}`}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500 mr-1.5 inline-block" />
+        <span className={`${baseClass} bg-blue-50 text-blue-700 border-blue-200`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />
           Enrolled
-        </Badge>
+        </span>
       )
 
     case "BEGINNER":
       return (
-        <Badge variant="outline" className={`bg-emerald-50/80 text-emerald-700 border-emerald-200 text-[11px] ${className}`}>
+        <span className={`${baseClass} bg-green-50 text-green-700 border-green-200`}>
           Beginner
-        </Badge>
+        </span>
       )
 
     case "INTERMEDIATE":
       return (
-        <Badge variant="outline" className={`bg-amber-50/80 text-amber-700 border-amber-200 text-[11px] ${className}`}>
+        <span className={`${baseClass} bg-amber-50 text-amber-700 border-amber-200`}>
           Intermediate
-        </Badge>
+        </span>
       )
 
     case "ADVANCED":
       return (
-        <Badge variant="outline" className={`bg-purple-50/80 text-purple-700 border-purple-200 text-[11px] ${className}`}>
+        <span className={`${baseClass} bg-red-50 text-red-700 border-red-200`}>
           Advanced
-        </Badge>
+        </span>
       )
 
     case "PENDING":
       return (
-        <Badge
-          variant="outline"
-          className={`bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 ${className}`}
-        >
+        <span className={`${baseClass} bg-amber-50 text-amber-700 border-amber-200`}>
           Pending
-        </Badge>
+        </span>
+      )
+
+    case "PASSED":
+      return (
+        <span className={`${baseClass} bg-green-50 text-green-700 border-green-200`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-green-600 inline-block" />
+          Passed
+        </span>
+      )
+
+    case "FAILED":
+      return (
+        <span className={`${baseClass} bg-red-50 text-red-700 border-red-200`}>
+          <span className="w-1.5 h-1.5 rounded-full bg-red-600 inline-block" />
+          Failed
+        </span>
+      )
+
+    case "PUBLISHED":
+      return (
+        <span className={`${baseClass} bg-green-50 text-green-700 border-green-200`}>
+          Published
+        </span>
+      )
+
+    case "DRAFT":
+      return (
+        <span className={`${baseClass} bg-slate-100 text-slate-600 border-slate-200`}>
+          Draft
+        </span>
       )
 
     default:
       return (
-        <Badge variant="outline" className={`bg-slate-50 text-slate-700 border-slate-200 ${className}`}>
+        <span className={`${baseClass} bg-slate-100 text-slate-600 border-slate-200`}>
           {status}
-        </Badge>
+        </span>
       )
   }
 }

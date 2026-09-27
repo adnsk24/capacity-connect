@@ -41,31 +41,21 @@ export const CourseCataloguePage: React.FC = () => {
   ]
 
   return (
-    <div className="space-y-6">
-      {/* Top Atmospheric Header */}
-      <div className="rounded-2xl bg-gradient-to-r from-blue-900 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white relative overflow-hidden shadow-sm">
-        <div className="relative z-10 space-y-2 max-w-2xl">
-          <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase bg-blue-500/20 text-blue-300 border border-blue-400/30">
-              IMD Curriculum
-            </span>
-            <span className="text-xs text-slate-300">Operational Capacity Building</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-            Meteorological Course Catalogue
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-            Standardized training syllabus designed in accordance with WMO Basic Instruction Packages for Meteorologists (BIP-M) and IMD operational requirements.
-          </p>
-        </div>
+    <div className="space-y-5">
+      {/* Page header */}
+      <div className="pb-5 border-b border-slate-200">
+        <h1 className="text-[22px] font-bold text-slate-900">Course Catalogue</h1>
+        <p className="text-[13px] text-slate-500 mt-0.5">
+          Standardized training syllabus aligned with WMO Basic Instruction Packages (BIP-M) and IMD operational requirements.
+        </p>
       </div>
 
-      {/* Filter and Search Bar */}
-      <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-3">
-        <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
-          {/* Search Input */}
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+      {/* Filter Bar */}
+      <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
+        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+          {/* Search */}
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
             <input
               type="text"
               value={search}
@@ -73,13 +63,13 @@ export const CourseCataloguePage: React.FC = () => {
                 setSearch(e.target.value)
                 setPage(1)
               }}
-              placeholder="Search by title, code, or topic (e.g., Radar, Monsoon)..."
-              className="w-full pl-9 pr-3 py-2 text-xs border rounded-lg bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search by title, code, or topic..."
+              className="w-full h-9 pl-9 pr-3 text-[13px] rounded-md border border-slate-300 bg-white focus:outline-none focus:border-[#1557A6] focus:ring-2 focus:ring-blue-100 transition-colors"
             />
           </div>
 
-          {/* Difficulty Filter Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+          {/* Difficulty filter */}
+          <div className="flex items-center gap-1.5 flex-wrap">
             {difficulties.map((diff) => {
               const isSelected = selectedDifficulty === diff.value
               return (
@@ -89,10 +79,10 @@ export const CourseCataloguePage: React.FC = () => {
                     setSelectedDifficulty(diff.value)
                     setPage(1)
                   }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors border ${
                     isSelected
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+                      ? "bg-[#1557A6] text-white border-[#1557A6]"
+                      : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
                   }`}
                 >
                   {diff.label}
@@ -102,38 +92,32 @@ export const CourseCataloguePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Categories Bar */}
+        {/* Categories */}
         {data?.categories && data.categories.length > 0 && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 border-t border-slate-100 pt-3">
             <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-              <Filter className="h-3 w-3" /> Discipline:
+              <Filter className="h-3 w-3" /> Category:
             </span>
             <button
-              onClick={() => {
-                setSelectedCategory(undefined)
-                setPage(1)
-              }}
-              className={`px-2.5 py-1 rounded-md text-xs font-medium shrink-0 transition-colors ${
+              onClick={() => { setSelectedCategory(undefined); setPage(1) }}
+              className={`px-2.5 py-1 rounded-md text-[12px] font-medium shrink-0 transition-colors border ${
                 !selectedCategory
-                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-semibold"
-                  : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                  ? "bg-[#1557A6] text-white border-[#1557A6]"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
               }`}
             >
-              All Disciplines
+              All
             </button>
             {data.categories.map((cat) => {
               const isSelected = selectedCategory === cat.id
               return (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    setSelectedCategory(cat.id)
-                    setPage(1)
-                  }}
-                  className={`px-2.5 py-1 rounded-md text-xs font-medium shrink-0 transition-colors ${
+                  onClick={() => { setSelectedCategory(cat.id); setPage(1) }}
+                  className={`px-2.5 py-1 rounded-md text-[12px] font-medium shrink-0 transition-colors border ${
                     isSelected
-                      ? "bg-blue-600 text-white font-semibold"
-                      : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                      ? "bg-[#1557A6] text-white border-[#1557A6]"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   {cat.name}
@@ -170,7 +154,7 @@ export const CourseCataloguePage: React.FC = () => {
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {data?.items.map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}

@@ -14,41 +14,40 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   max = 100,
   size = "md",
   showLabel = false,
-  variant = "meteorological",
+  variant = "primary",
   className = "",
 }) => {
   const percentage = Math.min(100, Math.max(0, Math.round((value / max) * 100)))
 
   const sizeClasses = {
     sm: "h-1.5",
-    md: "h-2.5",
-    lg: "h-4",
+    md: "h-2",
+    lg: "h-3",
   }
 
-  const variantGradients = {
-    primary: "bg-gradient-to-r from-blue-600 to-indigo-600",
-    success: "bg-gradient-to-r from-emerald-500 to-teal-600",
-    warning: "bg-gradient-to-r from-amber-500 to-orange-500",
+  const fillColors = {
+    primary: "#1557A6",
+    success: "#15803D",
+    warning: "#D97706",
     meteorological:
-      percentage >= 100
-        ? "bg-gradient-to-r from-emerald-500 to-teal-500"
-        : percentage >= 50
-        ? "bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600"
-        : "bg-gradient-to-r from-blue-500 to-cyan-500",
+      percentage >= 100 ? "#15803D" : percentage >= 50 ? "#1557A6" : "#2563EB",
   }
 
   return (
     <div className={`w-full ${className}`}>
       {showLabel && (
-        <div className="flex justify-between items-center mb-1 text-xs font-medium text-slate-700 dark:text-slate-300">
+        <div className="flex justify-between items-center mb-1 text-xs font-medium text-slate-600">
           <span>Progress</span>
           <span className="font-semibold">{percentage}%</span>
         </div>
       )}
-      <div className={`w-full rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden ${sizeClasses[size]}`}>
+      <div className={`w-full rounded-full bg-slate-200 overflow-hidden ${sizeClasses[size]}`}>
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${variantGradients[variant]}`}
-          style={{ width: `${percentage}%` }}
+          className={`h-full rounded-full transition-all duration-500 ease-out`}
+          style={{
+            width: `${percentage}%`,
+            backgroundColor: fillColors[variant],
+          }}
           role="progressbar"
           aria-valuenow={percentage}
           aria-valuemin={0}

@@ -70,83 +70,83 @@ export const AssessmentDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-5">
       {/* Back button */}
       <div>
         <Link
           to="/trainee/assessments"
-          className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-white"
+          className="inline-flex items-center text-xs font-medium text-slate-500 hover:text-slate-900 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back to Assessments
         </Link>
       </div>
 
       {/* Main Assessment Brief */}
-      <Card className="border-slate-200 dark:border-slate-800">
-        <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-800">
+      <Card className="border-slate-200 shadow-xs bg-white">
+        <CardHeader className="p-5 pb-4 border-b border-slate-100">
           <div className="flex items-center justify-between gap-3 mb-2">
-            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+            <span className="text-[12px] font-semibold text-[#1557A6] uppercase tracking-wider">
               {assessment.course_title}
             </span>
-            <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="text-[11px] bg-blue-50 text-[#1557A6] border-blue-200">
               {assessment.assessment_type} Evaluation
             </Badge>
           </div>
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">
+          <CardTitle className="text-xl font-bold text-slate-900">
             {assessment.title}
           </CardTitle>
-          <CardDescription className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+          <CardDescription className="text-[13px] text-slate-600 mt-1">
             {assessment.description || "Official evaluation module assessing core domain competencies."}
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="pt-6 space-y-6">
+        <CardContent className="p-5 space-y-5">
           {/* Key Metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-lg border border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-                <Clock className="h-3.5 w-3.5 text-blue-500" /> Duration
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1.5">
+                <Clock className="h-3.5 w-3.5 text-[#1557A6]" /> Duration
               </div>
-              <p className="text-base font-bold text-slate-800 dark:text-slate-200">
+              <p className="text-[15px] font-bold text-slate-800">
                 {assessment.duration_minutes ? `${assessment.duration_minutes} Mins` : "Untimed"}
               </p>
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-lg border border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-                <Award className="h-3.5 w-3.5 text-amber-500" /> Pass Mark
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1.5">
+                <Award className="h-3.5 w-3.5 text-amber-600" /> Pass Mark
               </div>
-              <p className="text-base font-bold text-slate-800 dark:text-slate-200">
+              <p className="text-[15px] font-bold text-slate-800">
                 {assessment.passing_percentage}%
               </p>
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-lg border border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-                <ClipboardCheck className="h-3.5 w-3.5 text-emerald-500" /> Total Questions
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1.5">
+                <ClipboardCheck className="h-3.5 w-3.5 text-emerald-600" /> Questions
               </div>
-              <p className="text-base font-bold text-slate-800 dark:text-slate-200">
+              <p className="text-[15px] font-bold text-slate-800">
                 {assessment.questions_count}
               </p>
             </div>
 
-            <div className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-lg border border-slate-100 dark:border-slate-800">
-              <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1">
-                <RotateCcw className="h-3.5 w-3.5 text-purple-500" /> Max Attempts
+            <div className="p-3 bg-slate-50 rounded-md border border-slate-200">
+              <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1.5">
+                <RotateCcw className="h-3.5 w-3.5 text-violet-600" /> Max Attempts
               </div>
-              <p className="text-base font-bold text-slate-800 dark:text-slate-200">
+              <p className="text-[15px] font-bold text-slate-800">
                 {assessment.max_attempts}
               </p>
             </div>
           </div>
 
           {/* Exam Instructions */}
-          <div className="p-4 bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/60 rounded-lg space-y-2">
-            <div className="flex items-center gap-2 font-semibold text-amber-900 dark:text-amber-200 text-xs uppercase tracking-wider">
+          <div className="p-4 bg-amber-50/70 border border-amber-200 rounded-md space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-amber-900 text-[12px] uppercase tracking-wider">
               <ShieldAlert className="h-4 w-4 text-amber-600" />
               Examination Guidelines
             </div>
-            <ul className="text-xs text-amber-800 dark:text-amber-300/90 space-y-1.5 list-disc list-inside">
+            <ul className="text-[12px] text-amber-800 space-y-1.5 list-disc list-inside">
               <li>Deterministic scoring is computed immediately upon submission.</li>
               <li>Questions are presented without correct-answer disclosures until submitted.</li>
               <li>The exam countdown timer is synchronized with the server.</li>
@@ -156,17 +156,17 @@ export const AssessmentDetailPage: React.FC = () => {
 
           {/* Error alert if starting failed */}
           {errorMsg && (
-            <div className="p-3 bg-red-50 dark:bg-red-950/30 text-red-700 dark:text-red-300 text-xs rounded-lg border border-red-200">
+            <div className="p-3 bg-red-50 text-red-700 text-xs rounded-md border border-red-200">
               {errorMsg}
             </div>
           )}
 
           {/* Action Trigger */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center gap-3">
+          <div className="pt-1 flex flex-col sm:flex-row items-center gap-3">
             <Button
               onClick={handleStartExam}
               disabled={starting}
-              className="w-full sm:w-auto px-8 py-2.5 font-bold text-sm bg-blue-600 hover:bg-blue-700 shadow-sm gap-2"
+              className="w-full sm:w-auto px-6 h-10 font-semibold text-[13px] bg-[#1557A6] hover:bg-[#0f4282] shadow-xs gap-2"
             >
               {starting ? (
                 <>
@@ -179,7 +179,7 @@ export const AssessmentDetailPage: React.FC = () => {
               )}
             </Button>
             <Link to="/trainee/assessments" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full text-xs">
+              <Button variant="outline" className="w-full text-xs h-10 border-slate-200">
                 Cancel
               </Button>
             </Link>
@@ -189,3 +189,4 @@ export const AssessmentDetailPage: React.FC = () => {
     </div>
   )
 }
+

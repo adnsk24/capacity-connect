@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160" fill="none">
+  <!-- Official Institutional Circular Seal Foundation -->
+  <circle cx="80" cy="80" r="76" fill="#FFFFFF" stroke="#1557A6" stroke-width="4"/>
+  <circle cx="80" cy="80" r="70" fill="none" stroke="#1557A6" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <circle cx="80" cy="80" r="52" fill="#F8FAFC" stroke="#1557A6" stroke-width="2"/>
+
+  <!-- Top Text: भारत मौसम विज्ञान विभाग -->
+  <path id="text-top" d="M 22 80 A 58 58 0 0 1 138 80" fill="none"/>
+  <text font-family="'Inter', -apple-system, sans-serif" font-size="8.5" font-weight="700" fill="#1557A6" letter-spacing="1">
+    <textPath href="#text-top" startOffset="50%" text-anchor="middle">
+      भारत मौसम विज्ञान विभाग
+    </textPath>
+  </text>
+
+  <!-- Bottom Text: INDIA METEOROLOGICAL DEPARTMENT -->
+  <path id="text-bottom" d="M 142 80 A 62 62 0 0 1 18 80" fill="none"/>
+  <text font-family="'Inter', -apple-system, sans-serif" font-size="7" font-weight="600" fill="#1557A6" letter-spacing="0.8">
+    <textPath href="#text-bottom" startOffset="50%" text-anchor="middle">
+      INDIA METEOROLOGICAL DEPARTMENT
+    </textPath>
+  </text>
+
+  <!-- Side Star Emblems -->
+  <polygon points="18,80 20,82 18,84 16,82" fill="#1557A6"/>
+  <polygon points="142,80 144,82 142,84 140,82" fill="#1557A6"/>
+
+  <!-- Center Emblem: State Symbol Silhouette & Meteorological Sun Ray Motif -->
+  <!-- Sun Rays Radiating From Center (Adityat Jayate Vrishti) -->
+  <g stroke="#1557A6" stroke-width="1.2" opacity="0.6">
+    <line x1="80" y1="56" x2="80" y2="52"/>
+    <line x1="97" y1="63" x2="100" y2="60"/>
+    <line x1="104" y1="80" x2="108" y2="80"/>
+    <line x1="97" y1="97" x2="100" y2="100"/>
+    <line x1="80" y1="104" x2="80" y2="108"/>
+    <line x1="63" y1="97" x2="60" y2="100"/>
+    <line x1="56" y1="80" x2="52" y2="80"/>
+    <line x1="63" y1="63" x2="60" y2="60"/>
+  </g>
+
+  <!-- Central Ashoka Lion Capital Representation -->
+  <g fill="#1557A6">
+    <!-- Center Lion Face & Body -->
+    <path d="M76 61 H84 L85 68 H75 Z"/>
+    <path d="M74 68 H86 L87 75 H73 Z"/>
+    <!-- Left & Right Profile Lions -->
+    <path d="M71 63 C69 66 69 72 73 74 L73 70 C71 69 71 65 71 63 Z"/>
+    <path d="M89 63 C91 66 91 72 87 74 L87 70 C89 69 89 65 89 63 Z"/>
+    <!-- Abacus Base -->
+    <rect x="70" y="76" width="20" height="3" rx="0.5"/>
+    <!-- Center Dharma Chakra Wheel -->
+    <circle cx="80" cy="83" r="3.5" fill="none" stroke="#1557A6" stroke-width="1"/>
+    <circle cx="80" cy="83" r="1" fill="#1557A6"/>
+    <!-- Bull & Horse Profile Blocks -->
+    <rect x="71" y="82" width="3.5" height="2" rx="0.5"/>
+    <rect x="85.5" y="82" width="3.5" height="2" rx="0.5"/>
+    <!-- Pedestal Base Plinth -->
+    <rect x="67" y="86.5" width="26" height="3" rx="0.5"/>
+    <!-- Motto Banner Base -->
+    <path d="M66 91 H94 L92 94 H68 Z"/>
+    <!-- Estd 1875 -->
+    <text x="80" y="99" text-anchor="middle" font-family="'Inter', sans-serif" font-size="6" font-weight="700" fill="#1557A6" letter-spacing="0.5">
+      ESTD 1875
+    </text>
+  </g>
+</svg>

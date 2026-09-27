@@ -1,9 +1,7 @@
 import React, { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
-import { Layers, Eye, EyeOff, Loader2, AlertCircle, ArrowRight, ShieldCheck } from "lucide-react"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
+import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { authService } from "@/services/auth"
 import { useAuthStore } from "@/store/useAuthStore"
 
@@ -23,12 +21,10 @@ export const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMessage(null)
-
     if (!usernameOrEmail.trim() || !password) {
       setErrorMessage("Please enter both username/email and password.")
       return
     }
-
     try {
       setIsSubmitting(true)
       const data = await authService.login({
@@ -48,88 +44,69 @@ export const LoginPage: React.FC = () => {
     }
   }
 
+  const demoUsers = [
+    { label: "Trainee", email: "trainee.demo@imd.gov.in", password: "DemoTrainee123!", color: "text-[#1557A6] hover:bg-blue-50 border-blue-200" },
+    { label: "Trainer", email: "trainer.demo@imd.gov.in", password: "DemoTrainer123!", color: "text-green-700 hover:bg-green-50 border-green-200" },
+    { label: "Admin", email: "admin.demo@imd.gov.in", password: "DemoAdmin123!", color: "text-slate-700 hover:bg-slate-100 border-slate-300" },
+  ]
+
   return (
-    <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
-            <Layers className="h-6 w-6" />
+    <div className="flex-1 flex items-center justify-center py-12 px-4 bg-[#F7F9FC]">
+      <div className="w-full max-w-sm">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center mb-3">
+            <img
+              src="/branding/imd-emblem.svg"
+              alt="India Meteorological Department Emblem"
+              className="h-16 w-16 object-contain"
+              width="64"
+              height="64"
+            />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Capacity Connect Portal
-          </h1>
-          <p className="text-xs text-slate-500">
-            Sign in to access your capacity building & learning workspace
-          </p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">CAPACITY CONNECT</h1>
+          <p className="text-[13px] font-semibold text-[#1557A6] mt-0.5">India Meteorological Department</p>
+          <p className="text-[11px] text-slate-500 mt-0.5">Digital Capacity Building &amp; Learning Management Portal</p>
         </div>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-md">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Sign In</CardTitle>
-              <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-200 bg-blue-50/50">
-                Argon2id + JWT
-              </Badge>
-            </div>
-            <CardDescription className="text-xs">
-              Enter your official email or username and account password.
-            </CardDescription>
+        {/* Card */}
+        <div className="bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="px-6 pt-6 pb-4 border-b border-slate-100">
+            <h2 className="text-[15px] font-semibold text-slate-900">Sign In</h2>
+            <p className="text-[12px] text-slate-500 mt-0.5">Enter your institutional credentials to continue.</p>
+          </div>
 
-            {/* Evaluator Quick-Fill Bar */}
-            <div className="pt-2">
-              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-1.5">
-                <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
-                  <span className="flex items-center gap-1">
-                    <span className="text-amber-500">⚡</span> Demo Credentials Quick-Fill
-                  </span>
-                  <span className="text-[10px] text-slate-400">Click to autofill</span>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUsernameOrEmail("trainee.demo@imd.gov.in")
-                      setPassword("DemoTrainee123!")
-                    }}
-                    className="px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all cursor-pointer shadow-xs text-center"
-                  >
-                    Trainee
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUsernameOrEmail("trainer.demo@imd.gov.in")
-                      setPassword("DemoTrainer123!")
-                    }}
-                    className="px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950 transition-all cursor-pointer shadow-xs text-center"
-                  >
-                    Trainer
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setUsernameOrEmail("admin.demo@imd.gov.in")
-                      setPassword("DemoAdmin123!")
-                    }}
-                    className="px-2 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all cursor-pointer shadow-xs text-center"
-                  >
-                    Admin
-                  </button>
-                </div>
-              </div>
+          {/* Demo quick-fill */}
+          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
+            <p className="text-[11px] font-semibold text-slate-500 mb-2">Demo Quick-Fill</p>
+            <div className="flex gap-2">
+              {demoUsers.map((u) => (
+                <button
+                  key={u.label}
+                  type="button"
+                  onClick={() => {
+                    setUsernameOrEmail(u.email)
+                    setPassword(u.password)
+                  }}
+                  className={`flex-1 py-1.5 rounded border text-[11px] font-semibold transition-colors ${u.color}`}
+                >
+                  {u.label}
+                </button>
+              ))}
             </div>
-          </CardHeader>
-          <CardContent>
+          </div>
+
+          <div className="px-6 py-5">
             {errorMessage && (
-              <div className="mb-4 p-3 rounded-lg bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-300 border border-red-200 dark:border-red-900 flex items-start gap-2 text-xs">
-                <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-600 dark:text-red-400" />
+              <div className="mb-4 p-3 rounded-md bg-red-50 text-red-700 border border-red-200 flex items-start gap-2 text-[13px]">
+                <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
                 <span>{errorMessage}</span>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300" htmlFor="identifier">
+              <div>
+                <label className="block text-[12px] font-semibold text-slate-700 mb-1" htmlFor="identifier">
                   Email Address or Username
                 </label>
                 <input
@@ -139,20 +116,20 @@ export const LoginPage: React.FC = () => {
                   value={usernameOrEmail}
                   onChange={(e) => setUsernameOrEmail(e.target.value)}
                   placeholder="trainee@imd.gov.in"
-                  className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-9 px-3 text-[13px] rounded-md border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#1557A6] focus:ring-2 focus:ring-blue-100 transition-colors"
                   disabled={isSubmitting}
                   required
                 />
               </div>
 
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300" htmlFor="password">
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[12px] font-semibold text-slate-700" htmlFor="password">
                     Password
                   </label>
                   <Link
                     to="/forgot-password"
-                    className="text-[11px] font-medium text-blue-600 hover:underline dark:text-blue-400"
+                    className="text-[11px] font-medium text-[#1557A6] hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -164,15 +141,15 @@ export const LoginPage: React.FC = () => {
                     autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="••••••••"
+                    className="w-full h-9 px-3 pr-10 text-[13px] rounded-md border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#1557A6] focus:ring-2 focus:ring-blue-100 transition-colors"
                     disabled={isSubmitting}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                     tabIndex={-1}
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
@@ -181,31 +158,34 @@ export const LoginPage: React.FC = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full mt-2" disabled={isSubmitting}>
+              <Button type="submit" className="w-full gap-2" disabled={isSubmitting}>
                 {isSubmitting ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Authenticating...
-                  </span>
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Authenticating...
+                  </>
                 ) : (
-                  <span className="flex items-center justify-center gap-1.5">
-                    Sign In <ArrowRight className="h-4 w-4" />
-                  </span>
+                  <>
+                    Sign In
+                    <ArrowRight className="h-4 w-4" />
+                  </>
                 )}
               </Button>
             </form>
-          </CardContent>
-          <CardFooter className="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-100 dark:border-slate-800/80 pt-4 text-xs text-slate-500">
-            <span>Don't have an account?</span>
-            <Link to="/register" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
-              Register New Profile
-            </Link>
-          </CardFooter>
-        </Card>
+          </div>
 
-        {/* Security Assurance Notice */}
-        <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 text-center">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-          <span>Secured via RFC 9106 Argon2id hashing & cryptographically signed JWT sessions</span>
+          <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-[12px] text-slate-500">
+            <span>Don't have an account?</span>
+            <Link to="/register" className="font-semibold text-[#1557A6] hover:underline">
+              Register Profile
+            </Link>
+          </div>
+        </div>
+
+        {/* Security notice */}
+        <div className="flex items-center justify-center gap-1.5 mt-5 text-[11px] text-slate-400">
+          <ShieldCheck className="h-3.5 w-3.5 text-green-600" />
+          <span>Secured via Argon2id + JWT session signing</span>
         </div>
       </div>
     </div>

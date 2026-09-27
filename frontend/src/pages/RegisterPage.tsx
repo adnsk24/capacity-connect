@@ -1,7 +1,6 @@
 import React, { useState } from "react"
 import { Link } from "react-router-dom"
 import {
-  Layers,
   Eye,
   EyeOff,
   Loader2,
@@ -91,41 +90,49 @@ export const RegisterPage: React.FC = () => {
     <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-lg space-y-6">
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md">
-            <Layers className="h-6 w-6" />
+          <div className="inline-flex items-center justify-center mx-auto mb-2">
+            <img
+              src="/branding/imd-emblem.svg"
+              alt="India Meteorological Department Emblem"
+              className="h-14 w-14 object-contain"
+              width="56"
+              height="56"
+            />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Create Portal Account
-          </h1>
-          <p className="text-xs text-slate-500">
-            Join the Capacity Connect capacity building ecosystem
-          </p>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Create Portal Account
+            </h1>
+            <p className="text-xs text-slate-500 mt-1">
+              India Meteorological Department • Capacity Building Ecosystem
+            </p>
+          </div>
         </div>
 
-        <Card className="border-slate-200 dark:border-slate-800 shadow-md">
+        <Card className="border-slate-200 shadow-sm">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Registration</CardTitle>
-              <Badge variant="outline" className="text-[10px]">
+              <CardTitle className="text-base font-bold text-slate-900">Registration</CardTitle>
+              <Badge variant="outline" className="text-[10px] bg-slate-50 text-slate-600 border-slate-200">
                 RBAC Enforced
               </Badge>
             </div>
-            <CardDescription>
-              Select your persona and fill in your professional details.
+            <CardDescription className="text-xs text-slate-500">
+              Select your persona and fill in your official details.
             </CardDescription>
           </CardHeader>
           <CardContent>
             {registeredSuccess ? (
-              <div className="p-6 rounded-xl bg-emerald-50 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800 space-y-4 text-center">
-                <CheckCircle2 className="h-10 w-10 text-emerald-600 dark:text-emerald-400 mx-auto" />
+              <div className="p-6 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 space-y-4 text-center">
+                <CheckCircle2 className="h-10 w-10 text-emerald-600 mx-auto" />
                 <div className="space-y-1">
                   <h3 className="text-base font-bold">Registration Submitted!</h3>
-                  <p className="text-xs text-emerald-800 dark:text-emerald-300">
+                  <p className="text-xs text-emerald-800">
                     Your account has been registered with status: <strong>PENDING</strong>.
                   </p>
                 </div>
-                <div className="p-3 rounded-lg bg-white/80 dark:bg-slate-900/60 text-left text-xs text-slate-600 dark:text-slate-300 space-y-1.5 border border-emerald-200/50">
-                  <div className="font-semibold text-slate-800 dark:text-white">Next Steps:</div>
+                <div className="p-3 rounded-md bg-white text-left text-xs text-slate-600 space-y-1.5 border border-emerald-200">
+                  <div className="font-semibold text-slate-900">Next Steps:</div>
                   <ul className="list-disc list-inside space-y-1 text-[11px]">
                     <li>An administrator will review and approve your cadre application.</li>
                     <li>Verify your email address using the verification link or token.</li>
@@ -148,25 +155,25 @@ export const RegisterPage: React.FC = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {errorMessage && (
-                  <div className="p-3 rounded-lg bg-red-50 text-red-800 dark:bg-red-950 dark:text-red-300 border border-red-200 dark:border-red-900 flex items-start gap-2 text-xs">
-                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-600 dark:text-red-400" />
+                  <div className="p-3 rounded-md bg-red-50 text-red-800 border border-red-200 flex items-start gap-2 text-xs">
+                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-red-600" />
                     <span>{errorMessage}</span>
                   </div>
                 )}
 
                 {/* Role Selector Tabs */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700">
                     Platform Role
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
                       onClick={() => setRole("TRAINEE")}
-                      className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-all ${
+                      className={`flex items-center justify-center gap-2 p-2.5 rounded-md border text-xs font-medium cursor-pointer transition-all ${
                         role === "TRAINEE"
-                          ? "border-blue-600 bg-blue-50 text-blue-700 font-bold dark:bg-blue-950 dark:text-blue-300 shadow-xs"
-                          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                          ? "border-[#1557A6] bg-[#EFF6FF] text-[#1557A6] font-bold shadow-xs"
+                          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                       }`}
                     >
                       <GraduationCap className="h-4 w-4" />
@@ -175,10 +182,10 @@ export const RegisterPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setRole("TRAINER")}
-                      className={`flex items-center justify-center gap-2 p-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-all ${
+                      className={`flex items-center justify-center gap-2 p-2.5 rounded-md border text-xs font-medium cursor-pointer transition-all ${
                         role === "TRAINER"
-                          ? "border-blue-600 bg-blue-50 text-blue-700 font-bold dark:bg-blue-950 dark:text-blue-300 shadow-xs"
-                          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                          ? "border-[#1557A6] bg-[#EFF6FF] text-[#1557A6] font-bold shadow-xs"
+                          : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                       }`}
                     >
                       <Award className="h-4 w-4" />
@@ -194,7 +201,7 @@ export const RegisterPage: React.FC = () => {
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-xs font-semibold text-slate-700">
                       First Name
                     </label>
                     <input
@@ -202,12 +209,12 @@ export const RegisterPage: React.FC = () => {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="Aditya"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                       required
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-xs font-semibold text-slate-700">
                       Last Name
                     </label>
                     <input
@@ -215,7 +222,7 @@ export const RegisterPage: React.FC = () => {
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="Sharma"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                       required
                     />
                   </div>
@@ -224,7 +231,7 @@ export const RegisterPage: React.FC = () => {
                 {/* Email & Username */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-xs font-semibold text-slate-700">
                       Email Address
                     </label>
                     <input
@@ -232,12 +239,12 @@ export const RegisterPage: React.FC = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="officer@imd.gov.in"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                       required
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-xs font-semibold text-slate-700">
                       Username
                     </label>
                     <input
@@ -245,7 +252,7 @@ export const RegisterPage: React.FC = () => {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="aditya_sharma"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                       required
                     />
                   </div>
@@ -254,7 +261,7 @@ export const RegisterPage: React.FC = () => {
                 {/* Password Fields */}
                 <div className="space-y-2">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-xs font-semibold text-slate-700">
                       Password (min. 8 characters)
                     </label>
                     <div className="relative">
@@ -263,7 +270,7 @@ export const RegisterPage: React.FC = () => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••••••"
-                        className="w-full px-3 py-2 pr-10 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 pr-10 text-sm rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                         required
                       />
                       <button
@@ -282,11 +289,11 @@ export const RegisterPage: React.FC = () => {
                     <div className="space-y-1">
                       <div className="flex justify-between items-center text-[10px]">
                         <span className="text-slate-500">Strength:</span>
-                        <span className="font-semibold text-slate-700 dark:text-slate-300">
+                        <span className="font-semibold text-slate-700">
                           {getStrengthLabel(strength).label}
                         </span>
                       </div>
-                      <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-300 ${getStrengthLabel(strength).color}`}
                           style={{ width: `${strength}%` }}
@@ -296,7 +303,7 @@ export const RegisterPage: React.FC = () => {
                   )}
 
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    <label className="text-xs font-semibold text-slate-700">
                       Confirm Password
                     </label>
                     <input
@@ -304,7 +311,7 @@ export const RegisterPage: React.FC = () => {
                       value={passwordConfirm}
                       onChange={(e) => setPasswordConfirm(e.target.value)}
                       placeholder="••••••••••••"
-                      className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 text-sm rounded-md border border-slate-300 bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-[#1557A6] focus:border-[#1557A6]"
                       required
                     />
                   </div>
@@ -324,9 +331,9 @@ export const RegisterPage: React.FC = () => {
               </form>
             )}
           </CardContent>
-          <CardFooter className="flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80 pt-4 text-xs text-slate-500">
+          <CardFooter className="flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-500">
             <span>Already registered?</span>
-            <Link to="/login" className="font-semibold text-blue-600 hover:underline dark:text-blue-400">
+            <Link to="/login" className="font-semibold text-[#1557A6] hover:underline">
               Sign In to Account
             </Link>
           </CardFooter>

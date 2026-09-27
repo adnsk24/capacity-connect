@@ -17,6 +17,7 @@ import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { ErrorState } from "@/components/ui/error-state"
 import { Skeleton } from "@/components/ui/loading-skeleton"
 import { coursesService, LessonItem } from "@/services/courses"
+import { getCourseThumbnail, getCourseThumbnailAlt } from "@/lib/courseImages"
 
 export const LearningContentPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
@@ -107,32 +108,38 @@ export const LearningContentPage: React.FC = () => {
 
   return (
     <div className="space-y-4 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 rounded-lg border border-slate-200 shadow-xs">
         <Breadcrumb items={breadcrumbItems} />
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500 font-medium">
-            Progress: {course.completed_lessons_count} / {course.total_lessons_count} ({course.progress_percentage || 0}%)
+          <span className="text-[12px] text-slate-600 font-medium">
+            Course Completion: <span className="font-semibold text-slate-900">{course.completed_lessons_count}</span> of {course.total_lessons_count} ({course.progress_percentage || 0}%)
           </span>
           <div className="w-28">
-            <ProgressBar value={course.progress_percentage || 0} size="sm" variant="meteorological" />
+            <ProgressBar value={course.progress_percentage || 0} size="sm" variant="primary" />
           </div>
         </div>
       </div>
 
       {/* Main LMS Split Screen */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left Pane: Syllabus Navigation (4 cols) */}
-        <div className="lg:col-span-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/40">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-              Course Syllabus
-            </h3>
-            <h2 className="text-sm font-extrabold text-slate-900 dark:text-white line-clamp-1">
-              {course.title}
-            </h2>
+        <div className="lg:col-span-4 bg-white border border-slate-200 rounded-lg shadow-xs overflow-hidden flex flex-col">
+          <div className="relative h-24 overflow-hidden border-b border-slate-200 bg-slate-100">
+            <img
+              src={getCourseThumbnail(course.title)}
+              alt={getCourseThumbnailAlt(course.title)}
+              className="w-full h-full object-cover"
+              loading="lazy"
+              width="360"
+              height="96"
+            />
+            <div className="absolute inset-0 bg-slate-900/60 p-3 flex flex-col justify-end text-white">
+              <span className="text-[10px] uppercase font-semibold tracking-wider text-blue-200">Official Syllabus</span>
+              <h2 className="text-[13px] font-bold line-clamp-1 text-white">{course.title}</h2>
+            </div>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[650px] overflow-y-auto p-2 space-y-3">
+          <div className="divide-y divide-slate-100 max-h-[680px] overflow-y-auto p-2 space-y-2">
             {course.modules.map((mod, mIdx) => (
               <div key={mod.id} className="pt-2">
                 <div className="px-2 pb-1.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
@@ -145,17 +152,17 @@ export const LearningContentPage: React.FC = () => {
                       <button
                         key={les.id}
                         onClick={() => setSelectedLessonId(les.id)}
-                        className={`w-full p-2.5 rounded-xl text-left text-xs transition-all flex items-start gap-2.5 ${
+                        className={`w-full p-2.5 rounded-md text-left text-[12px] transition-all flex items-start gap-2.5 ${
                           isSelected
-                            ? "bg-blue-50 text-blue-900 font-bold border border-blue-200 dark:bg-blue-950/60 dark:text-blue-200 dark:border-blue-800"
-                            : "text-slate-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800/60"
+                            ? "bg-blue-50 text-[#1557A6] font-semibold border-l-2 border-[#1557A6]"
+                            : "text-slate-700 hover:bg-slate-50 border-l-2 border-transparent"
                         }`}
                       >
                         {les.is_completed ? (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                         ) : (
                           <div className={`w-4 h-4 rounded-full border text-[10px] flex items-center justify-center shrink-0 mt-0.5 font-mono ${
-                            isSelected ? "border-blue-500 text-blue-600 bg-blue-100 dark:bg-blue-900" : "border-slate-300 text-slate-400"
+                            isSelected ? "border-[#1557A6] text-[#1557A6] bg-blue-100" : "border-slate-300 text-slate-500"
                           }`}>
                             {les.order_index}
                           </div>
@@ -163,7 +170,7 @@ export const LearningContentPage: React.FC = () => {
                         <div className="flex-1 min-w-0">
                           <div className="truncate">{les.title}</div>
                           <div className="text-[10px] text-slate-400 font-mono mt-0.5">
-                            {les.duration_minutes} min
+                            {les.duration_minutes} min duration
                           </div>
                         </div>
                       </button>
@@ -176,27 +183,27 @@ export const LearningContentPage: React.FC = () => {
         </div>
 
         {/* Right Pane: Lesson Viewer & Content (8 cols) */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-5">
           {currentLesson ? (
-            <Card className="border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden bg-white dark:bg-slate-900">
+            <Card className="border-slate-200 shadow-xs overflow-hidden bg-white">
               {/* Lesson Top Banner */}
-              <div className="p-6 border-b border-slate-100 dark:border-slate-800 space-y-2 bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-950">
+              <div className="p-6 border-b border-slate-100 space-y-2 bg-slate-50/50">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-[10px] font-mono uppercase bg-blue-50 text-blue-700 border-blue-200">
+                  <Badge variant="outline" className="text-[10px] font-medium uppercase bg-blue-50 text-[#1557A6] border-blue-200">
                     {currentModuleTitle}
                   </Badge>
-                  <span className="text-xs text-slate-400 flex items-center gap-1 font-mono">
+                  <span className="text-[11px] text-slate-500 flex items-center gap-1 font-mono">
                     <Clock className="h-3 w-3" />
                     {currentLesson.duration_minutes} min duration
                   </span>
                 </div>
 
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
                   {currentLesson.title}
                 </h1>
 
                 {currentLesson.description && (
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-[13px] text-slate-600 leading-relaxed">
                     {currentLesson.description}
                   </p>
                 )}
@@ -204,21 +211,21 @@ export const LearningContentPage: React.FC = () => {
 
               {/* Lesson Instructional Content Body */}
               <CardContent className="p-6 space-y-6">
-                <div className="prose prose-slate dark:prose-invert max-w-none text-xs sm:text-sm leading-relaxed space-y-4">
-                  <div className="p-4 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 text-blue-950 dark:text-blue-200">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 dark:text-blue-300 mb-1">
+                <div className="prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed space-y-4">
+                  <div className="p-4 rounded-md bg-blue-50/60 border border-blue-200/80 text-slate-900">
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#1557A6] mb-1.5">
                       Instructional Core Narrative
                     </h4>
-                    <p className="text-xs leading-relaxed">
+                    <p className="text-[13px] leading-relaxed text-slate-700">
                       {currentLesson.content_body || "Instructional module contents under live meteorological feed."}
                     </p>
                   </div>
 
                   <div className="space-y-2">
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                    <h4 className="text-[14px] font-bold text-slate-900">
                       Operational Key Takeaways
                     </h4>
-                    <ul className="list-disc pl-5 space-y-1 text-slate-600 dark:text-slate-300 text-xs">
+                    <ul className="list-disc pl-5 space-y-1.5 text-slate-600 text-[13px]">
                       <li>Maintain rigorous compliance with IMD and WMO operational reporting protocols.</li>
                       <li>Cross-reference radar, satellite, and surface observation networks during severe weather analysis.</li>
                       <li>Verify sensor calibration status and transmission timestamps prior to issuing alerts.</li>
@@ -228,24 +235,24 @@ export const LearningContentPage: React.FC = () => {
 
                 {/* Lesson Resources if any */}
                 {currentLesson.resources && currentLesson.resources.length > 0 && (
-                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  <div className="pt-4 border-t border-slate-100 space-y-2">
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                       Lesson Documentation & References
                     </h4>
                     {currentLesson.resources.map((res) => (
                       <div
                         key={res.id}
-                        className="p-3 rounded-lg border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                        className="p-3 rounded-md border border-slate-200 flex items-center justify-between text-xs hover:bg-slate-50 transition-colors"
                       >
                         <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-red-500 shrink-0" />
-                          <span className="font-semibold text-slate-800 dark:text-slate-200">{res.title}</span>
+                          <FileText className="h-4 w-4 text-[#1557A6] shrink-0" />
+                          <span className="font-medium text-slate-800">{res.title}</span>
                         </div>
                         <a
                           href={res.storage_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
+                          className="text-[12px] text-[#1557A6] hover:underline font-medium flex items-center gap-1"
                         >
                           <Download className="h-3.5 w-3.5" />
                           <span>Download</span>
@@ -256,11 +263,11 @@ export const LearningContentPage: React.FC = () => {
                 )}
 
                 {/* Completion & Navigation Controls Footer */}
-                <div className="pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                   {/* Mark as Complete button */}
                   <div>
                     {currentLesson.is_completed ? (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 text-xs font-semibold">
                         <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                         <span>Lesson Completed</span>
                       </div>
@@ -268,10 +275,10 @@ export const LearningContentPage: React.FC = () => {
                       <Button
                         onClick={() => completeMutation.mutate(currentLesson!.id)}
                         disabled={completeMutation.isPending}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center gap-2"
+                        className="bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs h-9 px-4 flex items-center gap-2"
                       >
                         <CheckCircle2 className="h-4 w-4" />
-                        <span>{completeMutation.isPending ? "Recording..." : "Mark Lesson Complete"}</span>
+                        <span>{completeMutation.isPending ? "Recording Progress..." : "Mark Lesson Complete"}</span>
                       </Button>
                     )}
                   </div>
@@ -283,7 +290,7 @@ export const LearningContentPage: React.FC = () => {
                         variant="outline"
                         size="sm"
                         onClick={() => setSelectedLessonId(prevLesson.id)}
-                        className="text-xs flex items-center gap-1"
+                        className="text-xs h-9 flex items-center gap-1 border-slate-200"
                       >
                         <ArrowLeft className="h-3.5 w-3.5" />
                         <span>Previous</span>
@@ -293,7 +300,7 @@ export const LearningContentPage: React.FC = () => {
                       <Button
                         size="sm"
                         onClick={() => setSelectedLessonId(nextLesson.id)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1"
+                        className="bg-[#1557A6] hover:bg-[#0f4282] text-white text-xs font-medium h-9 flex items-center gap-1"
                       >
                         <span>Next Lesson</span>
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -304,8 +311,8 @@ export const LearningContentPage: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-slate-200 dark:border-slate-800 p-8 text-center">
-              <p className="text-xs text-slate-400">Select a lesson from the syllabus to begin learning.</p>
+            <Card className="border-slate-200 p-8 text-center bg-white shadow-xs">
+              <p className="text-xs text-slate-500">Select a lesson from the curriculum to begin studying.</p>
             </Card>
           )}
         </div>

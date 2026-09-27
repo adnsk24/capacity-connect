@@ -75,14 +75,15 @@ export const TrainerCoursesPage: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-5 border-b border-slate-200">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Curriculum Authoring & Course Management
+          <h1 className="text-[22px] font-bold text-slate-900 flex items-center gap-2.5">
+            <BookOpen className="h-6 w-6 text-emerald-700" />
+            <span>Curriculum Authoring & Course Management</span>
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Author and publish meteorological training modules, lessons, and learning resources.
           </p>
         </div>
@@ -92,7 +93,7 @@ export const TrainerCoursesPage: React.FC = () => {
             if (categories.length > 0 && !categoryId) setCategoryId(categories[0].id)
             setShowCreateModal(true)
           }}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs gap-1.5 font-bold self-start sm:self-auto"
+          className="bg-emerald-700 hover:bg-emerald-800 text-white text-xs gap-1.5 font-semibold self-start sm:self-auto shadow-xs"
         >
           <Plus className="h-4 w-4" /> Create New Course
         </Button>
@@ -100,7 +101,7 @@ export const TrainerCoursesPage: React.FC = () => {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-emerald-600 animate-spin" />
+          <Loader2 className="h-8 w-8 text-emerald-700 animate-spin" />
           <p className="text-xs text-slate-500 font-medium">Loading managed courses...</p>
         </div>
       ) : error ? (
@@ -112,25 +113,25 @@ export const TrainerCoursesPage: React.FC = () => {
           </CardContent>
         </Card>
       ) : (courses || []).length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-200 dark:border-slate-800">
+        <Card className="border-dashed border-2 border-slate-200">
           <CardContent className="py-12 flex flex-col items-center justify-center text-center">
             <BookOpen className="h-12 w-12 text-slate-300 mb-3" />
-            <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-lg">No Courses Managed Yet</h3>
-            <p className="text-sm text-slate-500 max-w-sm mt-1">
+            <h3 className="font-semibold text-slate-800 text-base">No Courses Managed Yet</h3>
+            <p className="text-xs text-slate-500 max-w-sm mt-1">
               You haven't authored any courses. Click 'Create New Course' to establish your first syllabus.
             </p>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {(courses || []).map((c: TrainerCourseItem) => (
             <Card
               key={c.id}
-              className="flex flex-col justify-between hover:shadow-md transition-shadow border-slate-200 dark:border-slate-800"
+              className="flex flex-col justify-between hover:shadow-sm transition-shadow border-slate-200 bg-white"
             >
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="text-[11px] font-bold text-emerald-700">
                     {c.code}
                   </span>
                   <Badge
@@ -140,7 +141,7 @@ export const TrainerCoursesPage: React.FC = () => {
                     {c.status}
                   </Badge>
                 </div>
-                <CardTitle className="text-base font-bold text-slate-900 dark:text-white line-clamp-1">
+                <CardTitle className="text-base font-bold text-slate-900 line-clamp-1">
                   {c.title}
                 </CardTitle>
                 <CardDescription className="text-xs line-clamp-2 mt-1">
@@ -149,23 +150,23 @@ export const TrainerCoursesPage: React.FC = () => {
               </CardHeader>
 
               <CardContent className="pt-0 space-y-4">
-                <div className="grid grid-cols-3 gap-2 text-xs bg-slate-50 dark:bg-slate-900/60 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+                <div className="grid grid-cols-3 gap-2 text-xs bg-slate-50 p-2.5 rounded-md border border-slate-100 text-slate-600">
                   <div className="flex flex-col items-center text-center">
                     <span className="text-[10px] text-slate-400">Enrolled</span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200">{c.enrolled_count}</span>
+                    <span className="font-bold text-slate-800">{c.enrolled_count}</span>
                   </div>
-                  <div className="flex flex-col items-center text-center border-x border-slate-200 dark:border-slate-700">
+                  <div className="flex flex-col items-center text-center border-x border-slate-200">
                     <span className="text-[10px] text-slate-400">Modules</span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200">{c.modules_count}</span>
+                    <span className="font-bold text-slate-800">{c.modules_count}</span>
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <span className="text-[10px] text-slate-400">Duration</span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200">{c.duration_hours}h</span>
+                    <span className="font-bold text-slate-800">{c.duration_hours}h</span>
                   </div>
                 </div>
 
                 <Link to={`/trainer/courses/${c.id}`} className="block">
-                  <Button variant="outline" className="w-full text-xs font-semibold justify-between">
+                  <Button variant="outline" className="w-full text-xs font-semibold justify-between hover:bg-slate-50">
                     <span>Manage Syllabus</span>
                     <ArrowRight className="h-3.5 w-3.5" />
                   </Button>
@@ -178,10 +179,10 @@ export const TrainerCoursesPage: React.FC = () => {
 
       {/* Course Creation Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <Card className="max-w-xl w-full p-6 shadow-xl border-slate-200 dark:border-slate-800 my-8">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">Author New Course</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
+          <Card className="max-w-xl w-full p-6 shadow-xl border-slate-200 my-8 bg-white">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <h3 className="text-base font-bold text-slate-900">Author New Course</h3>
               <button
                 onClick={() => setShowCreateModal(false)}
                 className="text-slate-400 hover:text-slate-600"
@@ -192,43 +193,43 @@ export const TrainerCoursesPage: React.FC = () => {
 
             <form onSubmit={handleCreate} className="space-y-4 pt-4 text-xs">
               {formError && (
-                <div className="p-2.5 bg-red-50 text-red-700 rounded-lg border border-red-200">
+                <div className="p-2.5 bg-red-50 text-red-700 rounded-md border border-red-200">
                   {formError}
                 </div>
               )}
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Course Title *</label>
+                  <label className="font-semibold text-slate-700">Course Title *</label>
                   <input
                     type="text"
                     required
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="e.g. Advanced Radar Nowcasting"
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Code *</label>
+                  <label className="font-semibold text-slate-700">Code *</label>
                   <input
                     type="text"
                     required
                     value={code}
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
                     placeholder="e.g. RAD-401"
-                    className="w-full px-3 py-2 border rounded-md uppercase dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md uppercase bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Category *</label>
+                  <label className="font-semibold text-slate-700">Category *</label>
                   <select
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                   >
                     {categories.map((cat: any) => (
                       <option key={cat.id} value={cat.id}>
@@ -238,11 +239,11 @@ export const TrainerCoursesPage: React.FC = () => {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Difficulty</label>
+                  <label className="font-semibold text-slate-700">Difficulty</label>
                   <select
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                   >
                     <option value="BEGINNER">BEGINNER</option>
                     <option value="INTERMEDIATE">INTERMEDIATE</option>
@@ -250,41 +251,41 @@ export const TrainerCoursesPage: React.FC = () => {
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="font-semibold text-slate-700 dark:text-slate-300">Duration (Hours)</label>
+                  <label className="font-semibold text-slate-700">Duration (Hours)</label>
                   <input
                     type="number"
                     min="1"
                     max="300"
                     value={durationHours}
                     onChange={(e) => setDurationHours(Number(e.target.value))}
-                    className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                <label className="font-semibold text-slate-700">Description</label>
                 <textarea
                   rows={2}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Summary of course content and meteorological scope..."
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="font-semibold text-slate-700 dark:text-slate-300">Learning Objectives</label>
+                <label className="font-semibold text-slate-700">Learning Objectives</label>
                 <textarea
                   rows={2}
                   value={objectives}
                   onChange={(e) => setObjectives(e.target.value)}
                   placeholder="Key competencies acquired upon completion..."
-                  className="w-full px-3 py-2 border rounded-md dark:bg-slate-900 dark:border-slate-700"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-md bg-white text-slate-900 focus:outline-none focus:ring-1 focus:ring-emerald-700"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
                 <Button
                   type="button"
                   variant="outline"
@@ -297,7 +298,7 @@ export const TrainerCoursesPage: React.FC = () => {
                   type="submit"
                   size="sm"
                   disabled={createCourseMutation.isPending}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-1.5"
+                  className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold gap-1.5 shadow-xs"
                 >
                   {createCourseMutation.isPending ? (
                     <>
