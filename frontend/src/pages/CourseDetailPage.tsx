@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useParams, Link, useNavigate } from "react-router-dom"
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Clock,
@@ -33,6 +33,7 @@ import { getCourseThumbnail, getCourseThumbnailAlt } from "@/lib/courseImages"
 export const CourseDetailPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const queryClient = useQueryClient()
   const { isAuthenticated } = useAuthStore()
   const [enrollError, setEnrollError] = useState<string | null>(null)
@@ -113,11 +114,15 @@ export const CourseDetailPage: React.FC = () => {
     )
   }
 
+  const isTrainee = location.pathname.startsWith("/trainee")
+  const catalogueUrl = isTrainee ? "/trainee/courses" : "/courses"
+  const catalogueLabel = isTrainee ? "Course Catalogue" : "Catalogue"
+
   const breadcrumbItems = [
-    { label: "Catalogue", href: "/courses" },
+    { label: catalogueLabel, href: catalogueUrl },
     {
       label: course.category?.name || "General Meteorology",
-      href: course.category?.id ? `/courses?category_id=${course.category.id}` : "/courses",
+      href: course.category?.id ? `${catalogueUrl}?category_id=${course.category.id}` : catalogueUrl,
     },
     { label: course.title },
   ]

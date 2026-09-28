@@ -102,7 +102,7 @@ export const CertificatesPage: React.FC = () => {
           title="No Certificates Earned Yet"
           description="Certificates are automatically generated upon course completion and passing required assessments."
           actionLabel="Browse Course Catalogue"
-          onAction={() => navigate("/courses")}
+          onAction={() => navigate("/trainee/courses")}
         />
       )}
 

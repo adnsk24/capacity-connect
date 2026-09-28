@@ -21,6 +21,7 @@ import { CertificateVerifyPage } from "@/pages/CertificateVerifyPage"
 // Phase 3 Courses & Trainee Pages
 import { CourseCataloguePage } from "@/pages/CourseCataloguePage"
 import { CourseDetailPage } from "@/pages/CourseDetailPage"
+import { TraineeCoursesPage } from "@/pages/TraineeCoursesPage"
 import { TraineeDashboardPage } from "@/pages/TraineeDashboardPage"
 import { TraineeProfilePage } from "@/pages/TraineeProfilePage"
 import { MyLearningPage } from "@/pages/MyLearningPage"
@@ -120,6 +121,8 @@ export const App: React.FC = () => {
             <Route index element={<Navigate to="/trainee/dashboard" replace />} />
             <Route path="dashboard" element={<TraineeDashboardPage />} />
             <Route path="profile" element={<TraineeProfilePage />} />
+            <Route path="courses" element={<TraineeCoursesPage />} />
+            <Route path="courses/:courseId" element={<CourseDetailPage />} />
             <Route path="learning" element={<MyLearningPage />} />
             <Route path="assessments" element={<TraineeAssessmentsPage />} />
             <Route path="assessments/:assessmentId" element={<AssessmentDetailPage />} />

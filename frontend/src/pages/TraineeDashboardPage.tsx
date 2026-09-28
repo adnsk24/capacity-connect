@@ -81,7 +81,7 @@ export const TraineeDashboardPage: React.FC = () => {
 
             {/* Actions */}
             <div className="flex items-center gap-2 pt-1">
-              <Link to="/courses">
+              <Link to="/trainee/courses">
                 <Button size="sm" className="gap-1.5">
                   <BookOpen className="h-3.5 w-3.5" />
                   Browse Courses
@@ -173,7 +173,7 @@ export const TraineeDashboardPage: React.FC = () => {
                   title="No Enrolled Courses"
                   description="Browse the IMD course catalogue to get started."
                   actionLabel="Explore Courses"
-                  onAction={() => navigate("/courses")}
+                  onAction={() => navigate("/trainee/courses")}
                 />
               ) : (
                 data.recent_learning.map((item) => (

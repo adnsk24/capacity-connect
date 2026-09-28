@@ -19,8 +19,10 @@ import { getCourseThumbnail, getCourseThumbnailAlt } from "@/lib/courseImages"
 import { ResourceCard } from "@/components/ui/ResourceCard"
 import { VideoPlayerModal } from "@/components/ui/VideoPlayerModal"
 import { AudioPlayerModal } from "@/components/ui/AudioPlayerModal"
+import { useAuthStore } from "@/store/useAuthStore"
 
 export const LearningContentPage: React.FC = () => {
+  const { user } = useAuthStore()
   const { courseId } = useParams<{ courseId: string }>()
   const queryClient = useQueryClient()
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
@@ -114,9 +116,11 @@ export const LearningContentPage: React.FC = () => {
   const prevLesson = currentIndex > 0 ? allLessons[currentIndex - 1] : null
   const nextLesson = currentIndex >= 0 && currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null
 
+  const courseDetailUrl = user?.role === "TRAINEE" ? `/trainee/courses/${course.id}` : `/courses/${course.id}`
+
   const breadcrumbItems = [
     { label: "My Learning", href: "/trainee/learning" },
-    { label: course.title, href: `/courses/${course.id}` },
+    { label: course.title, href: courseDetailUrl },
     { label: currentLesson?.title || "Lesson" },
   ]
 

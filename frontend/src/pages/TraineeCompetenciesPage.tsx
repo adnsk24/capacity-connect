@@ -513,7 +513,7 @@ export const TraineeCompetenciesPage: React.FC = () => {
                   </span>
                   {rec.why_recommended}
                 </div>
-                <Link to={`/courses/${rec.course_id}`}>
+                <Link to={`/trainee/courses/${rec.course_id}`}>
                   <Button size="sm" className="w-full text-xs font-semibold shadow-xs">
                     Enroll to Close Gap
                   </Button>

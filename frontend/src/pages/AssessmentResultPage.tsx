@@ -138,7 +138,7 @@ export const AssessmentResultPage: React.FC = () => {
               <RotateCcw className="h-3.5 w-3.5" /> Retake
             </Button>
           </Link>
-          <Link to="/courses">
+          <Link to="/trainee/courses">
             <Button size="sm" variant="outline" className="text-xs h-8 gap-1.5 border-slate-200">
               <BookOpen className="h-3.5 w-3.5" /> Catalogue
             </Button>

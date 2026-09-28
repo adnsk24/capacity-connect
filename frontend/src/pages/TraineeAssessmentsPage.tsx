@@ -137,7 +137,7 @@ export const TraineeAssessmentsPage: React.FC = () => {
                 ? "You have completed all assessments for your currently enrolled courses, or no tests are published yet."
                 : "You haven't completed any assessments yet. Start an available test to evaluate your competency."}
             </p>
-            <Link to="/courses" className="mt-4">
+            <Link to="/trainee/courses" className="mt-4">
               <Button size="sm" variant="outline" className="text-xs">
                 <BookOpen className="h-3.5 w-3.5 mr-1.5" /> Explore Course Catalogue
               </Button>

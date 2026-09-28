@@ -19,6 +19,7 @@ import { useAuthStore } from "@/store/useAuthStore"
 
 interface CourseCardProps {
   course: CourseCardType
+  basePath?: string
 }
 
 const difficultyLabel: Record<string, string> = {
@@ -33,7 +34,7 @@ const difficultyColor: Record<string, string> = {
   ADVANCED: "bg-rose-50 text-rose-700 border-rose-200",
 }
 
-export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+export const CourseCard: React.FC<CourseCardProps> = ({ course, basePath = "/courses" }) => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { isAuthenticated } = useAuthStore()
@@ -121,7 +122,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           </div>
 
           {/* Title */}
-          <Link to={`/courses/${course.id}`}>
+          <Link to={`${basePath}/${course.id}`}>
             <h3 className="text-[15px] font-bold text-slate-900 group-hover:text-[#1557A6] transition-colors line-clamp-2 leading-snug mb-2">
               {course.title}
             </h3>
@@ -190,7 +191,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
       {/* Footer CTA Buttons */}
       <div className="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
-        <Link to={`/courses/${course.id}`} className="flex-1">
+        <Link to={`${basePath}/${course.id}`} className="flex-1">
           <Button
             variant="outline"
             size="sm"

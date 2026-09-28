@@ -21,7 +21,7 @@ interface TraineeSidebarProps {
 const navItems = [
   { to: "/trainee/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/trainee/profile", label: "My Profile", icon: User },
-  { to: "/courses", label: "Course Catalogue", icon: BookOpen },
+  { to: "/trainee/courses", label: "Course Catalogue", icon: BookOpen },
   { to: "/trainee/learning", label: "My Learning", icon: GraduationCap },
   { to: "/trainee/assessments", label: "Assessments", icon: ClipboardCheck },
   { to: "/trainee/competencies", label: "Competencies", icon: Network },

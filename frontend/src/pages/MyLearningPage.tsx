@@ -64,7 +64,7 @@ export const MyLearningPage: React.FC = () => {
             Track your ongoing courses, lesson completions, and operational skill development
           </p>
         </div>
-        <Link to="/courses">
+        <Link to="/trainee/courses">
           <Button size="sm" variant="outline" className="text-xs flex items-center gap-1.5 hover:bg-slate-50">
             <Compass className="h-4 w-4" />
             <span>Browse More Courses</span>
@@ -79,7 +79,7 @@ export const MyLearningPage: React.FC = () => {
           title="No Active Enrollments"
           description="You have not enrolled in any operational meteorology courses yet. Explore our course catalogue to advance your competencies."
           actionLabel="Explore Course Catalogue"
-          onAction={() => navigate("/courses")}
+          onAction={() => navigate("/trainee/courses")}
         />
       ) : (
         <div className="space-y-4">
