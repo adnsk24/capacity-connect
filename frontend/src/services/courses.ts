@@ -6,6 +6,7 @@ export interface CourseCategory {
   code: string
   description?: string
   parent_id?: string
+  course_count?: number
 }
 
 export interface TrainerSummary {
@@ -82,6 +83,10 @@ export interface CourseCard {
   is_enrolled: boolean
   enrollment_status?: string
   progress_percentage?: number
+  module_names?: string[]
+  assessment_types?: string[]
+  passing_marks?: string
+  enrollment_count?: number
 }
 
 export interface CourseCatalogueResponse {

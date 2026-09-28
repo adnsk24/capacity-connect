@@ -1,6 +1,6 @@
-import React, { useState } from "react"
+import React, { useState, useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Search, Filter, Compass } from "lucide-react"
+import { Search, Filter, Compass, Layers, RotateCcw } from "lucide-react"
 import { CourseCard } from "@/components/ui/course-card"
 import { CourseCatalogSkeleton } from "@/components/ui/loading-skeleton"
 import { ErrorState } from "@/components/ui/error-state"
@@ -26,6 +26,12 @@ export const CourseCataloguePage: React.FC = () => {
       }),
   })
 
+  // Calculate total course count across all categories
+  const totalAllCourses = useMemo(() => {
+    if (!data?.categories || data.categories.length === 0) return 12
+    return data.categories.reduce((acc, cat) => acc + (cat.course_count || 0), 0)
+  }, [data?.categories])
+
   const resetFilters = () => {
     setSearch("")
     setSelectedCategory(undefined)
@@ -41,91 +47,148 @@ export const CourseCataloguePage: React.FC = () => {
   ]
 
   return (
-    <div className="space-y-5">
-      {/* Page header */}
-      <div className="pb-5 border-b border-slate-200">
-        <h1 className="text-[22px] font-bold text-slate-900">Course Catalogue</h1>
-        <p className="text-[13px] text-slate-500 mt-0.5">
-          Standardized training syllabus aligned with WMO Basic Instruction Packages (BIP-M) and IMD operational requirements.
-        </p>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3 shadow-[0_1px_3px_0_rgb(0,0,0,0.06)]">
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-          {/* Search */}
-          <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value)
-                setPage(1)
-              }}
-              placeholder="Search by title, code, or topic..."
-              className="w-full h-9 pl-9 pr-3 text-[13px] rounded-md border border-slate-300 bg-white focus:outline-none focus:border-[#1557A6] focus:ring-2 focus:ring-blue-100 transition-colors"
-            />
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+      {/* Page Header */}
+      <div className="pb-4 border-b border-slate-200">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-blue-50 text-[#1557A6] border border-blue-200">
+                Official Curriculum
+              </span>
+              <span className="text-[12px] text-slate-400 font-medium">BIP-M / WMO Standards</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Course Catalogue
+            </h1>
+            <p className="text-[13px] text-slate-600 mt-1 max-w-3xl leading-relaxed">
+              Standardized capacity building courses aligned with WMO Basic Instruction Packages (BIP-M) and operational IMD mandates across meteorology, forecasting, radar, satellites, and climate science.
+            </p>
           </div>
 
-          {/* Difficulty filter */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {difficulties.map((diff) => {
-              const isSelected = selectedDifficulty === diff.value
-              return (
-                <button
-                  key={diff.label}
-                  onClick={() => {
-                    setSelectedDifficulty(diff.value)
-                    setPage(1)
-                  }}
-                  className={`px-3 py-1.5 rounded-md text-[12px] font-medium transition-colors border ${
-                    isSelected
-                      ? "bg-[#1557A6] text-white border-[#1557A6]"
-                      : "bg-white text-slate-600 border-slate-300 hover:bg-slate-50"
-                  }`}
-                >
-                  {diff.label}
-                </button>
-              )
-            })}
+          <div className="shrink-0 flex items-center gap-2">
+            {(selectedCategory || selectedDifficulty || search) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={resetFilters}
+                className="text-xs h-8 text-slate-600 hover:text-slate-900 gap-1.5"
+              >
+                <RotateCcw className="h-3 w-3" /> Reset Filters
+              </Button>
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Categories */}
-        {data?.categories && data.categories.length > 0 && (
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 border-t border-slate-100 pt-3">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider shrink-0 flex items-center gap-1">
-              <Filter className="h-3 w-3" /> Category:
-            </span>
-            <button
-              onClick={() => { setSelectedCategory(undefined); setPage(1) }}
-              className={`px-2.5 py-1 rounded-md text-[12px] font-medium shrink-0 transition-colors border ${
-                !selectedCategory
-                  ? "bg-[#1557A6] text-white border-[#1557A6]"
-                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+      {/* Category Navigation Bar with Course Counts */}
+      <div className="bg-white border border-slate-200/90 rounded-xl p-3.5 shadow-xs">
+        <div className="flex items-center justify-between mb-2.5 px-0.5">
+          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-500">
+            <Layers className="h-3.5 w-3.5 text-[#1557A6]" />
+            <span>Browse by Category</span>
+          </div>
+          <span className="text-[11px] text-slate-400 font-medium">
+            {data?.categories ? `${data.categories.length} Disciplines` : "8 Disciplines"}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 pt-0.5 scrollbar-thin scrollbar-thumb-slate-200">
+          {/* All Courses Tab */}
+          <button
+            onClick={() => {
+              setSelectedCategory(undefined)
+              setPage(1)
+            }}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-semibold shrink-0 transition-all cursor-pointer border ${
+              !selectedCategory
+                ? "bg-[#1557A6] text-white border-[#1557A6] shadow-xs"
+                : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
+            }`}
+          >
+            <span>All Courses</span>
+            <span
+              className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${
+                !selectedCategory ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
               }`}
             >
-              All
-            </button>
-            {data.categories.map((cat) => {
+              {totalAllCourses}
+            </span>
+          </button>
+
+          {/* Dynamic Category Tabs */}
+          {data?.categories &&
+            data.categories.map((cat) => {
               const isSelected = selectedCategory === cat.id
               return (
                 <button
                   key={cat.id}
-                  onClick={() => { setSelectedCategory(cat.id); setPage(1) }}
-                  className={`px-2.5 py-1 rounded-md text-[12px] font-medium shrink-0 transition-colors border ${
+                  onClick={() => {
+                    setSelectedCategory(cat.id)
+                    setPage(1)
+                  }}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-[12.5px] font-semibold shrink-0 transition-all cursor-pointer border ${
                     isSelected
-                      ? "bg-[#1557A6] text-white border-[#1557A6]"
-                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                      ? "bg-[#1557A6] text-white border-[#1557A6] shadow-xs"
+                      : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
                   }`}
                 >
-                  {cat.name}
+                  <span>{cat.name}</span>
+                  <span
+                    className={`px-1.5 py-0.2 rounded-full text-[11px] font-bold ${
+                      isSelected ? "bg-white/20 text-white" : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {cat.course_count ?? 0}
+                  </span>
                 </button>
               )
             })}
-          </div>
-        )}
+        </div>
+      </div>
+
+      {/* Search & Difficulty Filter Sub-Bar */}
+      <div className="bg-slate-50/70 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+        {/* Search */}
+        <div className="relative flex-1 sm:max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+            placeholder="Search by title, code, or topic..."
+            className="w-full h-9 pl-9 pr-3 text-[13px] rounded-lg border border-slate-300 bg-white placeholder-slate-400 focus:outline-none focus:border-[#1557A6] focus:ring-2 focus:ring-blue-100 transition-colors"
+          />
+        </div>
+
+        {/* Difficulty filter buttons */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+            <Filter className="h-3 w-3" /> Level:
+          </span>
+          {difficulties.map((diff) => {
+            const isSelected = selectedDifficulty === diff.value
+            return (
+              <button
+                key={diff.label}
+                onClick={() => {
+                  setSelectedDifficulty(diff.value)
+                  setPage(1)
+                }}
+                className={`px-2.5 py-1 rounded-md text-[12px] font-medium transition-colors border cursor-pointer ${
+                  isSelected
+                    ? "bg-[#1557A6] text-white border-[#1557A6] shadow-2xs"
+                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-100/80"
+                }`}
+              >
+                {diff.label}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Main Course Grid */}
@@ -140,21 +203,28 @@ export const CourseCataloguePage: React.FC = () => {
       ) : data?.items.length === 0 ? (
         <EmptyState
           icon={<Compass className="h-8 w-8" />}
-          title="No Courses Match Your Criteria"
-          description="Try broadening your search term or clearing category and difficulty filters."
-          actionLabel="Reset All Filters"
+          title="No Courses Match Your Selection"
+          description="Try selecting a different category or clearing search and difficulty filters."
+          actionLabel="View All Courses"
           onAction={resetFilters}
         />
       ) : (
         <div className="space-y-6">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          {/* Results Summary Header */}
+          <div className="flex items-center justify-between text-xs text-slate-500 px-0.5">
             <span>
-              Showing <strong className="text-slate-800">{data?.items.length}</strong> of{" "}
-              <strong className="text-slate-800">{data?.total}</strong> operational courses
+              Showing <strong className="text-slate-800 font-semibold">{data?.items.length}</strong> of{" "}
+              <strong className="text-slate-800 font-semibold">{data?.total}</strong> operational courses
+              {selectedCategory && (
+                <span className="ml-1 text-[#1557A6] font-medium">
+                  in {data?.categories.find((c) => c.id === selectedCategory)?.name || "selected category"}
+                </span>
+              )}
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Responsive Course Grid: Mobile 1, Tablet 2, Desktop/Laptop 3 or 4 */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {data?.items.map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}
@@ -167,7 +237,10 @@ export const CourseCataloguePage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                onClick={() => {
+                  setPage((p) => Math.max(1, p - 1))
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }}
                 className="text-xs"
               >
                 Previous
@@ -179,7 +252,10 @@ export const CourseCataloguePage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 disabled={page >= data.total_pages}
-                onClick={() => setPage((p) => p + 1)}
+                onClick={() => {
+                  setPage((p) => p + 1)
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }}
                 className="text-xs"
               >
                 Next

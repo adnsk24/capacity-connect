@@ -172,14 +172,14 @@ export const Navbar: React.FC = () => {
 
           {/* Right Header Actions: Compact Search + Sign In / Register Buttons */}
           <div className="flex items-center gap-2.5 shrink-0">
-            {/* Header Search Box (Visible on large screens) */}
-            <form onSubmit={handleSearchSubmit} className="hidden 2xl:flex relative items-center">
+            {/* Header Search Box (Visible on desktop screens, matching reference screenshot) */}
+            <form onSubmit={handleSearchSubmit} className="hidden lg:flex relative items-center">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search courses..."
-                className="w-36 2xl:w-44 h-9 pl-3.5 pr-8 text-xs rounded-full border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B3D91] focus:ring-1 focus:ring-[#0B3D91] transition-all"
+                placeholder="Search here..."
+                className="w-36 xl:w-44 h-9 pl-3.5 pr-8 text-xs rounded-full border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B3D91] focus:ring-1 focus:ring-[#0B3D91] transition-all"
               />
               <button
                 type="submit"

@@ -10,6 +10,7 @@ class CourseCategoryResponse(BaseModel):
     code: str
     description: Optional[str] = None
     parent_id: Optional[uuid.UUID] = None
+    course_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -98,6 +99,10 @@ class CourseCardResponse(BaseModel):
     is_enrolled: bool = False
     enrollment_status: Optional[str] = None
     progress_percentage: Optional[float] = None
+    module_names: List[str] = []
+    assessment_types: List[str] = []
+    passing_marks: Optional[str] = "60% Pass Mark"
+    enrollment_count: int = 0
 
     model_config = ConfigDict(from_attributes=True)
 

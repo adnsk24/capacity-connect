@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
 from app.models.course import Course, CourseCategory, CourseModule, Lesson, Resource, Enrollment, CourseProgress, LessonCompletion
+from app.models.assessment import Assessment
 from app.models.user import User
 from app.schemas.course import (
     CourseCatalogueResponse,
@@ -23,7 +24,18 @@ class CourseService:
     @staticmethod
     def get_categories(db: Session) -> List[CourseCategoryResponse]:
         categories = db.query(CourseCategory).order_by(CourseCategory.name.asc()).all()
-        return [CourseCategoryResponse.model_validate(c) for c in categories]
+        course_counts = dict(
+            db.query(Course.category_id, func.count(Course.id))
+            .filter(Course.status == "PUBLISHED")
+            .group_by(Course.category_id)
+            .all()
+        )
+        res: List[CourseCategoryResponse] = []
+        for c in categories:
+            cat_dto = CourseCategoryResponse.model_validate(c)
+            cat_dto.course_count = course_counts.get(c.id, 0)
+            res.append(cat_dto)
+        return res
 
     @staticmethod
     def list_courses(
@@ -61,8 +73,10 @@ class CourseService:
                 joinedload(Course.trainer),
                 joinedload(Course.modules).joinedload(CourseModule.lessons),
                 joinedload(Course.course_competencies),
+                joinedload(Course.assessments).joinedload(Assessment.questions),
+                joinedload(Course.enrollments),
             )
-            .order_by(Course.created_at.desc())
+            .order_by(Course.created_at.asc())
             .offset(offset)
             .limit(page_size)
             .all()
@@ -108,6 +122,35 @@ class CourseService:
             enrollment_status = en.status if en else None
             progress_pct = en.progress.completion_percentage if en and en.progress else None
 
+            module_names = [m.title for m in course.modules]
+
+            assessment_labels = []
+            for a in course.assessments:
+                q_count = len(a.questions) if a.questions else 0
+                if "MCQ" in a.title.upper() or a.assessment_type == "MCQ":
+                    assessment_labels.append(f"{q_count} MCQs" if q_count > 1 else "MCQ Exam")
+                elif a.assessment_type == "PRACTICAL":
+                    assessment_labels.append("Practical Lab")
+                elif a.assessment_type == "ASSIGNMENT":
+                    assessment_labels.append("Assignment")
+                elif a.assessment_type == "SCENARIO":
+                    assessment_labels.append("Scenario Test")
+                elif a.assessment_type == "EXAM":
+                    assessment_labels.append("Final Exam")
+                elif a.assessment_type == "QUIZ":
+                    assessment_labels.append("Quiz")
+                else:
+                    assessment_labels.append(a.title or a.assessment_type)
+
+            if not assessment_labels:
+                assessment_labels = ["Operational Assessment"]
+
+            passing_str = "60% Pass Mark"
+            if course.assessments and len(course.assessments) > 0:
+                passing_str = f"{int(course.assessments[0].passing_percentage)}% Pass Mark"
+
+            enrollment_count = len(course.enrollments) if course.enrollments else 0
+
             items.append(
                 CourseCardResponse(
                     id=course.id,
@@ -127,6 +170,10 @@ class CourseService:
                     is_enrolled=is_enrolled,
                     enrollment_status=enrollment_status,
                     progress_percentage=progress_pct,
+                    module_names=module_names,
+                    assessment_types=assessment_labels,
+                    passing_marks=passing_str,
+                    enrollment_count=enrollment_count,
                 )
             )
 
