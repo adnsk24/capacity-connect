@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from app.models.assessment import AssessmentAttempt
     from app.models.feedback import Feedback
     from app.models.competency import UserCompetency
+    from app.models.certificate import Certificate
 
 
 class Role(Base, UUIDPrimaryKeyMixin, TimestampMixin):
@@ -88,6 +89,9 @@ class User(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
     certifications: Mapped[List["Certification"]] = relationship(
         "Certification", back_populates="user", cascade="all, delete-orphan"
+    )
+    issued_certificates: Mapped[List["Certificate"]] = relationship(
+        "Certificate", back_populates="user", cascade="all, delete-orphan"
     )
     enrollments: Mapped[List["Enrollment"]] = relationship(
         "Enrollment", back_populates="user", cascade="all, delete-orphan"

@@ -10,6 +10,7 @@ from app.routers.trainer import router as trainer_router
 from app.routers.notifications import router as notifications_router
 from app.routers.competencies import router as competencies_router
 from app.routers.feedback import router as feedback_router
+from app.routers.resources import router as resources_router
 
 api_v1_router = APIRouter()
 
@@ -37,3 +38,11 @@ api_v1_router.include_router(competencies_router)
 
 # Feedback & Course Evaluation System (MVP Item 8)
 api_v1_router.include_router(feedback_router)
+
+# Course Media & Learning Resources
+from app.routers.certificates import router as certificates_router
+
+api_v1_router.include_router(resources_router)
+
+# Accredited Course Completion Certificates
+api_v1_router.include_router(certificates_router)

@@ -23,6 +23,9 @@ from app.models.user import (
     Certification,
     AuthSession,
 )
+from app.models.certificate import (
+    Certificate,
+)
 
 # Course & Learning Management
 from app.models.course import (
@@ -31,6 +34,7 @@ from app.models.course import (
     CourseModule,
     Lesson,
     Resource,
+    ResourceCompletion,
     Enrollment,
     CourseProgress,
 )
@@ -81,6 +85,7 @@ __all__ = [
     "Skill",
     "UserSkill",
     "Certification",
+    "Certificate",
     "AuthSession",
     # Course & Learning Management (7)
     "CourseCategory",
