@@ -2,6 +2,7 @@ import React from "react"
 import { Outlet } from "react-router-dom"
 import { Navbar } from "./Navbar"
 import { Footer } from "./Footer"
+import { AccessibilityWidget } from "./AccessibilityWidget"
 
 export const AppShell: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ export const AppShell: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
+      <AccessibilityWidget />
     </div>
   )
 }
