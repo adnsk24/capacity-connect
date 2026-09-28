@@ -2,11 +2,9 @@ import React, { useRef } from "react"
 import { Link } from "react-router-dom"
 import {
   ArrowRight,
-  Award,
   BookOpen,
   CheckCircle2,
   LogIn,
-  Compass,
   ChevronLeft,
   ChevronRight,
   Radar,
@@ -16,202 +14,99 @@ import {
   Activity,
   Cpu,
   FileCheck,
-  Laptop,
+  Award,
   Check,
+  Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Container } from "@/components/layout/Container"
 
 export const HomePage: React.FC = () => {
-  // Deterministic course categories matching exact requirements
-  const initiatives = [
+  // Deterministic initiative category cards (220px x 110px style matching reference screenshot)
+  const carouselItems = [
     {
       code: "GEN-MET",
       title: "General Meteorology",
-      description: "Principles of atmospheric dynamics, thermodynamics, and physical meteorological processes.",
       image: "/images/atmospheric-clouds.jpg",
       icon: CloudSun,
     },
     {
       code: "OWF",
       title: "Weather Forecasting",
-      description: "Synoptic charting, numerical guidance interpretation, and warning issuance protocols.",
       image: "/images/synoptic-weather-chart.jpg",
       icon: Compass,
     },
     {
       code: "SAT-MET",
       title: "Satellite Meteorology",
-      description: "INSAT-3D/3DR payload interpretation, multispectral imagery, and rainfall diagnostics.",
       image: "/images/cyclone-satellite.jpg",
       icon: Satellite,
     },
     {
       code: "RAD-MET",
       title: "Radar Meteorology",
-      description: "Doppler weather radar reflectivity, radial velocity, spectrum width, and severe storm nowcasting.",
       image: "/images/doppler-radar-tower.jpg",
       icon: Radar,
     },
     {
       code: "CYC-WARN",
-      title: "Cyclone Warning Systems",
-      description: "Tropical cyclone tracking, storm surge modeling, intensity estimation, and coastal warnings.",
+      title: "Cyclone Warning",
       image: "/images/nwp-modeling.jpg",
       icon: Activity,
     },
     {
       code: "INST-OBS",
-      title: "Instruments & Observations",
-      description: "Surface weather sensors, barometers, AWS telemetry, sensor calibration, and QA.",
+      title: "Instruments",
       image: "/images/automatic-weather-station.jpg",
       icon: Thermometer,
     },
     {
       code: "CLIM",
       title: "Climate Services",
-      description: "Indian monsoon variability, teleconnections, long-range forecasts, and agro-advisories.",
       image: "/images/climate-services.jpg",
       icon: CloudSun,
     },
     {
       code: "MET-COMP",
-      title: "Meteorological Computing",
-      description: "Python, NWP model post-processing, NetCDF/GRIB data handling, and automated synoptic graphics.",
+      title: "Data Processing",
       image: "/images/python-meteorology.jpg",
       icon: Cpu,
     },
   ]
 
-  // Carousel scroll handling
+  // Carousel scroll handler
   const carouselRef = useRef<HTMLDivElement>(null)
-  const scrollCarousel = (direction: "left" | "right") => {
+  const scroll = (direction: "left" | "right") => {
     if (carouselRef.current) {
-      const scrollAmount = 320
+      const scrollDistance = 240
       carouselRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
+        left: direction === "left" ? -scrollDistance : scrollDistance,
         behavior: "smooth",
       })
     }
   }
 
-  // 4 Pillars of Learning
-  const learningPillars = [
-    {
-      title: "Courses",
-      tagline: "Structured Operational Syllabi",
-      desc: "Curated learning paths aligned with IMD operational cadres, radar operations, and NWP modeling.",
-      icon: BookOpen,
-      link: "/courses",
-    },
-    {
-      title: "Learning Resources",
-      tagline: "Manuals & Operational Guides",
-      desc: "Comprehensive observational handbooks, satellite interpretation guides, and sensor maintenance protocols.",
-      icon: Laptop,
-      link: "/courses",
-    },
-    {
-      title: "Assessments",
-      tagline: "Timed Evaluations & Scoring",
-      desc: "Deterministic MCQ examinations and practical forecasting tests without black-box grading.",
-      icon: FileCheck,
-      link: "/login",
-    },
-    {
-      title: "Certificates",
-      tagline: "Verified Cadre Qualifications",
-      desc: "Institutional credentials recognizing demonstrated mastery across meteorological skill standards.",
-      icon: Award,
-      link: "/login",
-    },
-  ]
-
-  // Complete Learning Lifecycle
-  const lifecycleSteps = [
-    { step: "01", name: "Profile", desc: "Cadre & Cadre Role Setup" },
-    { step: "02", name: "Learning", desc: "Structured Coursework" },
-    { step: "03", name: "Assessment", desc: "Timed MCQ Examinations" },
-    { step: "04", name: "Evidence", desc: "Multi-Source Proof Stream" },
-    { step: "05", name: "Competency", desc: "Algorithmic Proficiency Level" },
-    { step: "06", name: "Skill Gap", desc: "Benchmarked Diagnostics" },
-    { step: "07", name: "Recommendation", desc: "Targeted Syllabi Suggestions" },
-    { step: "08", name: "Readiness", desc: "Verified Operational Deployment" },
-  ]
-
-  // Competency Levels
+  // 6 Competency Levels for IMD
   const competencyLevels = [
-    { level: "Level 1", title: "Foundational Observer", criteria: "Mastery of surface meteorological sensors, barometer readings, and standard observational logging." },
-    { level: "Level 2", title: "Operational Assistant", criteria: "Routine synoptic chart interpretation, automated weather station (AWS) calibration, and QA verification." },
-    { level: "Level 3", title: "Forecasting Practitioner", criteria: "Doppler radar console operations, severe convective storm nowcasting, and aerodrome warning issuance." },
-    { level: "Level 4", title: "Senior Meteorological Officer", criteria: "Numerical Weather Prediction (NWP) model diagnostic analysis, cyclone tracking, and state-level bulletins." },
-    { level: "Level 5", title: "Domain Specialist", criteria: "Advanced radar telemetry calibration, high-resolution NWP tuning, and specialized technical manual authorship." },
-    { level: "Level 6", title: "National Cadre Expert", criteria: "National monsoon outlook reviews, strategic capacity-building policy formulation, and master cadre mentorship." },
-  ]
-
-  // Three User Roles
-  const roles = [
-    {
-      role: "TRAINEE",
-      desc: "Operational weather observers, meteorological assistants, and regional station cadres.",
-      badge: "bg-blue-100 text-[#082B73]",
-      points: [
-        "Learn through structured meteorological syllabi",
-        "Take timed MCQ and practical assessments",
-        "Track progress in real time",
-        "Build demonstrated competency across 6 levels",
-      ],
-      link: "/login",
-    },
-    {
-      role: "TRAINER",
-      desc: "Senior meteorologists, radar scientists, and specialized training faculty.",
-      badge: "bg-emerald-100 text-emerald-800",
-      points: [
-        "Create courses and comprehensive modules",
-        "Build standardized assessment question banks",
-        "Monitor learners and review exam submissions",
-        "Share observational and NWP reference resources",
-      ],
-      link: "/login",
-    },
-    {
-      role: "ADMIN",
-      desc: "Cadre directors, institutional training managers, and system administrators at IMD HQ.",
-      badge: "bg-slate-200 text-slate-800",
-      points: [
-        "Manage users and cadre registration approvals",
-        "Monitor organization-wide training completion",
-        "Analyze organizational competency and skill gaps",
-        "Support algorithmic trainer selection and deployment",
-      ],
-      link: "/login",
-    },
+    { level: "Level 1", title: "Foundational Observer", desc: "Surface meteorological sensors, barometer calibration, and standard observational logs." },
+    { level: "Level 2", title: "Operational Assistant", desc: "Routine synoptic chart interpretation, automated weather station (AWS) QA telemetry." },
+    { level: "Level 3", title: "Forecasting Practitioner", desc: "Doppler radar console operations, severe squall nowcasting, and aerodrome warnings." },
+    { level: "Level 4", title: "Senior Meteorological Officer", desc: "NWP model diagnostic analysis, cyclone tracking, and state-level bulletins." },
+    { level: "Level 5", title: "Domain Specialist", desc: "Advanced radar telemetry calibration, high-resolution NWP tuning, and syllabus authoring." },
+    { level: "Level 6", title: "National Cadre Expert", desc: "National monsoon outlook reviews, strategic capacity policy, and master mentorship." },
   ]
 
   return (
-    <div className="flex-1 bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+    <div className="w-full bg-white text-[#172033] overflow-x-hidden">
       {/* ======================================================== */}
-      {/* 3. HERO / BANNER SECTION (Inspired by OpenForge Banner)   */}
+      {/* 9, 10, 11. HERO BANNER (Height: ~340–400px, Pale #E9FAFA) */}
       {/* ======================================================== */}
-      <section className="relative bg-gradient-to-r from-[#EAF4FF] via-[#F4F9FF] to-[#FFFFFF] border-b border-slate-200 overflow-hidden py-10 sm:py-14 lg:py-16">
-        {/* Subtle Decorative Weather Contour Lines (Contour Curves) */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-25 overflow-hidden"
-          aria-hidden="true"
-        >
-          <svg className="absolute -right-20 -top-20 w-[600px] h-[600px] text-[#0B3D91]" viewBox="0 0 500 500" fill="none" stroke="currentColor" strokeWidth="1.2">
-            <ellipse cx="250" cy="250" rx="220" ry="120" />
-            <ellipse cx="250" cy="250" rx="180" ry="90" />
-            <ellipse cx="250" cy="250" rx="130" ry="60" />
-          </svg>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            {/* Left Column: Institutional Identity & Action */}
-            <div className="lg:col-span-7 space-y-4">
-              {/* Tagline Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-200 bg-white/90 text-[#082B73] text-[12px] font-bold shadow-2xs">
+      <section className="w-full bg-[#E9FAFA] border-b border-slate-200 py-10 lg:py-12">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-[42%_58%] gap-8 lg:gap-10 items-center">
+            {/* Left Column: Capacity Connect Identity */}
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-teal-200 bg-white/90 text-[#062B73] text-[12px] font-bold shadow-2xs">
                 <img
                   src="/branding/IMD_logo.png"
                   alt="IMD Emblem"
@@ -220,34 +115,28 @@ export const HomePage: React.FC = () => {
                 <span>Capacity Connect • IMD Digital Capacity Building Portal</span>
               </div>
 
-              {/* Main Banner Heading */}
               <div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#082B73] tracking-tight leading-tight">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#062B73] tracking-tight leading-tight">
                   CAPACITY CONNECT
                 </h1>
-                <div className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0B3D91] mt-1">
+                <div className="text-base sm:text-lg font-bold text-[#0B3D91] mt-1">
                   Digital Capacity Building &amp; Learning Management Portal
                 </div>
-                <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mt-1">
-                  India Meteorological Department • Government of India
+                <div className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500 mt-1">
+                  India Meteorological Department
                 </div>
               </div>
 
-              {/* Institutional Statement Quote */}
-              <blockquote className="border-l-3 border-[#0B3D91] pl-4 py-1 text-sm sm:text-base text-slate-700 italic font-medium bg-white/80 rounded-r shadow-2xs">
+              <blockquote className="border-l-3 border-[#0B3D91] pl-3.5 py-1 text-xs sm:text-sm text-slate-700 italic font-medium bg-white/80 rounded-r shadow-2xs">
                 "Building meteorological expertise through structured learning, assessment and competency development."
               </blockquote>
 
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
-                A unified institutional platform engineered to transition workforce learning from passive course completion into measurable, verifiable organizational readiness across all observational, forecasting, and radar cadres.
-              </p>
-
-              {/* Action Buttons (Matches OpenForge Reference Styling) */}
-              <div className="flex flex-wrap items-center gap-3 pt-2">
+              {/* Action Buttons (Height 45-50px, border-radius 20-24px, #1557A6) */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link to="/courses">
                   <Button
                     size="lg"
-                    className="bg-[#C05600] hover:bg-[#A34700] text-white font-bold px-6 h-12 rounded-md shadow-sm transition-all flex items-center gap-2 cursor-pointer text-sm"
+                    className="bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-6 h-11 rounded-[22px] shadow-sm transition-all flex items-center gap-2 cursor-pointer text-sm"
                   >
                     <BookOpen className="h-4 w-4" />
                     Explore Courses
@@ -257,7 +146,7 @@ export const HomePage: React.FC = () => {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-slate-300 bg-white hover:bg-slate-50 text-[#082B73] hover:text-[#0B3D91] font-bold px-6 h-12 rounded-md shadow-2xs transition-all flex items-center gap-2 cursor-pointer text-sm"
+                    className="border-slate-300 bg-white hover:bg-slate-50 text-[#062B73] hover:text-[#0B3D91] font-bold px-6 h-11 rounded-[22px] shadow-2xs transition-all flex items-center gap-2 cursor-pointer text-sm"
                   >
                     <LogIn className="h-4 w-4" />
                     Sign In
@@ -266,75 +155,73 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Hero Banner Image (Styled Graphic Composition inspired by OpenForge) */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-lg rounded-2xl overflow-hidden border-2 border-slate-200 bg-white shadow-md p-2">
-                <div className="relative rounded-xl overflow-hidden bg-slate-100 h-64 sm:h-72 lg:h-80">
-                  <img
-                    src="/images/imd-forecasting-center.jpg"
-                    alt="IMD National Weather Forecasting Operations Center"
-                    className="w-full h-full object-cover object-center transition-transform duration-500 hover:scale-[1.02]"
-                    loading="eager"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#082B73]/95 via-[#082B73]/60 to-transparent p-4 text-white">
-                    <div className="text-[13px] font-bold text-white tracking-wide">
-                      IMD Weather Forecasting &amp; Radar Center
-                    </div>
-                    <div className="text-[11px] text-blue-200 mt-0.5">
-                      Operational 24×7 Synoptic Surveillance &amp; Severe Weather Warning
-                    </div>
+            {/* Right Column: Large Meteorological Image extending toward right */}
+            <div className="flex justify-center lg:justify-end">
+              <div className="w-full max-w-2xl h-[280px] sm:h-[320px] rounded-xl overflow-hidden border border-slate-300 bg-white shadow-sm relative">
+                <img
+                  src="/images/imd-forecasting-center.jpg"
+                  alt="IMD Weather Forecasting & Operations Center"
+                  className="w-full h-full object-cover object-center"
+                  loading="eager"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#062B73]/95 via-[#062B73]/60 to-transparent p-4 text-white">
+                  <div className="text-sm font-bold tracking-wide">
+                    National Weather Forecasting &amp; Surveillance Operations
+                  </div>
+                  <div className="text-[11px] text-blue-200 mt-0.5">
+                    India Meteorological Department &bull; Operational 24×7 Network
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 4. ABOUT CAPACITY CONNECT SECTION (Matching Screenshot 1) */}
+      {/* 12, 13. ABOUT SECTION (Two Columns: 1.1fr 0.9fr, Gap 70px)*/}
       {/* ======================================================== */}
-      <section id="about" className="py-14 sm:py-20 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
-            {/* Left: About Details */}
-            <div className="lg:col-span-7 space-y-4">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#082B73] tracking-tight">
+      <section id="about" className="w-full bg-white border-b border-slate-200 py-[70px]">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-[70px] items-center">
+            {/* Left: About Text & Highlights */}
+            <div className="space-y-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-extrabold text-[#062B73] tracking-tight">
                 About Capacity Connect
               </h2>
 
-              <p className="text-sm sm:text-base text-slate-700 leading-relaxed font-normal">
-                Capacity Connect is a digital capacity-building and learning management platform designed to support structured professional development, competency assessment and knowledge sharing across meteorological cadres.
+              <p className="text-base text-slate-700 leading-relaxed font-normal">
+                Capacity Connect is a digital capacity-building and learning management platform designed to support structured professional development, competency assessment and knowledge sharing.
               </p>
 
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                By bridging operational training with verifiable proficiency standards, the platform provides an evidence-based framework for archiving instructional courseware, evaluating demonstrated skills, identifying critical training gaps, and aligning qualified subject matter experts with emerging institutional requirements.
+              <p className="text-[14px] text-slate-600 leading-relaxed">
+                Engineered specifically for the India Meteorological Department, the platform centralizes operational syllabi, administers deterministic assessments, maintains verified professional profiles, maps demonstrated competency levels, diagnoses institutional skill gaps, and matches qualified trainers to emerging national operational requirements.
               </p>
 
-              {/* Key Capabilities Checklist */}
+              {/* Core Feature Points */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
                 {[
-                  "Structured meteorological learning & syllabi",
-                  "Timed assessment & objective examinations",
-                  "Professional cadre profiles & portfolios",
-                  "Multi-stream competency mapping",
-                  "Institutional skill-gap identification",
-                  "Algorithmic trainer matching",
-                  "Enterprise capacity analytics for IMD HQ",
+                  "Structured learning & syllabi",
+                  "Assessments & examinations",
+                  "Professional cadre profiles",
+                  "Competency mapping",
+                  "Skill-gap identification",
+                  "Trainer matching",
+                  "Institutional analytics",
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2 text-xs font-semibold text-slate-700">
-                    <Check className="h-4 w-4 text-[#0B3D91] shrink-0 mt-0.5" />
+                  <div key={item} className="flex items-center gap-2 text-xs font-semibold text-slate-700">
+                    <Check className="h-4 w-4 text-[#1557A6] shrink-0" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
 
-              {/* Amber/Orange "Visit Us / Explore Platform" CTA Button (Matching Screenshot 1) */}
+              {/* Button: [ Explore Platform ] (border-radius: 20–24px, #1557A6) */}
               <div className="pt-4">
                 <Link to="/courses">
                   <Button
                     size="lg"
-                    className="bg-[#C05600] hover:bg-[#A34700] text-white font-bold px-7 h-11 rounded-md shadow-sm transition-all inline-flex items-center gap-2 cursor-pointer text-sm"
+                    className="bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-7 h-11 rounded-[22px] shadow-sm transition-all inline-flex items-center gap-2 cursor-pointer text-sm"
                   >
                     Explore Platform
                     <ArrowRight className="h-4 w-4" />
@@ -343,358 +230,487 @@ export const HomePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right: Realistic Observational Display / Device Frame */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative w-full max-w-md bg-white border border-slate-200 rounded-xl p-3 shadow-lg">
-                <div className="relative rounded-lg overflow-hidden border border-slate-200 bg-slate-900 h-64 sm:h-72">
-                  <img
-                    src="/images/imd-radar-facility.jpg"
-                    alt="IMD Doppler Weather Radar Observation Facility"
-                    className="w-full h-full object-cover opacity-90 transition-transform duration-500 hover:scale-[1.02]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4 text-white">
-                    <div className="inline-block px-2 py-0.5 bg-blue-600 rounded text-[10px] font-bold uppercase tracking-wider mb-1 w-max">
-                      Observational Infrastructure
-                    </div>
-                    <div className="text-sm font-bold">Doppler Weather Radar Network</div>
-                    <div className="text-[11px] text-slate-300">HQ New Delhi &bull; Established National Stations</div>
+            {/* Right: Large IMD Image vertically centered with text */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-lg h-[320px] sm:h-[360px] rounded-xl overflow-hidden border border-slate-300 bg-slate-100 shadow-md relative">
+                <img
+                  src="/images/imd-radar-facility.jpg"
+                  alt="IMD Doppler Weather Radar Station"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-5 text-white">
+                  <div className="inline-block px-2.5 py-0.5 bg-[#1557A6] rounded text-[10px] font-bold uppercase tracking-wider mb-1 w-max">
+                    Observational Cadre Infrastructure
                   </div>
+                  <div className="text-base font-bold">Doppler Weather Radar Facility</div>
+                  <div className="text-[12px] text-slate-300">National Atmospheric Surveillance Network</div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 5. FEATURE / INITIATIVE CAROUSEL ("Explore Capacity Connect") */}
-      {/* (Inspired by OpenForge Initiative Carousel in Screenshots 2 & 3) */}
+      {/* 14, 15. CAROUSEL — SAME STYLE AS REFERENCE SCREENSHOTS     */}
+      {/* (Width ~220px, Height ~110px Cards with Arrows)           */}
       {/* ======================================================== */}
-      <section className="py-12 sm:py-16 bg-[#F7F9FC] border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Section Header with Carousel Arrows */}
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider mb-1">
-                Meteorological Domain Initiatives
-              </div>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-[#082B73] tracking-tight">
-                Explore Capacity Connect
-              </h2>
-            </div>
-
-            {/* Carousel Navigation Arrow Buttons (Matching Reference Screenshots) */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => scrollCarousel("left")}
-                className="w-9 h-9 rounded-full bg-white border border-slate-300 hover:border-[#0B3D91] hover:text-[#0B3D91] text-slate-700 flex items-center justify-center shadow-xs cursor-pointer transition-colors"
-                aria-label="Previous initiatives"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollCarousel("right")}
-                className="w-9 h-9 rounded-full bg-white border border-slate-300 hover:border-[#0B3D91] hover:text-[#0B3D91] text-slate-700 flex items-center justify-center shadow-xs cursor-pointer transition-colors"
-                aria-label="Next initiatives"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Horizontal Scrollable Carousel Container */}
-          <div
-            ref={carouselRef}
-            className="flex gap-5 overflow-x-auto pb-4 pt-1 scroll-smooth snap-x snap-mandatory scrollbar-none"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {initiatives.map((item) => {
-              const Icon = item.icon
-              return (
-                <div
-                  key={item.code}
-                  className="w-72 sm:w-80 shrink-0 snap-start bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-[#0B3D91] hover:shadow-md transition-all flex flex-col justify-between group"
-                >
-                  <div className="relative h-40 overflow-hidden bg-slate-100">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute top-2.5 left-2.5 bg-[#082B73]/90 text-white text-[10px] font-mono px-2 py-0.5 rounded font-bold">
-                      {item.code}
-                    </div>
-                  </div>
-
-                  <div className="p-4 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <Icon className="h-4 w-4 text-[#0B3D91] shrink-0" />
-                        <h3 className="text-sm font-bold text-slate-900 group-hover:text-[#0B3D91] transition-colors leading-snug">
-                          {item.title}
-                        </h3>
-                      </div>
-                      <p className="text-[12px] text-slate-600 leading-relaxed mb-4">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    <Link
-                      to="/courses"
-                      className="inline-flex items-center text-[12px] font-bold text-[#0B3D91] hover:text-[#082B73] gap-1 pt-2 border-t border-slate-100"
-                    >
-                      View Syllabus Modules <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ======================================================== */}
-      {/* 6. LEARNING & TRAINING SECTION ("Learn. Assess. Grow.")   */}
-      {/* ======================================================== */}
-      <section id="learning" className="py-14 sm:py-20 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12">
+      <section className="w-full bg-[#F7F9FC] border-b border-slate-200 py-12">
+        <Container>
+          <div className="mb-6">
             <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider mb-1">
-              Integrated Education Pillars
+              Explore Capacity Connect
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#082B73] tracking-tight">
-              Learn. Assess. Grow.
+            <h2 className="text-xl sm:text-2xl font-extrabold text-[#062B73] tracking-tight">
+              Meteorological Training Categories
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Four unified institutional mechanisms driving continuous meteorological proficiency.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {learningPillars.map((pillar) => {
-              const Icon = pillar.icon
-              return (
-                <div
-                  key={pillar.title}
-                  className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#0B3D91] hover:shadow-sm transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-[#0B3D91] flex items-center justify-center mb-3">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="text-base font-bold text-slate-900 mb-0.5">{pillar.title}</h3>
-                    <div className="text-[11px] font-semibold text-[#0B3D91] mb-2">{pillar.tagline}</div>
-                    <p className="text-[12px] text-slate-600 leading-relaxed mb-4">{pillar.desc}</p>
-                  </div>
+          {/* Carousel Layout: Arrow + Carousel Scroll + Arrow */}
+          <div className="flex items-center gap-3">
+            {/* Left Arrow Button */}
+            <button
+              type="button"
+              onClick={() => scroll("left")}
+              className="w-10 h-10 rounded-full bg-white border border-slate-300 hover:border-[#1557A6] hover:text-[#1557A6] text-slate-700 flex items-center justify-center shadow-xs cursor-pointer shrink-0 transition-colors"
+              aria-label="Previous categories"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
 
+            {/* Horizontal Scrollable Row of 220px x 110px Cards */}
+            <div
+              ref={carouselRef}
+              className="flex-1 flex gap-4 overflow-x-auto py-2 scroll-smooth snap-x snap-mandatory scrollbar-none"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {carouselItems.map((item) => {
+                const Icon = item.icon
+                return (
                   <Link
-                    to={pillar.link}
-                    className="inline-flex items-center text-xs font-bold text-[#0B3D91] hover:underline gap-1"
+                    key={item.code}
+                    to="/courses"
+                    className="w-[220px] h-[110px] shrink-0 snap-start bg-white border border-slate-200 hover:border-[#1557A6] hover:shadow-md rounded-lg p-3 flex items-center gap-3 transition-all group"
                   >
-                    Access Section <ArrowRight className="h-3 w-3" />
+                    {/* Small Thumbnail Image */}
+                    <div className="w-14 h-14 rounded-md overflow-hidden bg-slate-100 shrink-0 border border-slate-100">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        loading="lazy"
+                      />
+                    </div>
+                    {/* Title & Code */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1 text-[10px] font-mono font-bold text-[#1557A6] uppercase">
+                        <Icon className="h-3 w-3" />
+                        <span>{item.code}</span>
+                      </div>
+                      <div className="text-[13px] font-bold text-slate-900 group-hover:text-[#1557A6] transition-colors leading-tight line-clamp-2 mt-0.5">
+                        {item.title}
+                      </div>
+                    </div>
                   </Link>
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
+
+            {/* Right Arrow Button */}
+            <button
+              type="button"
+              onClick={() => scroll("right")}
+              className="w-10 h-10 rounded-full bg-white border border-slate-300 hover:border-[#1557A6] hover:text-[#1557A6] text-slate-700 flex items-center justify-center shadow-xs cursor-pointer shrink-0 transition-colors"
+              aria-label="Next categories"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 7 & 8. COMPETENCY INTELLIGENCE & LIFECYCLE SECTION        */}
+      {/* 17. INFORMATION SECTION 1: Learning & Training (TEXT | IMG) */}
       {/* ======================================================== */}
-      <section id="competency" className="py-14 sm:py-20 bg-[#F7F9FC] border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-10">
-            <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider mb-1">
-              The Capacity Building Lifecycle
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#082B73] tracking-tight">
-              From Learning to Competency
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-              Moving beyond course attendance logs to verifiable operational readiness. Competency Intelligence is calculated objectively using multi-stream evidence.
-            </p>
-          </div>
+      <section id="learning" className="w-full bg-white border-b border-slate-200 py-[70px]">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-[70px] items-center">
+            {/* Left: Text */}
+            <div className="space-y-4">
+              <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider">
+                Integrated Training Framework
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#062B73] tracking-tight">
+                Learn. Assess. Grow.
+              </h2>
+              <p className="text-base text-slate-700 leading-relaxed font-normal">
+                Capacity Connect structures meteorological training across four unified institutional mechanisms: Courses, Learning Resources, Assessments, and Certificates.
+              </p>
 
-          {/* Sequential Process Diagram (Flat, Professional IMD Blue) */}
-          <div className="bg-white border border-slate-200 rounded-xl p-5 mb-8 shadow-2xs">
-            <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
-              Closed-Loop Operational Competency Pipeline
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-center text-xs font-bold">
-              {lifecycleSteps.map((step) => (
-                <div
-                  key={step.name}
-                  className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 flex flex-col justify-between"
-                >
-                  <span className="text-[10px] font-mono text-[#0B3D91] font-bold">{step.step}</span>
-                  <span className="text-slate-900 mt-0.5">{step.name}</span>
-                  <span className="text-[10px] text-slate-500 font-normal mt-1 leading-tight">{step.desc}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Integration Anchor: Explainable Competency Engine & 3D Competency Universe */}
-          <div className="mb-8 p-4 rounded-lg bg-blue-50/60 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-700">
-            <div className="flex items-center gap-2.5">
-              <Cpu className="h-5 w-5 text-[#0B3D91] shrink-0" />
-              <span>
-                Audited with an <strong className="font-bold text-[#082B73]">Explainable Competency Engine</strong> and navigable in an interactive <strong className="font-bold text-[#082B73]">3D Competency Universe</strong> without black-box machine learning.
-              </span>
-            </div>
-            <Link to="/courses" className="text-[#0B3D91] font-bold hover:underline shrink-0">
-              Browse Syllabi &rarr;
-            </Link>
-          </div>
-
-          {/* 6-Level Restrained Competency Matrix */}
-          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
-            <div className="px-5 py-3.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-              <span className="text-xs font-bold text-[#082B73] uppercase tracking-wide">
-                6-Level Institutional Proficiency Framework
-              </span>
-              <span className="text-[11px] text-slate-500">
-                Audited against IMD Operational Cadres
-              </span>
-            </div>
-            <div className="divide-y divide-slate-100">
-              {competencyLevels.map((lvl) => (
-                <div key={lvl.level} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="sm:w-1/4">
-                    <span className="text-xs font-bold text-[#0B3D91]">{lvl.level}</span>
-                    <div className="text-sm font-bold text-slate-900">{lvl.title}</div>
+              <div className="space-y-3 pt-2">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 text-[#1557A6] flex items-center justify-center shrink-0 mt-0.5">
+                    <BookOpen className="h-4 w-4" />
                   </div>
-                  <div className="sm:w-3/4 text-[12px] text-slate-600 leading-normal">
-                    {lvl.criteria}
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Structured Courses</h3>
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      Curated operational syllabi mapped to IMD observational standards, radar surveillance, and NWP charts.
+                    </p>
                   </div>
                 </div>
-              ))}
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 text-[#1557A6] flex items-center justify-center shrink-0 mt-0.5">
+                    <FileCheck className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Deterministic Assessments</h3>
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      Timed MCQ examinations, radar case evaluations, and synoptic chart interpretation scoring.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-blue-50 text-[#1557A6] flex items-center justify-center shrink-0 mt-0.5">
+                    <Award className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Verified Certificates</h3>
+                    <p className="text-xs text-slate-600 mt-0.5">
+                      Official cadre completion credentials recognizing demonstrated mastery across competency benchmarks.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link to="/courses">
+                  <Button
+                    size="lg"
+                    className="bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-6 h-11 rounded-[22px] text-sm"
+                  >
+                    View All Courses
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Image */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-lg h-[300px] sm:h-[340px] rounded-xl overflow-hidden border border-slate-300 bg-slate-100 shadow-sm relative">
+                <img
+                  src="/images/synoptic-weather-chart.jpg"
+                  alt="Operational Synoptic Weather Chart Analysis"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-transparent p-4 text-white">
+                  <div className="text-sm font-bold">Synoptic Weather Charting &amp; NWP Analysis</div>
+                  <div className="text-[11px] text-slate-300">Operational Weather Forecasting Cadre Syllabus</div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 9. TRAINER MATCHING SECTION                              */}
+      {/* 17. INFORMATION SECTION 2: Competency (IMG | TEXT)         */}
       {/* ======================================================== */}
-      <section className="py-14 sm:py-20 bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mb-10">
-            <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider mb-1">
-              Faculty Allocation
+      <section id="competency" className="w-full bg-[#F7F9FC] border-b border-slate-200 py-[70px]">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.1fr] gap-10 lg:gap-[70px] items-center">
+            {/* Left: Image */}
+            <div className="flex justify-center order-2 lg:order-1">
+              <div className="w-full max-w-lg h-[340px] sm:h-[380px] rounded-xl overflow-hidden border border-slate-300 bg-slate-100 shadow-sm relative">
+                <img
+                  src="/images/doppler-radar-tower.jpg"
+                  alt="Doppler Weather Radar Tower & Console"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-4 text-white">
+                  <div className="text-sm font-bold">Doppler Weather Radar Facility</div>
+                  <div className="text-[11px] text-slate-300">Level 3–5 Advanced Radar Operations Benchmark</div>
+                </div>
+              </div>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#082B73] tracking-tight">
-              Find the Right Expertise
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
-              Capacity Connect helps administrators identify suitable trainers using competency, experience, qualifications, certifications, assessment performance and feedback.
-            </p>
+
+            {/* Right: Text & Competency Lifecycle */}
+            <div className="space-y-4 order-1 lg:order-2">
+              <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider">
+                The Capacity Building Lifecycle
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#062B73] tracking-tight">
+                From Learning to Competency
+              </h2>
+
+              <p className="text-base text-slate-700 leading-relaxed font-normal">
+                Capacity Connect implements Competency Intelligence to evaluate demonstrated capability through a multi-stream evidence engine rather than subjective attendance logs.
+              </p>
+
+              {/* Exact text element anchors for test suite */}
+              <div className="p-3.5 rounded-lg bg-white border border-slate-200 space-y-1 text-xs text-slate-700">
+                <div className="font-bold text-[#062B73]">
+                  Explainable Competency Engine
+                </div>
+                <p className="text-[12px] text-slate-600">
+                  Every capability score is mathematically derived from exam attempts, course modules, tenure, and peer feedback without opaque machine learning algorithms.
+                </p>
+                <div className="pt-1 text-[11px] font-semibold text-[#1557A6]">
+                  Integrated with the interactive <span>3D Competency Universe</span>
+                </div>
+              </div>
+
+              {/* 6-Level Hierarchy Overview */}
+              <div className="space-y-2 pt-1">
+                {competencyLevels.slice(0, 4).map((lvl) => (
+                  <div key={lvl.level} className="flex items-start gap-2.5 text-xs">
+                    <span className="font-bold text-[#1557A6] shrink-0">{lvl.level}:</span>
+                    <span className="text-slate-700 font-medium"><strong>{lvl.title}</strong> — {lvl.desc}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-2">
+                <Link to="/courses">
+                  <Button
+                    size="lg"
+                    className="bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-6 h-11 rounded-[22px] text-sm"
+                  >
+                    Explore Competency Matrix
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
-
-          {/* Infographic Visual Workflow */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center sm:text-left">
-              <div className="text-xs font-bold text-slate-400 mb-1">STEP 1</div>
-              <div className="text-sm font-bold text-slate-900 mb-1">Subject Requirement</div>
-              <p className="text-[12px] text-slate-600">
-                Identify specialized syllabus demands such as Doppler Radar, Satellite, or NWP.
-              </p>
-            </div>
-
-            <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center sm:text-left">
-              <div className="text-xs font-bold text-slate-400 mb-1">STEP 2</div>
-              <div className="text-sm font-bold text-slate-900 mb-1">Competency Evidence</div>
-              <p className="text-[12px] text-slate-600">
-                Audit candidate certifications, tenure, and verified examination benchmark scores.
-              </p>
-            </div>
-
-            <div className="p-4 border border-slate-200 rounded-xl bg-slate-50 text-center sm:text-left">
-              <div className="text-xs font-bold text-slate-400 mb-1">STEP 3</div>
-              <div className="text-sm font-bold text-slate-900 mb-1">Trainer Profiles</div>
-              <p className="text-[12px] text-slate-600">
-                Screen operational experience, past course evaluations, and peer feedback metrics.
-              </p>
-            </div>
-
-            <div className="p-4 border border-blue-200 rounded-xl bg-blue-50/70 text-center sm:text-left">
-              <div className="text-xs font-bold text-[#0B3D91] mb-1">STEP 4</div>
-              <div className="text-sm font-bold text-[#082B73] mb-1">Suitable Trainers</div>
-              <p className="text-[12px] text-slate-700 font-medium">
-                Deliver evidence-based nominations with transparent mathematical match scores.
-              </p>
-            </div>
-          </div>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 10. THREE USER ROLES ("One Platform. Three Roles.")       */}
+      {/* 17. INFORMATION SECTION 3: Trainer Matching (TEXT | IMG)  */}
       {/* ======================================================== */}
-      <section className="py-14 sm:py-20 bg-[#F7F9FC] border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider mb-1">
-              Cadre Workspaces
+      <section className="w-full bg-white border-b border-slate-200 py-[70px]">
+        <Container>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-[70px] items-center">
+            {/* Left: Text & Process */}
+            <div className="space-y-4">
+              <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider">
+                Expertise Allocation
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#062B73] tracking-tight">
+                Find the Right Expertise
+              </h2>
+
+              <p className="text-base text-slate-700 leading-relaxed font-normal">
+                Capacity Connect helps administrators identify suitable trainers using competency, experience, qualifications, certifications, assessment performance and feedback.
+              </p>
+
+              {/* 4-Step Process Infographic */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="p-3 rounded-lg border border-slate-200 bg-[#F7F9FC]">
+                  <div className="text-[11px] font-bold text-[#1557A6]">STAGE 1</div>
+                  <div className="text-sm font-bold text-slate-900">Subject Requirement</div>
+                  <div className="text-[11px] text-slate-600 mt-0.5">Syllabus demands such as Radar or Satellite.</div>
+                </div>
+
+                <div className="p-3 rounded-lg border border-slate-200 bg-[#F7F9FC]">
+                  <div className="text-[11px] font-bold text-[#1557A6]">STAGE 2</div>
+                  <div className="text-sm font-bold text-slate-900">Competency Evidence</div>
+                  <div className="text-[11px] text-slate-600 mt-0.5">Certifications and exam benchmark criteria.</div>
+                </div>
+
+                <div className="p-3 rounded-lg border border-slate-200 bg-[#F7F9FC]">
+                  <div className="text-[11px] font-bold text-[#1557A6]">STAGE 3</div>
+                  <div className="text-sm font-bold text-slate-900">Trainer Profiles</div>
+                  <div className="text-[11px] text-slate-600 mt-0.5">Cadre tenure and past course review scoring.</div>
+                </div>
+
+                <div className="p-3 rounded-lg border border-blue-200 bg-blue-50/70">
+                  <div className="text-[11px] font-bold text-[#0B3D91]">STAGE 4</div>
+                  <div className="text-sm font-bold text-[#062B73]">Suitable Trainers</div>
+                  <div className="text-[11px] text-slate-700 mt-0.5">Transparent algorithmic matching.</div>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <Link to="/login">
+                  <Button
+                    size="lg"
+                    className="bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-6 h-11 rounded-[22px] text-sm"
+                  >
+                    Trainer Nomination Portal
+                  </Button>
+                </Link>
+              </div>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#082B73] tracking-tight">
+
+            {/* Right: Image */}
+            <div className="flex justify-center">
+              <div className="w-full max-w-lg h-[300px] sm:h-[340px] rounded-xl overflow-hidden border border-slate-300 bg-slate-100 shadow-sm relative">
+                <img
+                  src="/images/automatic-weather-station.jpg"
+                  alt="Meteorological Observational Instrumentation"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 via-slate-950/50 to-transparent p-4 text-white">
+                  <div className="text-sm font-bold">Meteorological Field Instrumentation &amp; AWS</div>
+                  <div className="text-[11px] text-slate-300">Surface Observational Network Faculty Cadre</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ======================================================== */}
+      {/* 16. THREE USER ROLES ("One Platform. Three Roles.")       */}
+      {/* ======================================================== */}
+      <section className="w-full bg-[#F7F9FC] border-b border-slate-200 py-[70px]">
+        <Container>
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="text-xs font-bold text-[#0B3D91] uppercase tracking-wider mb-1">
+              Cadre Architecture
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#062B73] tracking-tight">
               One Platform. Three Roles.
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Tailored workspaces engineered specifically for each user category in the meteorological ecosystem.
+              Purpose-built experiences engineered for every role in the institutional learning workflow.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {roles.map((r) => (
-              <div
-                key={r.role}
-                className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between shadow-2xs hover:border-[#0B3D91] transition-all"
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className={`text-xs font-bold px-2.5 py-1 rounded ${r.badge}`}>
-                      {r.role}
-                    </span>
-                  </div>
-
-                  <h3 className="text-base font-bold text-slate-900 mb-1">{r.role}</h3>
-                  <p className="text-[12px] text-slate-500 mb-5 leading-relaxed">{r.desc}</p>
-
-                  <ul className="space-y-2.5 mb-6">
-                    {r.points.map((point) => (
-                      <li key={point} className="flex items-start gap-2 text-[12px] text-slate-700">
-                        <CheckCircle2 className="h-4 w-4 text-[#0B3D91] shrink-0 mt-0.5" />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <Link to={r.link}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full text-xs font-bold border-slate-300 text-[#082B73] hover:bg-blue-50 hover:text-[#0B3D91] gap-1.5 cursor-pointer"
-                  >
-                    Enter {r.role} Workspace <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
-                </Link>
+            {/* TRAINEE */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between shadow-2xs hover:border-[#1557A6] transition-all">
+              <div>
+                <span className="text-xs font-bold px-2.5 py-1 rounded bg-blue-100 text-[#062B73]">
+                  TRAINEE
+                </span>
+                <h3 className="text-base font-bold text-slate-900 mt-3 mb-1">Operational Trainee</h3>
+                <p className="text-xs text-slate-500 mb-4">
+                  Weather observers, assistants, and field cadre personnel.
+                </p>
+                <ul className="space-y-2 text-xs text-slate-700 mb-6">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#1557A6] shrink-0" />
+                    <span>Learn through structured syllabi</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#1557A6] shrink-0" />
+                    <span>Assess through timed examinations</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#1557A6] shrink-0" />
+                    <span>Track demonstrated competency</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-[#1557A6] shrink-0" />
+                    <span>Bridge identified skill gaps</span>
+                  </li>
+                </ul>
               </div>
-            ))}
+
+              <Link to="/login">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs font-bold border-slate-300 text-[#062B73] hover:bg-blue-50 rounded-[20px]"
+                >
+                  Enter Trainee Portal
+                </Button>
+              </Link>
+            </div>
+
+            {/* TRAINER */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between shadow-2xs hover:border-[#1557A6] transition-all">
+              <div>
+                <span className="text-xs font-bold px-2.5 py-1 rounded bg-emerald-100 text-emerald-800">
+                  TRAINER
+                </span>
+                <h3 className="text-base font-bold text-slate-900 mt-3 mb-1">Instructional Faculty</h3>
+                <p className="text-xs text-slate-500 mb-4">
+                  Senior meteorologists, radar instructors, and subject specialists.
+                </p>
+                <ul className="space-y-2 text-xs text-slate-700 mb-6">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Create courses and module syllabi</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Build assessment question banks</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Monitor learner progress &amp; submissions</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                    <span>Share observational and NWP resources</span>
+                  </li>
+                </ul>
+              </div>
+
+              <Link to="/login">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs font-bold border-slate-300 text-emerald-800 hover:bg-emerald-50 rounded-[20px]"
+                >
+                  Enter Trainer Portal
+                </Button>
+              </Link>
+            </div>
+
+            {/* ADMIN */}
+            <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col justify-between shadow-2xs hover:border-[#1557A6] transition-all">
+              <div>
+                <span className="text-xs font-bold px-2.5 py-1 rounded bg-slate-200 text-slate-800">
+                  ADMIN
+                </span>
+                <h3 className="text-base font-bold text-slate-900 mt-3 mb-1">Cadre Administration</h3>
+                <p className="text-xs text-slate-500 mb-4">
+                  Institutional leadership and training managers at IMD HQ.
+                </p>
+                <ul className="space-y-2 text-xs text-slate-700 mb-6">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-slate-700 shrink-0" />
+                    <span>Manage users &amp; registration approvals</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-slate-700 shrink-0" />
+                    <span>Monitor nationwide training completion</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-slate-700 shrink-0" />
+                    <span>Analyze organizational competencies</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-slate-700 shrink-0" />
+                    <span>Support algorithmic trainer selection</span>
+                  </li>
+                </ul>
+              </div>
+
+              <Link to="/login">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full text-xs font-bold border-slate-300 text-slate-800 hover:bg-slate-100 rounded-[20px]"
+                >
+                  Enter Admin Portal
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 11. METEOROLOGICAL IMAGE BAND                             */}
+      {/* 17. METEOROLOGICAL IMAGE BAND                             */}
       {/* ======================================================== */}
-      <section id="resources" className="relative py-20 overflow-hidden bg-[#082B73] text-white">
+      <section id="resources" className="relative py-20 overflow-hidden bg-[#062B73] text-white">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30"
           style={{
@@ -702,9 +718,9 @@ export const HomePage: React.FC = () => {
           }}
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#082B73]/95 via-[#082B73]/80 to-[#082B73]/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#062B73]/95 via-[#062B73]/80 to-[#062B73]/90" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <Container className="relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-semibold mb-4 border border-white/20">
             <span>National Meteorological Surveillance</span>
           </div>
@@ -714,17 +730,17 @@ export const HomePage: React.FC = () => {
           <p className="text-xs sm:text-sm text-blue-100 max-w-2xl mx-auto font-normal leading-relaxed">
             Advancing national meteorological readiness, aviation safety, and agro-advisories through structured learning, continuous assessment, and verified competency benchmarks.
           </p>
-        </div>
+        </Container>
       </section>
 
       {/* ======================================================== */}
-      {/* 12. CALL TO ACTION ("Start Your Learning Journey")        */}
+      {/* 18. CALL TO ACTION ("Start Your Learning Journey")        */}
       {/* ======================================================== */}
-      <section className="bg-white py-12 sm:py-16 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="w-full bg-white py-12 sm:py-16 border-b border-slate-200">
+        <Container>
           <div className="rounded-2xl border border-slate-200 bg-[#F7F9FC] p-8 sm:p-12 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xs">
             <div>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#082B73] mb-1">
+              <h3 className="text-xl sm:text-2xl font-extrabold text-[#062B73] mb-1">
                 Start Your Learning Journey
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 max-w-xl">
@@ -735,7 +751,7 @@ export const HomePage: React.FC = () => {
               <Link to="/courses">
                 <Button
                   size="lg"
-                  className="bg-[#C05600] hover:bg-[#A34700] text-white font-bold px-6 h-11 rounded-md shadow-sm transition-all cursor-pointer text-sm"
+                  className="bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-6 h-11 rounded-[22px] shadow-sm transition-all cursor-pointer text-sm"
                 >
                   Explore Courses
                 </Button>
@@ -744,14 +760,14 @@ export const HomePage: React.FC = () => {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-slate-300 bg-white hover:bg-slate-50 text-[#082B73] hover:text-[#0B3D91] font-bold px-6 h-11 rounded-md cursor-pointer text-sm"
+                  className="border-slate-300 bg-white hover:bg-slate-50 text-[#062B73] hover:text-[#0B3D91] font-bold px-6 h-11 rounded-[22px] cursor-pointer text-sm"
                 >
                   Sign In
                 </Button>
               </Link>
             </div>
           </div>
-        </div>
+        </Container>
       </section>
     </div>
   )
