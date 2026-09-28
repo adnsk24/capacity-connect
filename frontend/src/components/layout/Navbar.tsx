@@ -116,35 +116,35 @@ export const Navbar: React.FC = () => {
       {/* 2. MAIN NAVIGATION HEADER (White, 90–105px Height)       */}
       {/* ======================================================== */}
       <header className="sticky top-0 z-40 w-full h-[96px] border-b border-slate-200 bg-white shadow-2xs">
-        <Container className="h-full flex items-center justify-between gap-4">
+        <Container className="h-full flex items-center justify-between gap-3 lg:gap-4">
           {/* Brand - Left: Real IMD Logo (height 72px) vertically centered with title */}
-          <Link to="/" className="flex items-center gap-3.5 sm:gap-4 flex-shrink-0 group">
+          <Link to="/" className="flex items-center gap-3 sm:gap-4 flex-shrink-0 group">
             <img
               src="/branding/IMD_logo.png"
               alt="India Meteorological Department Emblem"
-              className="h-[72px] w-auto object-contain flex-shrink-0 drop-shadow-2xs"
+              className="h-[68px] sm:h-[72px] w-auto object-contain flex-shrink-0 drop-shadow-2xs"
               height="72"
             />
-            <div className="flex flex-col justify-center border-l-2 border-slate-200 pl-3.5 sm:pl-4">
-              <span className="text-[17px] sm:text-[18px] font-extrabold text-[#062B73] tracking-tight leading-tight">
+            <div className="flex flex-col justify-center border-l-2 border-slate-200 pl-3 sm:pl-3.5">
+              <span className="text-[16px] sm:text-[18px] font-extrabold text-[#062B73] tracking-tight leading-tight">
                 CAPACITY CONNECT
               </span>
               <span className="text-[12px] sm:text-[13px] font-bold text-[#0B3D91] leading-tight mt-0.5">
                 India Meteorological Department
               </span>
-              <span className="text-[10px] sm:text-[11px] text-slate-500 leading-tight hidden lg:block mt-0.5">
+              <span className="text-[10px] sm:text-[11px] text-slate-500 leading-tight hidden 2xl:block mt-0.5">
                 Digital Capacity Building &amp; Learning Management Portal
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links (Pushed right with margin-left: auto) */}
-          <nav className="hidden xl:flex items-center gap-1 ml-auto">
+          <nav className="hidden xl:flex items-center gap-0.5 2xl:gap-1 ml-auto shrink-0">
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.to}
-                className={`px-3 py-2 text-[15px] font-semibold rounded-md transition-colors ${
+                className={`px-2.5 2xl:px-3 py-1.5 text-[14px] 2xl:text-[15px] font-semibold rounded-md transition-colors ${
                   isActive(link.to)
                     ? "text-[#0B3D91] bg-blue-50/80 font-bold"
                     : "text-[#172033] hover:text-[#0B3D91] hover:bg-slate-50"
@@ -156,7 +156,7 @@ export const Navbar: React.FC = () => {
             {isAuthenticated && user && (
               <Link
                 to={portalLink}
-                className={`flex items-center gap-1.5 px-3 py-2 text-[15px] font-bold rounded-md transition-colors ${
+                className={`flex items-center gap-1.5 px-2.5 2xl:px-3 py-1.5 text-[14px] 2xl:text-[15px] font-bold rounded-md transition-colors ${
                   location.pathname.startsWith("/trainee") ||
                   location.pathname.startsWith("/trainer") ||
                   location.pathname.startsWith("/admin")
@@ -170,16 +170,16 @@ export const Navbar: React.FC = () => {
             )}
           </nav>
 
-          {/* Right Header Actions: Compact Search + Sign In / Register */}
-          <div className="flex items-center gap-3">
-            {/* Header Search Box */}
-            <form onSubmit={handleSearchSubmit} className="hidden md:flex relative items-center">
+          {/* Right Header Actions: Compact Search + Sign In / Register Buttons */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            {/* Header Search Box (Visible on large screens) */}
+            <form onSubmit={handleSearchSubmit} className="hidden 2xl:flex relative items-center">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search courses..."
-                className="w-44 lg:w-52 h-9 pl-3.5 pr-8 text-xs rounded-full border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B3D91] focus:ring-1 focus:ring-[#0B3D91] transition-all"
+                className="w-36 2xl:w-44 h-9 pl-3.5 pr-8 text-xs rounded-full border border-slate-300 bg-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0B3D91] focus:ring-1 focus:ring-[#0B3D91] transition-all"
               />
               <button
                 type="submit"
@@ -191,7 +191,7 @@ export const Navbar: React.FC = () => {
             </form>
 
             {isAuthenticated && user ? (
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2 shrink-0">
                 <div className="flex items-center gap-2 px-2.5 py-1 rounded border border-slate-200 bg-slate-50">
                   <div className="w-6 h-6 rounded-full bg-[#0B3D91] text-white flex items-center justify-center text-[10px] font-bold">
                     {user.first_name?.[0]}{user.last_name?.[0]}
@@ -203,31 +203,34 @@ export const Navbar: React.FC = () => {
                   size="sm"
                   variant="ghost"
                   onClick={() => clearSession()}
-                  className="text-[12px] text-slate-600 hover:text-red-600 hover:bg-red-50 gap-1 font-semibold"
+                  className="text-[12px] text-slate-600 hover:text-red-600 hover:bg-red-50 gap-1 font-semibold cursor-pointer"
                 >
                   <LogOut className="h-3.5 w-3.5" />
                   Sign Out
                 </Button>
               </div>
             ) : (
-              <div className="hidden sm:flex items-center gap-2">
-                <Link to="/login">
+              <div className="hidden sm:flex items-center gap-2 shrink-0">
+                {/* Sign In Button: Outline, 36px Height, 20px Radius */}
+                <Link to="/login" className="inline-flex items-center shrink-0">
                   <Button
                     size="sm"
                     variant="outline"
-                    className="text-[13px] border-slate-300 text-[#062B73] hover:bg-slate-50 hover:text-[#0B3D91] font-bold px-4 h-9 rounded-[20px]"
+                    className="h-9 px-4 text-[13px] font-bold border border-slate-300 bg-white text-[#062B73] hover:bg-slate-50 hover:text-[#0B3D91] rounded-[20px] transition-colors gap-1.5 cursor-pointer leading-none"
                   >
-                    <LogIn className="h-3.5 w-3.5" />
-                    Sign In
+                    <LogIn className="h-3.5 w-3.5 shrink-0" />
+                    <span>Sign In</span>
                   </Button>
                 </Link>
-                <Link to="/register">
+
+                {/* Register Button: Primary Solid, 36px Height, 20px Radius, Identical Box Model */}
+                <Link to="/register" className="inline-flex items-center shrink-0">
                   <Button
                     size="sm"
-                    className="text-[13px] bg-[#1557A6] hover:bg-[#0B3D91] text-white font-bold px-4 h-9 rounded-[20px] shadow-none"
+                    className="h-9 px-4 text-[13px] font-bold border border-transparent bg-[#1557A6] hover:bg-[#0B3D91] text-white rounded-[20px] shadow-none transition-colors gap-1.5 cursor-pointer leading-none"
                   >
-                    <UserPlus className="h-3.5 w-3.5" />
-                    Register
+                    <UserPlus className="h-3.5 w-3.5 shrink-0" />
+                    <span>Register</span>
                   </Button>
                 </Link>
               </div>
@@ -235,7 +238,7 @@ export const Navbar: React.FC = () => {
 
             {/* Mobile Menu Toggle Button */}
             <button
-              className="xl:hidden p-2 rounded border border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer"
+              className="xl:hidden p-2 rounded border border-slate-200 text-slate-700 hover:bg-slate-100 cursor-pointer shrink-0"
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle navigation menu"
             >
@@ -286,7 +289,7 @@ export const Navbar: React.FC = () => {
                   {roleName} Portal
                 </Link>
                 <button
-                  className="flex items-center gap-2 px-3 py-2 text-[14px] font-semibold text-red-600 rounded hover:bg-red-50 w-full text-left"
+                  className="flex items-center gap-2 px-3 py-2 text-[14px] font-semibold text-red-600 rounded hover:bg-red-50 w-full text-left cursor-pointer"
                   onClick={() => {
                     clearSession()
                     setMobileOpen(false)
@@ -297,20 +300,25 @@ export const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2">
+              <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2.5">
+                {/* Mobile Drawer Sign In */}
                 <Link
                   to="/login"
-                  className="px-3 py-2 text-[13px] font-bold text-slate-700 rounded-[20px] border border-slate-200 text-center hover:bg-slate-50"
+                  className="h-9 px-3 text-[13px] font-bold text-slate-700 rounded-[20px] border border-slate-300 text-center hover:bg-slate-50 inline-flex items-center justify-center gap-1.5"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Sign In
+                  <LogIn className="h-3.5 w-3.5" />
+                  <span>Sign In</span>
                 </Link>
+
+                {/* Mobile Drawer Register */}
                 <Link
                   to="/register"
-                  className="px-3 py-2 text-[13px] font-bold text-white bg-[#1557A6] rounded-[20px] text-center hover:bg-[#0B3D91]"
+                  className="h-9 px-3 text-[13px] font-bold text-white bg-[#1557A6] rounded-[20px] border border-transparent text-center hover:bg-[#0B3D91] inline-flex items-center justify-center gap-1.5"
                   onClick={() => setMobileOpen(false)}
                 >
-                  Register
+                  <UserPlus className="h-3.5 w-3.5" />
+                  <span>Register</span>
                 </Link>
               </div>
             )}
