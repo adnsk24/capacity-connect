@@ -18,17 +18,65 @@ class CourseCategoryResponse(BaseModel):
 class ResourceResponse(BaseModel):
     id: uuid.UUID
     course_id: uuid.UUID
+    module_id: Optional[uuid.UUID] = None
     lesson_id: Optional[uuid.UUID] = None
     title: str
     description: Optional[str] = None
     resource_type: str
     storage_url: str
+    media_url: Optional[str] = None
+    file_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
     file_name: Optional[str] = None
     file_size_bytes: Optional[int] = None
     mime_type: Optional[str] = None
+    duration_seconds: Optional[int] = None
+    display_order: int = 0
+    is_published: bool = True
     is_downloadable: bool = True
+    is_completed: bool = False
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class ResourceCreateRequest(BaseModel):
+    title: str = Field(..., min_length=1, max_length=255)
+    description: Optional[str] = None
+    resource_type: str = "VIDEO"
+    media_url: Optional[str] = None
+    url_or_path: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    module_id: Optional[uuid.UUID] = None
+    lesson_id: Optional[uuid.UUID] = None
+    duration_seconds: Optional[int] = Field(None, ge=0)
+    display_order: int = 0
+    is_published: bool = True
+    is_downloadable: bool = True
+
+
+class ResourceUpdateRequest(BaseModel):
+    title: Optional[str] = Field(None, min_length=1, max_length=255)
+    description: Optional[str] = None
+    resource_type: Optional[str] = None
+    media_url: Optional[str] = None
+    thumbnail_url: Optional[str] = None
+    module_id: Optional[uuid.UUID] = None
+    lesson_id: Optional[uuid.UUID] = None
+    duration_seconds: Optional[int] = Field(None, ge=0)
+    display_order: Optional[int] = None
+    is_published: Optional[bool] = None
+    is_downloadable: Optional[bool] = None
+
+
+class ResourcePublishRequest(BaseModel):
+    is_published: bool
+
+
+class ResourceCompleteRequest(BaseModel):
+    is_completed: bool = True
+    progress_seconds: Optional[int] = None
 
 
 class LessonResponse(BaseModel):
@@ -54,6 +102,7 @@ class CourseModuleResponse(BaseModel):
     description: Optional[str] = None
     order_index: int = 0
     lessons: List[LessonResponse] = []
+    resources: List[ResourceResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
 

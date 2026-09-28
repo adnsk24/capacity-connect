@@ -31,15 +31,23 @@ export interface CompetencyTag {
 export interface ResourceItem {
   id: string
   course_id: string
+  module_id?: string
   lesson_id?: string
   title: string
   description?: string
   resource_type: string
   storage_url: string
+  media_url?: string
+  file_url?: string
+  thumbnail_url?: string
   file_name?: string
   file_size_bytes?: number
   mime_type?: string
+  duration_seconds?: number
+  display_order: number
+  is_published: boolean
   is_downloadable: boolean
+  is_completed?: boolean
 }
 
 export interface LessonItem {
@@ -63,6 +71,7 @@ export interface CourseModuleItem {
   description?: string
   order_index: number
   lessons: LessonItem[]
+  resources?: ResourceItem[]
 }
 
 export interface CourseCard {
@@ -196,5 +205,23 @@ export const coursesService = {
     return fetchJson<LessonCompletionResponse>(`/courses/${courseId}/lessons/${lessonId}/complete`, {
       method: "POST",
     })
+  },
+
+  async getCourseResources(courseId: string, moduleId?: string, lessonId?: string): Promise<ResourceItem[]> {
+    const params = new URLSearchParams()
+    if (moduleId) params.append("module_id", moduleId)
+    if (lessonId) params.append("lesson_id", lessonId)
+    const qs = params.toString()
+    return fetchJson<ResourceItem[]>(`/courses/${courseId}/resources${qs ? `?${qs}` : ""}`)
+  },
+
+  async completeResource(resourceId: string, isCompleted = true, progressSeconds?: number): Promise<{ message: string; resource_id: string; is_completed: boolean; progress_seconds?: number }> {
+    return fetchJson<{ message: string; resource_id: string; is_completed: boolean; progress_seconds?: number }>(
+      `/resources/${resourceId}/complete`,
+      {
+        method: "POST",
+        body: JSON.stringify({ is_completed: isCompleted, progress_seconds: progressSeconds }),
+      }
+    )
   },
 }

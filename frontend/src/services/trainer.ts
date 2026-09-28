@@ -52,8 +52,16 @@ export interface TrainerCourseDetail extends TrainerCourseItem {
     id: string
     title: string
     resource_type: string
-    file_url: string
+    file_url?: string
+    media_url?: string
+    storage_url?: string
+    thumbnail_url?: string | null
     description?: string | null
+    module_id?: string | null
+    lesson_id?: string | null
+    duration_seconds?: number | null
+    display_order: number
+    is_published: boolean
   }>
 }
 
@@ -153,6 +161,75 @@ export const trainerService = {
     fetchJson<{ message: string; id: string }>(`/trainer/courses/${courseId}/resources`, {
       method: "POST",
       body: JSON.stringify(data),
+    }),
+
+  createResource: (
+    courseId: string,
+    data: {
+      title: string
+      resource_type: string
+      media_url?: string
+      url_or_path?: string
+      description?: string
+      module_id?: string | null
+      lesson_id?: string | null
+      thumbnail_url?: string | null
+      duration_seconds?: number | null
+      display_order?: number
+      is_published?: boolean
+    }
+  ) =>
+    fetchJson<any>(`/courses/${courseId}/resources`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  uploadResource: (courseId: string, formData: FormData) => {
+    const token = localStorage.getItem("token") || localStorage.getItem("access_token")
+    return fetch(`/api/v1/courses/${courseId}/resources/upload`, {
+      method: "POST",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    }).then(async (res) => {
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: "Upload failed" }))
+        throw new Error(err.detail || "Upload failed")
+      }
+      return res.json()
+    })
+  },
+
+  updateResource: (
+    resourceId: string,
+    data: Partial<{
+      title: string
+      resource_type: string
+      media_url: string
+      thumbnail_url: string
+      description: string
+      module_id: string | null
+      lesson_id: string | null
+      duration_seconds: number | null
+      display_order: number
+      is_published: boolean
+    }>
+  ) =>
+    fetchJson<any>(`/resources/${resourceId}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  deleteResource: (resourceId: string) =>
+    fetchJson<any>(`/resources/${resourceId}`, {
+      method: "DELETE",
+    }),
+
+  publishResource: (resourceId: string, isPublished: boolean) =>
+    fetchJson<any>(`/resources/${resourceId}/publish`, {
+      method: "POST",
+      body: JSON.stringify({ is_published: isPublished }),
     }),
 
   listAssessments: () => fetchJson<AssessmentListItem[]>("/trainer/assessments"),

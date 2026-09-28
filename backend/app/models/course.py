@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from app.models.assessment import Assessment
     from app.models.feedback import Feedback
     from app.models.competency import CourseCompetency
+    from app.models.certificate import Certificate
 
 
 class CourseCategory(Base, UUIDPrimaryKeyMixin, TimestampMixin):
@@ -88,6 +89,9 @@ class Course(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     certifications: Mapped[List["Certification"]] = relationship(
         "Certification", back_populates="course"
     )
+    issued_certificates: Mapped[List["Certificate"]] = relationship(
+        "Certificate", back_populates="course", cascade="all, delete-orphan"
+    )
     feedbacks: Mapped[List["Feedback"]] = relationship(
         "Feedback", back_populates="course", cascade="all, delete-orphan"
     )
@@ -115,6 +119,9 @@ class CourseModule(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     course: Mapped["Course"] = relationship("Course", back_populates="modules")
     lessons: Mapped[List["Lesson"]] = relationship(
         "Lesson", back_populates="module", cascade="all, delete-orphan", order_by="Lesson.order_index"
+    )
+    resources: Mapped[List["Resource"]] = relationship(
+        "Resource", back_populates="module"
     )
     assessments: Mapped[List["Assessment"]] = relationship(
         "Assessment", back_populates="module"
@@ -154,6 +161,9 @@ class Resource(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     course_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("courses.id", ondelete="CASCADE"), index=True, nullable=False
     )
+    module_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("course_modules.id", ondelete="SET NULL"), index=True, nullable=True
+    )
     lesson_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("lessons.id", ondelete="SET NULL"), index=True, nullable=True
     )
@@ -161,16 +171,69 @@ class Resource(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     resource_type: Mapped[str] = mapped_column(
         String(50), nullable=False
-    )  # PDF, PPT, VIDEO, AUDIO, DOCUMENT, LINK, OTHER
+    )  # VIDEO, AUDIO, DOCUMENT, PRESENTATION, EXTERNAL_VIDEO, PDF, PPT, LINK, OTHER
     storage_url: Mapped[str] = mapped_column(String(500), nullable=False)
+    thumbnail_url: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     file_name: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     file_size_bytes: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     mime_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    duration_seconds: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    display_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    is_published: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_downloadable: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    created_by: Mapped[Optional[uuid.UUID]] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
+
+    @property
+    def media_url(self) -> str:
+        return self.storage_url
+
+    @media_url.setter
+    def media_url(self, value: str):
+        self.storage_url = value
+
+    @property
+    def file_url(self) -> str:
+        return self.storage_url
+
+    @file_url.setter
+    def file_url(self, value: str):
+        self.storage_url = value
 
     # Relationships
     course: Mapped["Course"] = relationship("Course", back_populates="resources")
+    module: Mapped[Optional["CourseModule"]] = relationship("CourseModule", back_populates="resources")
     lesson: Mapped[Optional["Lesson"]] = relationship("Lesson", back_populates="resources")
+    creator: Mapped[Optional["User"]] = relationship("User")
+    completions: Mapped[List["ResourceCompletion"]] = relationship(
+        "ResourceCompletion", back_populates="resource", cascade="all, delete-orphan"
+    )
+
+
+class ResourceCompletion(Base, UUIDPrimaryKeyMixin, TimestampMixin):
+    """Tracks completed resources (videos, audios, documents) per trainee enrollment."""
+    __tablename__ = "resource_completions"
+
+    enrollment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("enrollments.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    resource_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("resources.id", ondelete="CASCADE"), index=True, nullable=False
+    )
+    is_completed: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    progress_seconds: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    __table_args__ = (
+        UniqueConstraint("enrollment_id", "resource_id", name="uq_enrollment_resource_completion"),
+    )
+
+    # Relationships
+    enrollment: Mapped["Enrollment"] = relationship("Enrollment", back_populates="resource_completions")
+    resource: Mapped["Resource"] = relationship("Resource", back_populates="completions")
 
 
 class Enrollment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
@@ -205,6 +268,9 @@ class Enrollment(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     )
     lesson_completions: Mapped[List["LessonCompletion"]] = relationship(
         "LessonCompletion", back_populates="enrollment", cascade="all, delete-orphan"
+    )
+    resource_completions: Mapped[List["ResourceCompletion"]] = relationship(
+        "ResourceCompletion", back_populates="enrollment", cascade="all, delete-orphan"
     )
 
 

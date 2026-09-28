@@ -6,8 +6,6 @@ import {
   Clock,
   ArrowRight,
   ArrowLeft,
-  FileText,
-  Download,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -16,13 +14,19 @@ import { ProgressBar } from "@/components/ui/progress-bar"
 import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { ErrorState } from "@/components/ui/error-state"
 import { Skeleton } from "@/components/ui/loading-skeleton"
-import { coursesService, LessonItem } from "@/services/courses"
+import { coursesService, LessonItem, ResourceItem } from "@/services/courses"
 import { getCourseThumbnail, getCourseThumbnailAlt } from "@/lib/courseImages"
+import { ResourceCard } from "@/components/ui/ResourceCard"
+import { VideoPlayerModal } from "@/components/ui/VideoPlayerModal"
+import { AudioPlayerModal } from "@/components/ui/AudioPlayerModal"
 
 export const LearningContentPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>()
   const queryClient = useQueryClient()
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null)
+  const [resourceFilter, setResourceFilter] = useState<"ALL" | "VIDEOS" | "AUDIO" | "DOCUMENTS" | "PRESENTATIONS">("ALL")
+  const [activeVideo, setActiveVideo] = useState<ResourceItem | null>(null)
+  const [activeAudio, setActiveAudio] = useState<ResourceItem | null>(null)
 
   const { data: course, isLoading, error, refetch } = useQuery({
     queryKey: ["course-learn", courseId],
@@ -47,6 +51,16 @@ export const LearningContentPage: React.FC = () => {
       }
     }
   }, [course, selectedLessonId])
+
+  // Resource completion mutation
+  const completeResourceMutation = useMutation({
+    mutationFn: (resourceId: string) => coursesService.completeResource(resourceId, true),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["course-learn", courseId] })
+      queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] })
+      queryClient.invalidateQueries({ queryKey: ["trainee-dashboard"] })
+    },
+  })
 
   // Lesson completion mutation
   const completeMutation = useMutation({
@@ -233,34 +247,137 @@ export const LearningContentPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Lesson Resources if any */}
-                {currentLesson.resources && currentLesson.resources.length > 0 && (
-                  <div className="pt-4 border-t border-slate-100 space-y-2">
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                      Lesson Documentation & References
-                    </h4>
-                    {currentLesson.resources.map((res) => (
-                      <div
-                        key={res.id}
-                        className="p-3 rounded-md border border-slate-200 flex items-center justify-between text-xs hover:bg-slate-50 transition-colors"
-                      >
-                        <div className="flex items-center gap-2">
-                          <FileText className="h-4 w-4 text-[#1557A6] shrink-0" />
-                          <span className="font-medium text-slate-800">{res.title}</span>
+                {/* ======================================================== */}
+                {/* LEARNING RESOURCES: Videos, Audio, Documents, PPT        */}
+                {/* ======================================================== */}
+                {(() => {
+                  const relevantResources: ResourceItem[] = [
+                    ...(currentLesson?.resources || []),
+                    ...(course.modules.find((m) => m.id === currentLesson?.module_id)?.resources || []),
+                    ...(course.resources || []),
+                  ]
+                  const uniqueResources = Array.from(new Map(relevantResources.map((r) => [r.id, r])).values())
+
+                  const videosCount = uniqueResources.filter((r) => ["VIDEO", "EXTERNAL_VIDEO"].includes(r.resource_type.toUpperCase())).length
+                  const audioCount = uniqueResources.filter((r) => r.resource_type.toUpperCase() === "AUDIO").length
+                  const docCount = uniqueResources.filter((r) => ["DOCUMENT", "PDF"].includes(r.resource_type.toUpperCase())).length
+                  const pptCount = uniqueResources.filter((r) => ["PRESENTATION", "PPT"].includes(r.resource_type.toUpperCase())).length
+
+                  const filteredResources = uniqueResources.filter((r) => {
+                    const type = r.resource_type.toUpperCase()
+                    if (resourceFilter === "VIDEOS") return ["VIDEO", "EXTERNAL_VIDEO"].includes(type)
+                    if (resourceFilter === "AUDIO") return type === "AUDIO"
+                    if (resourceFilter === "DOCUMENTS") return ["DOCUMENT", "PDF"].includes(type)
+                    if (resourceFilter === "PRESENTATIONS") return ["PRESENTATION", "PPT"].includes(type)
+                    return true
+                  })
+
+                  if (uniqueResources.length === 0) return null
+
+                  return (
+                    <div className="pt-6 border-t border-slate-200 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <span>Learning Resources</span>
+                            <Badge variant="secondary" className="text-[10px] font-mono">
+                              {uniqueResources.length}
+                            </Badge>
+                          </h3>
+                          <p className="text-[11.5px] text-slate-500 mt-0.5">
+                            Instructional videos, audio commentaries, and reference materials.
+                          </p>
                         </div>
-                        <a
-                          href={res.storage_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[12px] text-[#1557A6] hover:underline font-medium flex items-center gap-1"
-                        >
-                          <Download className="h-3.5 w-3.5" />
-                          <span>Download</span>
-                        </a>
+
+                        {/* Resource Filter Tabs */}
+                        <div className="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
+                          <button
+                            type="button"
+                            onClick={() => setResourceFilter("ALL")}
+                            className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer text-[11px] ${
+                              resourceFilter === "ALL"
+                                ? "bg-white text-[#1557A6] shadow-2xs font-bold"
+                                : "text-slate-600 hover:text-slate-900"
+                            }`}
+                          >
+                            All ({uniqueResources.length})
+                          </button>
+                          {videosCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setResourceFilter("VIDEOS")}
+                              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer text-[11px] ${
+                                resourceFilter === "VIDEOS"
+                                  ? "bg-white text-rose-700 shadow-2xs font-bold"
+                                  : "text-slate-600 hover:text-slate-900"
+                              }`}
+                            >
+                              Videos ({videosCount})
+                            </button>
+                          )}
+                          {audioCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setResourceFilter("AUDIO")}
+                              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer text-[11px] ${
+                                resourceFilter === "AUDIO"
+                                  ? "bg-white text-purple-700 shadow-2xs font-bold"
+                                  : "text-slate-600 hover:text-slate-900"
+                              }`}
+                            >
+                              Audio ({audioCount})
+                            </button>
+                          )}
+                          {docCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setResourceFilter("DOCUMENTS")}
+                              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer text-[11px] ${
+                                resourceFilter === "DOCUMENTS"
+                                  ? "bg-white text-[#1557A6] shadow-2xs font-bold"
+                                  : "text-slate-600 hover:text-slate-900"
+                              }`}
+                            >
+                              Documents ({docCount})
+                            </button>
+                          )}
+                          {pptCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => setResourceFilter("PRESENTATIONS")}
+                              className={`px-2.5 py-1 rounded-md font-semibold transition-all cursor-pointer text-[11px] ${
+                                resourceFilter === "PRESENTATIONS"
+                                  ? "bg-white text-amber-700 shadow-2xs font-bold"
+                                  : "text-slate-600 hover:text-slate-900"
+                              }`}
+                            >
+                              Presentations ({pptCount})
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+
+                      {/* Resource Cards Grid / Stack */}
+                      <div className="space-y-2.5">
+                        {filteredResources.map((res) => (
+                          <ResourceCard
+                            key={res.id}
+                            resource={res}
+                            onPlay={(r) => {
+                              const type = r.resource_type.toUpperCase()
+                              if (type === "AUDIO") {
+                                setActiveAudio(r)
+                              } else {
+                                setActiveVideo(r)
+                              }
+                            }}
+                            onComplete={(r) => completeResourceMutation.mutate(r.id)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })()}
 
                 {/* Completion & Navigation Controls Footer */}
                 <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -317,6 +434,23 @@ export const LearningContentPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Video & Audio Player Modals */}
+      {activeVideo && (
+        <VideoPlayerModal
+          resource={activeVideo}
+          onClose={() => setActiveVideo(null)}
+          onComplete={(r) => completeResourceMutation.mutate(r.id)}
+        />
+      )}
+
+      {activeAudio && (
+        <AudioPlayerModal
+          resource={activeAudio}
+          onClose={() => setActiveAudio(null)}
+          onComplete={(r) => completeResourceMutation.mutate(r.id)}
+        />
+      )}
     </div>
   )
 }
