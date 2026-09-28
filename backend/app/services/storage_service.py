@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Tuple, Optional
 from urllib.parse import urlparse
 from fastapi import HTTPException, UploadFile, status
+from app.core.config import settings
 
 # Logical storage folders
 MEDIA_PATHS = {
@@ -198,6 +199,25 @@ class StorageService:
         with open(destination_path, "wb") as f:
             f.write(contents)
 
-        # Logical storage URL relative to root
+        # Logical storage URL relative to root (local fallback)
         storage_url = f"/uploads/{folder_suffix}/{final_filename}"
+
+        # If Supabase Storage is configured, persist to Supabase bucket
+        if settings.SUPABASE_URL and (settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY):
+            try:
+                from supabase import create_client
+                key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY
+                supabase = create_client(settings.SUPABASE_URL, key)
+                bucket_name = settings.SUPABASE_STORAGE_MEDIA_BUCKET
+                subfolder = folder_suffix.replace("course-media/", "").strip("/")
+                storage_path = f"{subfolder}/{final_filename}" if subfolder else final_filename
+                supabase.storage.from_(bucket_name).upload(
+                    path=storage_path,
+                    file=contents,
+                    file_options={"content-type": mime_type, "upsert": "true"},
+                )
+                storage_url = supabase.storage.from_(bucket_name).get_public_url(storage_path)
+            except Exception as e:
+                print(f"[StorageService] Warning: Supabase media upload failed, falling back to local storage: {e}")
+
         return storage_url, clean_name, size_bytes, mime_type

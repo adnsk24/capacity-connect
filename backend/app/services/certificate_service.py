@@ -13,6 +13,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 import qrcode
 
+from app.core.config import settings
 from app.models.user import User
 from app.models.course import Course, CourseModule, Lesson, Enrollment
 from app.models.assessment import Assessment, AssessmentAttempt
@@ -230,7 +231,7 @@ class CertificateService:
         certificate: Certificate,
         user: User,
         course: Course,
-        public_verify_base_url: str = "http://localhost:5173",
+        public_verify_base_url: Optional[str] = None,
     ) -> Tuple[str, Path]:
         """Generates the certificate PDF using the master template and ReportLab.
         Returns: (relative_storage_url, absolute_file_path)
@@ -318,7 +319,8 @@ class CertificateService:
         c.drawString(579.5, 148.0, issue_str)
 
         # 5. Dynamic QR Code inside the pre-printed QR frame
-        verify_url = f"{public_verify_base_url.rstrip('/')}/certificates/verify/{certificate.id}"
+        verify_base = public_verify_base_url or settings.FRONTEND_URL
+        verify_url = f"{verify_base.rstrip('/')}/certificates/verify/{certificate.id}"
         qr = qrcode.QRCode(box_size=4, border=0)
         qr.add_data(verify_url)
         qr.make(fit=True)
@@ -341,11 +343,31 @@ class CertificateService:
         c.drawCentredString(49.5, 37.0, certificate.certificate_number)
 
         c.save()
+
+        # If Supabase Storage is configured, persist certificate to Supabase bucket
+        if settings.SUPABASE_URL and (settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY):
+            try:
+                from supabase import create_client
+                key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY
+                supabase = create_client(settings.SUPABASE_URL, key)
+                bucket_name = settings.SUPABASE_STORAGE_CERTIFICATES_BUCKET
+                storage_path = f"{user.id}/{filename}"
+                with open(abs_pdf_path, "rb") as pf:
+                    pdf_bytes = pf.read()
+                supabase.storage.from_(bucket_name).upload(
+                    path=storage_path,
+                    file=pdf_bytes,
+                    file_options={"content-type": "application/pdf", "upsert": "true"},
+                )
+                rel_storage_url = supabase.storage.from_(bucket_name).get_public_url(storage_path)
+            except Exception as e:
+                print(f"[CertificateService] Warning: Supabase certificate upload failed, falling back to local: {e}")
+
         return rel_storage_url, abs_pdf_path
 
     @classmethod
     def issue_certificate(
-        cls, db: Session, user_id: uuid.UUID, course_id: uuid.UUID, public_verify_base_url: str = "http://localhost:5173"
+        cls, db: Session, user_id: uuid.UUID, course_id: uuid.UUID, public_verify_base_url: Optional[str] = None
     ) -> Certificate:
         """Verifies eligibility and generates/issues an accredited certificate."""
         eligibility = cls.check_eligibility(db, user_id, course_id)

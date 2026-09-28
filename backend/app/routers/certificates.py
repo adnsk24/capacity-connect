@@ -153,6 +153,12 @@ def download_certificate(
     Filename: Capacity_Connect_Certificate_<CertificateNumber>.pdf
     """
     cert = CertificateService.get_certificate_by_id(db, certificate_id, current_user)
+
+    # If certificate is stored in Supabase / external CDN, redirect to download directly
+    if cert.pdf_url and (cert.pdf_url.startswith("http://") or cert.pdf_url.startswith("https://")):
+        from fastapi.responses import RedirectResponse
+        return RedirectResponse(url=cert.pdf_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+
     pdf_path = CertificateService.get_pdf_path(cert)
 
     if not pdf_path.exists():
@@ -160,7 +166,13 @@ def download_certificate(
         user = db.query(User).filter(User.id == cert.user_id).first()
         course = db.query(Course).filter(Course.id == cert.course_id).first()
         if user and course:
-            CertificateService.render_pdf(cert, user, course)
+            rel_url, abs_path = CertificateService.render_pdf(cert, user, course)
+            cert.pdf_url = rel_url
+            db.commit()
+            if rel_url.startswith("http://") or rel_url.startswith("https://"):
+                from fastapi.responses import RedirectResponse
+                return RedirectResponse(url=rel_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
+            pdf_path = abs_path
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Certificate source not found.")
 
