@@ -76,7 +76,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, basePath = "/cou
   const passMarkText = course.passing_marks || "60% Pass Mark"
 
   return (
-    <div className="group bg-white border border-slate-200 rounded-xl shadow-[0_1px_3px_0_rgb(0,0,0,0.05)] hover:border-[#1557A6]/40 hover:shadow-md transition-all duration-200 flex flex-col h-full overflow-hidden">
+    <div className="group bg-white border border-slate-200 rounded-xl shadow-[0_1px_3px_0_rgb(0,0,0,0.05)] hover:border-[#1557A6]/50 hover:shadow-md transition-all duration-200 flex flex-col h-full w-full overflow-hidden">
       {/* Course Image Header with Responsive Aspect Ratio */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 border-b border-slate-100">
         <img
@@ -122,14 +122,14 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, basePath = "/cou
           </div>
 
           {/* Title */}
-          <Link to={`${basePath}/${course.id}`}>
-            <h3 className="text-[15px] font-bold text-slate-900 group-hover:text-[#1557A6] transition-colors line-clamp-2 leading-snug mb-2">
+          <Link to={`${basePath}/${course.id}`} className="block">
+            <h3 className="text-sm sm:text-[15px] font-bold text-slate-900 group-hover:text-[#1557A6] transition-colors line-clamp-2 leading-snug mb-1.5 min-h-[2.5rem] flex items-center">
               {course.title}
             </h3>
           </Link>
 
           {/* Short 1-2 line description */}
-          <p className="text-[12px] text-slate-600 line-clamp-2 leading-relaxed mb-3.5">
+          <p className="text-[12px] text-slate-600 line-clamp-2 leading-relaxed mb-3 min-h-[2.25rem]">
             {course.description || "Comprehensive IMD curriculum for operational meteorological capacity building."}
           </p>
         </div>
@@ -153,9 +153,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, basePath = "/cou
                 {passMarkText}
               </span>
               {course.trainer ? (
-                <span className="flex items-center gap-1 text-slate-500 truncate max-w-[140px]" title={`${course.trainer.first_name} ${course.trainer.last_name}`}>
+                <span className="flex items-center gap-1 text-slate-500 truncate max-w-[120px] sm:max-w-[140px] shrink min-w-0" title={`${course.trainer.first_name} ${course.trainer.last_name}`}>
                   <UserIcon className="h-3 w-3 text-slate-400 shrink-0" />
-                  {course.trainer.first_name} {course.trainer.last_name}
+                  <span className="truncate">{course.trainer.first_name} {course.trainer.last_name}</span>
                 </span>
               ) : (
                 <span className="text-slate-400 text-[10px]">IMD Faculty</span>
@@ -190,24 +190,24 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, basePath = "/cou
       </div>
 
       {/* Footer CTA Buttons */}
-      <div className="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2">
-        <Link to={`${basePath}/${course.id}`} className="flex-1">
+      <div className="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center gap-2 mt-auto">
+        <Link to={`${basePath}/${course.id}`} className="flex-1 min-w-0">
           <Button
             variant="outline"
             size="sm"
-            className="w-full text-[12px] h-8 font-semibold border-slate-300 text-slate-700 hover:text-[#1557A6] hover:border-[#1557A6] bg-white transition-colors"
+            className="w-full text-xs h-8.5 font-semibold border-slate-300 text-slate-700 hover:text-[#1557A6] hover:border-[#1557A6] bg-white transition-colors truncate px-2"
           >
             View Course
           </Button>
         </Link>
 
         {course.is_enrolled ? (
-          <Link to={`/courses/${course.id}/learn`} className="flex-1">
+          <Link to={`/courses/${course.id}/learn`} className="flex-1 min-w-0">
             <Button
               size="sm"
-              className="w-full text-[12px] h-8 font-semibold bg-[#1557A6] hover:bg-[#114687] text-white gap-1 transition-colors"
+              className="w-full text-xs h-8.5 font-semibold bg-[#1557A6] hover:bg-[#114687] text-white gap-1 transition-colors truncate px-2"
             >
-              Continue <ArrowRight className="h-3 w-3" />
+              Continue <ArrowRight className="h-3 w-3 shrink-0" />
             </Button>
           </Link>
         ) : (
@@ -215,13 +215,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({ course, basePath = "/cou
             size="sm"
             onClick={handleEnroll}
             disabled={enrollMutation.isPending}
-            className="flex-1 text-[12px] h-8 font-semibold bg-[#1557A6] hover:bg-[#114687] text-white gap-1 transition-colors shadow-2xs"
+            className="flex-1 min-w-0 text-xs h-8.5 font-semibold bg-[#1557A6] hover:bg-[#114687] text-white gap-1 transition-colors shadow-2xs truncate px-2"
           >
             {enrollMutation.isPending ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
             ) : (
               <>
-                Enroll Now <Sparkles className="h-3 w-3 text-amber-300" />
+                <span>Enroll Now</span> <Sparkles className="h-3 w-3 text-amber-300 shrink-0" />
               </>
             )}
           </Button>
