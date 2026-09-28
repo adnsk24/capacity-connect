@@ -26,7 +26,7 @@ const navItems = [
   { to: "/trainee/assessments", label: "Assessments", icon: ClipboardCheck },
   { to: "/trainee/competencies", label: "Competencies", icon: Network },
   { to: "/trainee/skill-gap", label: "Skill Gap", icon: TrendingDown },
-  { to: "/trainee/certificates", label: "Certificates", icon: Award },
+  { to: "/trainee/certificates", label: "My Certificates", icon: Award },
   { to: "/trainee/notifications", label: "Notifications", icon: Bell },
 ]
 

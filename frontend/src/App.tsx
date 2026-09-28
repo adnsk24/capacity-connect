@@ -16,6 +16,7 @@ import { RegisterPage } from "@/pages/RegisterPage"
 import { VerifyEmailPage } from "@/pages/VerifyEmailPage"
 import { ForgotPasswordPage } from "@/pages/ForgotPasswordPage"
 import { ResetPasswordPage } from "@/pages/ResetPasswordPage"
+import { CertificateVerifyPage } from "@/pages/CertificateVerifyPage"
 
 // Phase 3 Courses & Trainee Pages
 import { CourseCataloguePage } from "@/pages/CourseCataloguePage"
@@ -101,7 +102,11 @@ export const App: React.FC = () => {
             <Route path="reset-password" element={<ResetPasswordPage />} />
             <Route path="courses" element={<CourseCataloguePage />} />
             <Route path="courses/:courseId" element={<CourseDetailPage />} />
+            <Route path="certificates/verify/:certificateId" element={<CertificateVerifyPage />} />
           </Route>
+
+          {/* Standalone verification route */}
+          <Route path="/certificates/verify/:certificateId" element={<CertificateVerifyPage />} />
 
           {/* Authenticated Trainee Portal */}
           <Route

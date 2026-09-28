@@ -23,6 +23,9 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+
 # CORS Middleware
 app.add_middleware(
     CORSMiddleware,
@@ -32,11 +35,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Static media uploads directory
+upload_dir = Path(__file__).resolve().parent.parent / "uploads"
+upload_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=str(upload_dir)), name="uploads")
+
 # Versioned API routes (/api/v1/health, etc.)
 app.include_router(api_v1_router, prefix="/api/v1")
 
 # Convenience route matching GET /api/health
 app.include_router(health_router, prefix="/api")
+
+
+from app.database.session import get_db
+from app.services.certificate_service import CertificateService
+from sqlalchemy.orm import Session
+from fastapi import Depends
+
+# Direct public certificate verification route matching GET /certificates/verify/{certificate_id}
+@app.get("/certificates/verify/{certificate_id}", tags=["Certificates"])
+def root_verify_certificate(certificate_id: str, db: Session = Depends(get_db)):
+    """Public certificate verification endpoint accessible at root path without authentication."""
+    return CertificateService.verify_certificate(db, certificate_id)
 
 
 @app.get("/", tags=["Root"])
@@ -49,3 +69,4 @@ def root_endpoint():
         "docs": "/docs",
         "health": "/api/v1/health",
     }
+

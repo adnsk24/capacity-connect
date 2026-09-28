@@ -57,9 +57,17 @@ class LessonCreate(BaseModel):
 
 class ResourceCreate(BaseModel):
     title: str = Field(..., min_length=2, max_length=255)
-    resource_type: str = "DOCUMENT"  # DOCUMENT, PDF, LINK, DATASET
-    url_or_path: str = Field(..., min_length=1)
+    resource_type: str = "DOCUMENT"  # VIDEO, AUDIO, DOCUMENT, PRESENTATION, EXTERNAL_VIDEO, PDF, PPT, LINK, DATASET
+    url_or_path: Optional[str] = None
+    media_url: Optional[str] = None
     description: Optional[str] = None
+    module_id: Optional[uuid.UUID] = None
+    lesson_id: Optional[uuid.UUID] = None
+    thumbnail_url: Optional[str] = None
+    duration_seconds: Optional[int] = None
+    display_order: int = 0
+    is_published: bool = True
+    is_downloadable: bool = True
 
 
 class TraineePerformanceItem(BaseModel):

@@ -142,10 +142,18 @@ def get_trainer_course_detail(
             "id": r.id,
             "title": r.title,
             "resource_type": r.resource_type,
-            "file_url": r.file_url,
+            "file_url": r.storage_url,
+            "media_url": r.storage_url,
+            "storage_url": r.storage_url,
+            "thumbnail_url": r.thumbnail_url,
             "description": r.description,
+            "module_id": r.module_id,
+            "lesson_id": r.lesson_id,
+            "duration_seconds": r.duration_seconds,
+            "display_order": r.display_order,
+            "is_published": r.is_published,
         }
-        for r in c.resources
+        for r in sorted(c.resources, key=lambda x: (x.display_order, x.created_at))
     ]
     return TrainerCourseDetailResponse(
         id=c.id,

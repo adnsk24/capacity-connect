@@ -9,6 +9,7 @@ import {
   BookOpen,
   Calendar,
   Compass,
+  Award,
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -169,6 +170,18 @@ export const MyLearningPage: React.FC = () => {
                         <ArrowRight className="h-4 w-4" />
                       </Button>
                     </Link>
+
+                    {course.progress_percentage >= 100 && (
+                      <Link to="/trainee/certificates" className="block w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full text-xs flex items-center justify-center gap-1.5 border-emerald-300 text-emerald-800 hover:bg-emerald-50"
+                        >
+                          <Award className="h-3.5 w-3.5 text-emerald-700" />
+                          <span>View Certificate</span>
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>

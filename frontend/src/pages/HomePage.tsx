@@ -11,6 +11,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Container } from "@/components/layout/Container"
+import { FeaturedCarousel } from "@/components/home/FeaturedCarousel"
 
 export const HomePage: React.FC = () => {
   // Deterministic initiative category cards (220px x 110px matching OpenForge reference screenshots)
@@ -61,7 +62,7 @@ export const HomePage: React.FC = () => {
   const carouselRef = useRef<HTMLDivElement>(null)
   const scroll = (direction: "left" | "right") => {
     if (carouselRef.current) {
-      const scrollDistance = 240
+      const scrollDistance = 500
       carouselRef.current.scrollBy({
         left: direction === "left" ? -scrollDistance : scrollDistance,
         behavior: "smooth",
@@ -158,24 +159,8 @@ export const HomePage: React.FC = () => {
                 {/* Circular dark-green / teal backdrop graphic matching OpenForge reference */}
                 <div className="absolute -top-4 -right-4 w-48 h-48 sm:w-56 sm:h-56 bg-[#0E6655] rounded-full opacity-90 hidden sm:block pointer-events-none" />
                 <div className="absolute top-1/2 -left-6 w-32 h-32 bg-[#1E8270] rounded-full opacity-60 hidden sm:block pointer-events-none" />
-
-                {/* Real Institutional Photograph Container */}
-                <div className="relative z-10 w-full h-[220px] sm:h-[260px] md:h-[280px] rounded-2xl overflow-hidden border-2 border-white shadow-lg bg-white">
-                  <img
-                    src="/images/imd-forecasting-center.jpg"
-                    alt="IMD National Weather Forecasting Operations Center"
-                    className="w-full h-full object-cover object-center"
-                    loading="eager"
-                  />
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 sm:p-4 text-white">
-                    <div className="text-xs sm:text-sm font-bold tracking-wide">
-                      National Weather Forecasting Operations
-                    </div>
-                    <div className="text-[11px] text-slate-200">
-                      India Meteorological Department &bull; Observational &amp; Numerical Weather Prediction
-                    </div>
-                  </div>
-                </div>
+                {/* Responsive Featured Operations Carousel */}
+                <FeaturedCarousel autoPlayIntervalMs={1500} />
               </div>
             </div>
           </div>

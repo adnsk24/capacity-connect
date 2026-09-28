@@ -27,6 +27,9 @@ from app.models.course import (
     CourseProgress,
     LessonCompletion,
 )
+from app.models.assessment import Assessment, AssessmentAttempt
+from app.models.certificate import Certificate
+from app.services.certificate_service import CertificateService
 
 
 def seed_phase3_data():
@@ -746,6 +749,99 @@ def seed_phase3_data():
                 verification_status="VERIFIED",
             )
             db.add(cert)
+
+        # 10. Accredited Certificate for Trainee (Satellite Data Interpretation)
+        c_satellite = db.query(Course).filter(Course.code == "MET-203").first()
+        if c_satellite:
+            cert_existing = (
+                db.query(Certificate)
+                .filter(Certificate.user_id == demo_trainee.id, Certificate.course_id == c_satellite.id)
+                .first()
+            )
+            if not cert_existing:
+                # Ensure Enrollment exists and is COMPLETED
+                en_sat = (
+                    db.query(Enrollment)
+                    .filter(Enrollment.user_id == demo_trainee.id, Enrollment.course_id == c_satellite.id)
+                    .first()
+                )
+                if not en_sat:
+                    en_sat = Enrollment(
+                        user_id=demo_trainee.id,
+                        course_id=c_satellite.id,
+                        status="COMPLETED",
+                        started_at=datetime(2026, 9, 1, 9, 0, 0, tzinfo=timezone.utc),
+                        completed_at=datetime(2026, 9, 28, 17, 0, 0, tzinfo=timezone.utc),
+                    )
+                    db.add(en_sat)
+                    db.flush()
+                else:
+                    en_sat.status = "COMPLETED"
+
+                # Mark all lessons completed
+                sat_lessons = (
+                    db.query(Lesson)
+                    .join(CourseModule, Lesson.module_id == CourseModule.id)
+                    .filter(CourseModule.course_id == c_satellite.id)
+                    .all()
+                )
+                for les in sat_lessons:
+                    lc = (
+                        db.query(LessonCompletion)
+                        .filter(LessonCompletion.enrollment_id == en_sat.id, LessonCompletion.lesson_id == les.id)
+                        .first()
+                    )
+                    if not lc:
+                        db.add(
+                            LessonCompletion(
+                                enrollment_id=en_sat.id,
+                                lesson_id=les.id,
+                                completed_at=datetime(2026, 9, 25, 12, 0, 0, tzinfo=timezone.utc),
+                            )
+                        )
+
+                # Ensure 100% course progress
+                sat_prog = db.query(CourseProgress).filter(CourseProgress.enrollment_id == en_sat.id).first()
+                if not sat_prog:
+                    db.add(
+                        CourseProgress(
+                            enrollment_id=en_sat.id,
+                            completed_lessons_count=len(sat_lessons),
+                            total_lessons_count=len(sat_lessons),
+                            completion_percentage=100.0,
+                            is_completed=True,
+                            completed_at=datetime(2026, 9, 28, 17, 0, 0, tzinfo=timezone.utc),
+                        )
+                    )
+
+                # Pass published assessments
+                sat_assessments = (
+                    db.query(Assessment)
+                    .filter(Assessment.course_id == c_satellite.id, Assessment.status == "PUBLISHED")
+                    .all()
+                )
+                for a in sat_assessments:
+                    att = (
+                        db.query(AssessmentAttempt)
+                        .filter(AssessmentAttempt.assessment_id == a.id, AssessmentAttempt.user_id == demo_trainee.id)
+                        .first()
+                    )
+                    if not att:
+                        db.add(
+                            AssessmentAttempt(
+                                assessment_id=a.id,
+                                user_id=demo_trainee.id,
+                                status="EVALUATED",
+                                score_obtained=94.0,
+                                percentage=94.0,
+                                is_passed=True,
+                                started_at=datetime(2026, 9, 27, 10, 0, 0, tzinfo=timezone.utc),
+                                submitted_at=datetime(2026, 9, 27, 11, 30, 0, tzinfo=timezone.utc),
+                            )
+                        )
+
+                db.flush()
+                CertificateService.issue_certificate(db, demo_trainee.id, c_satellite.id)
 
         db.commit()
         print("[Seed] Successfully seeded Phase 3 Demo Data (12 IMD Courses, Syllabus, Lessons, Resources, Competencies, and Demo Accounts)!")

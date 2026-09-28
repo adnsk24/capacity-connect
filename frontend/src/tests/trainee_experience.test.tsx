@@ -197,6 +197,8 @@ const mockCourseDetail = {
       storage_url: "https://example.com/handbook.pdf",
       file_size_bytes: 4000000,
       is_downloadable: true,
+      display_order: 1,
+      is_published: true,
     },
   ],
   competencies: [

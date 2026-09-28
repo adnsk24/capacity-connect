@@ -335,12 +335,21 @@ class TrainerService:
         if trainer.role.name != "ADMIN" and course.trainer_id != trainer.id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied.")
 
+        url = (data.media_url or data.url_or_path or "").strip()
         res = Resource(
             course_id=course_id,
+            module_id=data.module_id,
+            lesson_id=data.lesson_id,
             title=data.title,
             resource_type=data.resource_type,
-            file_url=data.url_or_path,
+            storage_url=url,
+            thumbnail_url=data.thumbnail_url,
+            duration_seconds=data.duration_seconds,
+            display_order=data.display_order,
+            is_published=data.is_published,
+            is_downloadable=data.is_downloadable,
             description=data.description,
+            created_by=trainer.id,
         )
         db.add(res)
         db.commit()

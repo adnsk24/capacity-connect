@@ -62,6 +62,10 @@ scratch/
 temp/
 tmp/
 
+# Uploaded Media & Generated PDFs
+uploads/
+backend/uploads/
+
 # OS / Editor files
 .DS_Store
 Thumbs.db

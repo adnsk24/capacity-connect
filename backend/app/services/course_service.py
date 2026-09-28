@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func
 
-from app.models.course import Course, CourseCategory, CourseModule, Lesson, Resource, Enrollment, CourseProgress, LessonCompletion
+from app.models.course import Course, CourseCategory, CourseModule, Lesson, Resource, ResourceCompletion, Enrollment, CourseProgress, LessonCompletion
 from app.models.assessment import Assessment
 from app.models.user import User
 from app.schemas.course import (
@@ -216,6 +216,7 @@ class CourseService:
         # Check enrollment and progress
         enrollment = None
         completed_lesson_ids = set()
+        completed_resource_ids = set()
         if current_user:
             enrollment = (
                 db.query(Enrollment)
@@ -230,6 +231,23 @@ class CourseService:
                     .all()
                 )
                 completed_lesson_ids = {c[0] for c in completions}
+
+                r_completions = (
+                    db.query(ResourceCompletion.resource_id)
+                    .filter(
+                        ResourceCompletion.enrollment_id == enrollment.id,
+                        ResourceCompletion.is_completed == True,
+                    )
+                    .all()
+                )
+                completed_resource_ids = {c[0] for c in r_completions}
+
+        # Check if user is course manager or admin
+        is_manager = current_user and (
+            current_user.role.name == "ADMIN" or (
+                current_user.role.name == "TRAINER" and course.trainer_id == current_user.id
+            )
+        )
 
         # Build trainer summary
         trainer_summary = None
@@ -250,13 +268,40 @@ class CourseService:
         total_lessons = 0
         sorted_modules = sorted(course.modules, key=lambda m: m.order_index)
 
-        # Index resources by lesson_id
+        # Index resources by lesson_id and module_id
         lesson_resources_map = {}
+        module_resources_map = {}
         course_level_resources: List[ResourceResponse] = []
-        for res in course.resources:
-            res_dto = ResourceResponse.model_validate(res)
+        for res in sorted(course.resources, key=lambda r: (r.display_order, r.created_at)):
+            if not is_manager and not res.is_published:
+                continue
+            res_dto = ResourceResponse(
+                id=res.id,
+                course_id=res.course_id,
+                module_id=res.module_id,
+                lesson_id=res.lesson_id,
+                title=res.title,
+                description=res.description,
+                resource_type=res.resource_type,
+                storage_url=res.storage_url,
+                media_url=res.storage_url,
+                file_url=res.storage_url,
+                thumbnail_url=res.thumbnail_url,
+                file_name=res.file_name,
+                file_size_bytes=res.file_size_bytes,
+                mime_type=res.mime_type,
+                duration_seconds=res.duration_seconds,
+                display_order=res.display_order,
+                is_published=res.is_published,
+                is_downloadable=res.is_downloadable,
+                is_completed=res.id in completed_resource_ids,
+                created_at=res.created_at,
+                updated_at=res.updated_at,
+            )
             if res.lesson_id:
                 lesson_resources_map.setdefault(res.lesson_id, []).append(res_dto)
+            elif res.module_id:
+                module_resources_map.setdefault(res.module_id, []).append(res_dto)
             else:
                 course_level_resources.append(res_dto)
 
@@ -289,6 +334,7 @@ class CourseService:
                     description=mod.description,
                     order_index=mod.order_index,
                     lessons=lessons_res,
+                    resources=module_resources_map.get(mod.id, []),
                 )
             )
 
