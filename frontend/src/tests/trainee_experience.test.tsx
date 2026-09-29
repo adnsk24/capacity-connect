@@ -8,7 +8,8 @@ import { TraineeDashboardPage } from "../pages/TraineeDashboardPage"
 import { CourseCataloguePage } from "../pages/CourseCataloguePage"
 import { CourseDetailPage } from "../pages/CourseDetailPage"
 import { TraineeProfilePage } from "../pages/TraineeProfilePage"
-import { traineeService } from "../services/trainee"
+import { MyLearningPage } from "../pages/MyLearningPage"
+import { traineeService, type EnrolledCourseItem } from "../services/trainee"
 import { coursesService } from "../services/courses"
 
 // Mock services
@@ -399,4 +400,123 @@ describe("Phase 3 Trainee Experience", () => {
     expect(screen.getByText("Login Page Redirect")).toBeDefined()
     expect(screen.queryByText("Secret Trainee Dashboard")).toBeNull()
   })
+
+  // 9. My Learning portfolio displays courses and filter tabs
+  it("renders My Learning portfolio with filter tabs and course cards", async () => {
+    const mockLearning: EnrolledCourseItem[] = [
+      {
+        course_id: "c-1",
+        enrollment_id: "en-1",
+        title: "Satellite Data Interpretation",
+        code: "MET-203",
+        category_name: "Satellite Meteorology",
+        difficulty_level: "INTERMEDIATE",
+        duration_hours: 35,
+        status: "COMPLETED",
+        enrolled_at: "2026-09-01T00:00:00Z",
+        progress_percentage: 100.0,
+        completed_lessons_count: 8,
+        total_lessons_count: 8,
+        certificate_id: "cert-uuid-1",
+        certificate_number: "CC-2026-SDI-000003",
+        certificate_status: "ISSUED",
+        certificate_issue_date: "2026-09-28",
+        has_pending_assessment: false,
+      },
+      {
+        course_id: "c-2",
+        enrollment_id: "en-2",
+        title: "Doppler Weather Radar Operations",
+        code: "MET-204",
+        category_name: "Radar Meteorology",
+        difficulty_level: "INTERMEDIATE",
+        duration_hours: 45,
+        status: "COMPLETED",
+        enrolled_at: "2026-09-02T00:00:00Z",
+        progress_percentage: 100.0,
+        completed_lessons_count: 8,
+        total_lessons_count: 8,
+        has_pending_assessment: true,
+        pending_assessment_id: "asmt-radar-1",
+        pending_assessment_title: "Doppler Radar Practical Lab",
+      },
+    ]
+
+    vi.mocked(traineeService.getMyLearning).mockResolvedValue(mockLearning)
+    renderWithClient(<MyLearningPage />)
+
+    expect(await screen.findByText("My Learning Portfolio")).toBeDefined()
+    expect(screen.getByText("All Courses (2)")).toBeDefined()
+    expect(screen.getByText("Accredited Certificates (1)")).toBeDefined()
+    expect(screen.getByText("Satellite Data Interpretation")).toBeDefined()
+    expect(screen.getByText("Doppler Weather Radar Operations")).toBeDefined()
+  })
+
+  // 10. My Learning displays certificate badge and opens modal
+  it("renders accredited certificate badge and opens preview modal directly from My Learning", async () => {
+    const mockLearning: EnrolledCourseItem[] = [
+      {
+        course_id: "c-1",
+        enrollment_id: "en-1",
+        title: "Automated Weather Stations Calibration",
+        code: "AWS-101",
+        category_name: "General Meteorology",
+        difficulty_level: "BEGINNER",
+        duration_hours: 10,
+        status: "COMPLETED",
+        enrolled_at: "2026-09-01T00:00:00Z",
+        progress_percentage: 100.0,
+        completed_lessons_count: 1,
+        total_lessons_count: 1,
+        certificate_id: "cert-aws-123",
+        certificate_number: "CC-2026-AWSC-000007",
+        certificate_status: "ISSUED",
+        certificate_issue_date: "2026-09-29",
+        has_pending_assessment: false,
+      },
+    ]
+
+    vi.mocked(traineeService.getMyLearning).mockResolvedValue(mockLearning)
+    renderWithClient(<MyLearningPage />)
+
+    expect(await screen.findByText("Accredited Certificate Issued")).toBeDefined()
+    expect(screen.getAllByText(/CC-2026-AWSC-000007/).length).toBeGreaterThanOrEqual(1)
+
+    // Clicking View Certificate opens modal
+    const viewButtons = screen.getAllByText("View Certificate")
+    fireEvent.click(viewButtons[0])
+
+    expect(await screen.findByRole("dialog")).toBeDefined()
+  })
+
+  // 11. My Learning displays assessment guidance when assessment is required
+  it("displays assessment required guidance for completed courses with pending assessment", async () => {
+    const mockLearning: EnrolledCourseItem[] = [
+      {
+        course_id: "c-2",
+        enrollment_id: "en-2",
+        title: "Doppler Weather Radar Operations",
+        code: "MET-204",
+        category_name: "Radar Meteorology",
+        difficulty_level: "INTERMEDIATE",
+        duration_hours: 45,
+        status: "COMPLETED",
+        enrolled_at: "2026-09-02T00:00:00Z",
+        progress_percentage: 100.0,
+        completed_lessons_count: 8,
+        total_lessons_count: 8,
+        has_pending_assessment: true,
+        pending_assessment_id: "asmt-radar-1",
+        pending_assessment_title: "Doppler Radar Practical Lab",
+      },
+    ]
+
+    vi.mocked(traineeService.getMyLearning).mockResolvedValue(mockLearning)
+    renderWithClient(<MyLearningPage />)
+
+    expect(await screen.findByText("Final Assessment Required for Certificate")).toBeDefined()
+    expect(screen.getByText(/Doppler Radar Practical Lab/)).toBeDefined()
+    expect(screen.getAllByText("Take Assessment").length).toBeGreaterThanOrEqual(1)
+  })
 })
+

@@ -72,6 +72,7 @@ export const LearningContentPage: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] })
       queryClient.invalidateQueries({ queryKey: ["trainee-dashboard"] })
       queryClient.invalidateQueries({ queryKey: ["trainee-learning"] })
+      queryClient.invalidateQueries({ queryKey: ["trainee-certificates"] })
     },
   })
 

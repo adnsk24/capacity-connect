@@ -96,6 +96,7 @@ class ProgressService:
             progress.completed_at = now
             enrollment.status = "COMPLETED"
             enrollment.completed_at = now
+            db.flush()
 
             # Check eligibility and trigger automatic certificate generation if all requirements are met
             try:

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Clock,
   ChevronLeft,
@@ -19,6 +19,7 @@ import { assessmentsService, AssessmentAttemptStartResponse } from "@/services/a
 export const AssessmentTakePage: React.FC = () => {
   const { assessmentId, attemptId } = useParams<{ assessmentId: string; attemptId: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
@@ -87,6 +88,10 @@ export const AssessmentTakePage: React.FC = () => {
 
     try {
       await assessmentsService.submitAttempt(attemptId, payload)
+      queryClient.invalidateQueries({ queryKey: ["trainee-learning"] })
+      queryClient.invalidateQueries({ queryKey: ["trainee-certificates"] })
+      queryClient.invalidateQueries({ queryKey: ["trainee-dashboard"] })
+      queryClient.invalidateQueries({ queryKey: ["assessment-history"] })
       navigate(`/trainee/assessments/${assessmentId}/result/${attemptId}`, { replace: true })
     } catch (err: any) {
       setErrorMsg(err.message || "Failed to submit assessment answers.")

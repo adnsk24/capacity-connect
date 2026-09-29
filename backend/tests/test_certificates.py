@@ -685,3 +685,23 @@ def test_download_certificate_and_inline_preview(client, setup_certificate_data)
     assert res_admin.headers["content-type"] == "application/pdf"
 
 
+# Test 16: My Learning portfolio returns certificate metadata and pending assessment guidance
+def test_my_learning_returns_certificates_and_guidance(client, setup_certificate_data):
+    t1_token = setup_certificate_data["t1_token"]
+
+    res = client.get("/api/v1/trainee/learning", headers={"Authorization": f"Bearer {t1_token}"})
+    assert res.status_code == status.HTTP_200_OK
+    learning_items = res.json()
+    assert len(learning_items) >= 1
+
+    # Trainee 1 completed Course 1 in Test 1 and has an issued certificate
+    course1_item = next((item for item in learning_items if item["course_id"] == str(setup_certificate_data["course1"].id)), None)
+    assert course1_item is not None
+    assert course1_item["certificate_id"] is not None
+    assert course1_item["certificate_number"].startswith("CC-")
+    assert course1_item["certificate_status"] in ("ISSUED", "REVOKED")
+    assert course1_item["has_pending_assessment"] is False
+
+
+
+

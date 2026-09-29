@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
@@ -59,5 +59,16 @@ class EnrolledCourseItem(BaseModel):
     total_lessons_count: int
     next_lesson_id: Optional[uuid.UUID] = None
     next_lesson_title: Optional[str] = None
+    # Certificate & Credential integration
+    certificate_id: Optional[uuid.UUID] = None
+    certificate_number: Optional[str] = None
+    certificate_pdf_url: Optional[str] = None
+    certificate_issue_date: Optional[date] = None
+    certificate_status: Optional[str] = None
+    # Assessment guidance
+    has_pending_assessment: bool = False
+    pending_assessment_id: Optional[uuid.UUID] = None
+    pending_assessment_title: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
+

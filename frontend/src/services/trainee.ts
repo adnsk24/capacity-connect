@@ -78,6 +78,14 @@ export interface EnrolledCourseItem {
   total_lessons_count: number
   next_lesson_id?: string
   next_lesson_title?: string
+  certificate_id?: string
+  certificate_number?: string
+  certificate_pdf_url?: string
+  certificate_issue_date?: string
+  certificate_status?: string
+  has_pending_assessment?: boolean
+  pending_assessment_id?: string
+  pending_assessment_title?: string
 }
 
 export interface CompetencyOverview {
