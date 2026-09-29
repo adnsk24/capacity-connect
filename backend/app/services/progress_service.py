@@ -96,6 +96,15 @@ class ProgressService:
             progress.completed_at = now
             enrollment.status = "COMPLETED"
             enrollment.completed_at = now
+
+            # Check eligibility and trigger automatic certificate generation if all requirements are met
+            try:
+                from app.services.certificate_service import CertificateService
+                eligibility = CertificateService.check_eligibility(db, enrollment.user_id, course_id)
+                if eligibility.eligible:
+                    CertificateService.issue_certificate(db, enrollment.user_id, course_id)
+            except Exception as cert_err:
+                print(f"[ProgressService] Certificate auto-issuance notice: {cert_err}")
         else:
             enrollment.status = "IN_PROGRESS"
             if not enrollment.started_at:

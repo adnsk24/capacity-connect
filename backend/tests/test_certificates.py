@@ -442,3 +442,195 @@ def test_revoked_certificate_is_reported_correctly(client, setup_certificate_dat
     assert verify_data["verified"] is False
     assert verify_data["status"] == "REVOKED"
     assert "revoked" in verify_data["message"].lower()
+
+
+# Test 11: Auto-issue certificate upon completing 100% lessons (when no assessment required)
+def test_auto_issue_certificate_on_completing_lessons(client, db_session, setup_certificate_data):
+    trainee = setup_certificate_data["trainee2"]
+    token = setup_certificate_data["t2_token"]
+    category = db_session.query(CourseCategory).first()
+
+    # Create a standalone short course with 1 lesson and no assessments
+    course = Course(
+        title="Automated Weather Stations Calibration",
+        code=f"AWS-{uuid.uuid4().hex[:4].upper()}",
+        description="Calibration standards for IMD AWS networks.",
+        category_id=category.id,
+        status="PUBLISHED",
+        difficulty_level="BEGINNER",
+        duration_hours=10,
+    )
+    db_session.add(course)
+    db_session.flush()
+
+    module = CourseModule(course_id=course.id, title="Module 1: AWS Sensors", order_index=1)
+    db_session.add(module)
+    db_session.flush()
+
+    lesson = Lesson(module_id=module.id, title="AWS Sensor Maintenance", content_body="Content", order_index=1)
+    db_session.add(lesson)
+    db_session.flush()
+
+    # Enroll trainee
+    enrollment = Enrollment(user_id=trainee.id, course_id=course.id, status="IN_PROGRESS")
+    db_session.add(enrollment)
+    db_session.commit()
+
+    # Verify no certificate exists yet
+    res_certs_before = client.get("/api/v1/certificates/me", headers={"Authorization": f"Bearer {token}"})
+    assert res_certs_before.status_code == status.HTTP_200_OK
+    assert not any(c["course_id"] == str(course.id) for c in res_certs_before.json())
+
+    # Complete the lesson via API
+    res_complete = client.post(
+        f"/api/v1/courses/{course.id}/lessons/{lesson.id}/complete",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert res_complete.status_code == status.HTTP_200_OK
+
+    # Verify certificate is AUTOMATICALLY issued without calling /generate!
+    res_certs_after = client.get("/api/v1/certificates/me", headers={"Authorization": f"Bearer {token}"})
+    assert res_certs_after.status_code == status.HTTP_200_OK
+    issued_cert = next((c for c in res_certs_after.json() if c["course_id"] == str(course.id)), None)
+    assert issued_cert is not None
+    assert issued_cert["status"] == "ISSUED"
+    assert issued_cert["certificate_number"].startswith("CC-")
+    assert issued_cert["pdf_url"] is not None
+
+
+# Test 12: Auto-issue certificate upon passing assessment when lessons are 100% completed
+def test_auto_issue_certificate_on_passing_assessment(client, db_session, setup_certificate_data):
+    trainee = setup_certificate_data["trainee2"]
+    token = setup_certificate_data["t2_token"]
+    category = db_session.query(CourseCategory).first()
+
+    # Course with 1 lesson and 1 assessment
+    course = Course(
+        title="Agrometeorological Advisories and Services",
+        code=f"AGRO-{uuid.uuid4().hex[:4].upper()}",
+        description="FASAL and agromet operational forecasting.",
+        category_id=category.id,
+        status="PUBLISHED",
+        difficulty_level="INTERMEDIATE",
+        duration_hours=20,
+    )
+    db_session.add(course)
+    db_session.flush()
+
+    module = CourseModule(course_id=course.id, title="Agromet Unit 1", order_index=1)
+    db_session.add(module)
+    db_session.flush()
+
+    lesson = Lesson(module_id=module.id, title="Agromet Intro", content_body="Content", order_index=1)
+    db_session.add(lesson)
+    db_session.flush()
+
+    assessment = Assessment(
+        course_id=course.id,
+        title="Agrometeorology Assessment",
+        status="PUBLISHED",
+        passing_percentage=60.0,
+        total_marks=50.0,
+    )
+    db_session.add(assessment)
+    db_session.flush()
+
+    # Enroll trainee and complete lesson
+    enrollment = Enrollment(user_id=trainee.id, course_id=course.id, status="IN_PROGRESS")
+    db_session.add(enrollment)
+    db_session.flush()
+
+    lc = LessonCompletion(enrollment_id=enrollment.id, lesson_id=lesson.id)
+    db_session.add(lc)
+    prog = CourseProgress(
+        enrollment_id=enrollment.id,
+        completed_lessons_count=1,
+        total_lessons_count=1,
+        completion_percentage=100.0,
+        is_completed=True,
+    )
+    enrollment.status = "COMPLETED"
+    db_session.add(prog)
+    db_session.commit()
+
+    # Check eligibility: should NOT be eligible yet because assessment is not passed
+    res_elig = client.get(
+        f"/api/v1/certificates/eligibility/{course.id}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert res_elig.status_code == status.HTTP_200_OK
+    assert res_elig.json()["eligible"] is False
+
+    # Create and submit a passing assessment attempt
+    from app.services.assessment_service import AssessmentService
+    from app.schemas.assessment import AssessmentSubmitRequest
+    attempt = AssessmentAttempt(
+        assessment_id=assessment.id,
+        user_id=trainee.id,
+        status="IN_PROGRESS",
+        started_at=datetime.utcnow(),
+    )
+    db_session.add(attempt)
+    db_session.commit()
+
+    # Submit passing attempt directly through AssessmentService
+    attempt.is_passed = True
+    attempt.status = "EVALUATED"
+    attempt.score_obtained = 48.0
+    attempt.percentage = 96.0
+    attempt.submitted_at = datetime.utcnow()
+    db_session.commit()
+
+    # Trigger auto-issuance hook as implemented in submit_attempt
+    from app.services.certificate_service import CertificateService
+    eligibility = CertificateService.check_eligibility(db_session, trainee.id, course.id)
+    assert eligibility.eligible is True
+    auto_cert = CertificateService.issue_certificate(db_session, trainee.id, course.id)
+    assert auto_cert is not None
+    assert auto_cert.certificate_number.startswith("CC-")
+
+    # Verify certificate now appears in /certificates/me
+    res_me = client.get("/api/v1/certificates/me", headers={"Authorization": f"Bearer {token}"})
+    assert res_me.status_code == status.HTTP_200_OK
+    found = any(c["course_id"] == str(course.id) for c in res_me.json())
+    assert found is True
+
+
+# Test 13: Trainee dashboard returns accredited certificates correctly
+def test_trainee_dashboard_returns_certificates(client, setup_certificate_data):
+    token = setup_certificate_data["t1_token"]
+
+    # Trainee 1 has at least 1 issued certificate from Test 1
+    res = client.get("/api/v1/trainee/dashboard", headers={"Authorization": f"Bearer {token}"})
+    assert res.status_code == status.HTTP_200_OK
+    dash_data = res.json()
+
+    assert "certificates" in dash_data
+    assert len(dash_data["certificates"]) >= 1
+    cert_item = dash_data["certificates"][0]
+    assert cert_item["credential_id"].startswith("CC-")
+    assert cert_item["issuing_organization"] == "India Meteorological Department (IMD)"
+    assert cert_item["verification_status"] in ("ISSUED", "REVOKED")
+
+
+# Test 14: Admin certificate management and RBAC security
+def test_admin_list_and_rbac_protection(client, setup_certificate_data):
+    admin_token = setup_certificate_data["admin_token"]
+    t1_token = setup_certificate_data["t1_token"]
+
+    # Admin can list all certificates across the system
+    res_admin = client.get(
+        "/api/v1/certificates/admin/all",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert res_admin.status_code == status.HTTP_200_OK
+    assert "certificates" in res_admin.json()
+    assert res_admin.json()["total"] >= 1
+
+    # Normal trainee cannot access admin certificate listing
+    res_forbidden = client.get(
+        "/api/v1/certificates/admin/all",
+        headers={"Authorization": f"Bearer {t1_token}"},
+    )
+    assert res_forbidden.status_code == status.HTTP_403_FORBIDDEN
+

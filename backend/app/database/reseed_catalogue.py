@@ -688,8 +688,68 @@ def reseed_catalogue():
                 )
                 db.add(prog2)
 
+            # Course 3: SAT-301 (Satellite Meteorology) - Completed with Issued Certificate
+            sat_course = courses_by_code.get("SAT-301") or courses_by_code.get("INS-302")
+            if sat_course:
+                en3 = Enrollment(
+                    user_id=trainee.id,
+                    course_id=sat_course.id,
+                    status="COMPLETED",
+                    started_at=datetime.now(timezone.utc) - timedelta(days=20),
+                    completed_at=datetime.now(timezone.utc) - timedelta(days=2),
+                )
+                db.add(en3)
+                db.flush()
+
+                sat_lessons = (
+                    db.query(Lesson)
+                    .join(CourseModule, Lesson.module_id == CourseModule.id)
+                    .filter(CourseModule.course_id == sat_course.id)
+                    .all()
+                )
+                for sl in sat_lessons:
+                    db.add(LessonCompletion(enrollment_id=en3.id, lesson_id=sl.id))
+
+                prog3 = CourseProgress(
+                    enrollment_id=en3.id,
+                    completed_lessons_count=len(sat_lessons),
+                    total_lessons_count=len(sat_lessons),
+                    completion_percentage=100.0,
+                    is_completed=True,
+                    completed_at=datetime.now(timezone.utc) - timedelta(days=2),
+                )
+                db.add(prog3)
+
+                # Passing assessment attempt
+                sat_assessments = (
+                    db.query(Assessment)
+                    .filter(Assessment.course_id == sat_course.id, Assessment.status == "PUBLISHED")
+                    .all()
+                )
+                for sa in sat_assessments:
+                    db.add(
+                        AssessmentAttempt(
+                            assessment_id=sa.id,
+                            user_id=trainee.id,
+                            status="EVALUATED",
+                            score_obtained=94.0,
+                            percentage=94.0,
+                            is_passed=True,
+                            started_at=datetime.now(timezone.utc) - timedelta(days=2, hours=1),
+                            submitted_at=datetime.now(timezone.utc) - timedelta(days=2),
+                        )
+                    )
+                db.flush()
+
+                try:
+                    from app.services.certificate_service import CertificateService
+                    CertificateService.issue_certificate(db, trainee.id, sat_course.id)
+                    print(f"[Reseed] Successfully issued accredited certificate for {sat_course.title}.")
+                except Exception as cert_err:
+                    print(f"[Reseed] Certificate generation note: {cert_err}")
+
             db.commit()
-            print("[Reseed] Restored Trainee demo enrollments.")
+            print("[Reseed] Restored Trainee demo enrollments and accredited certificate.")
 
         # Verification counts
         cat_count = db.query(CourseCategory).count()

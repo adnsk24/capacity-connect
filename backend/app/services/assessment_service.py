@@ -536,6 +536,20 @@ class AssessmentService:
         db.commit()
         db.refresh(attempt)
 
+        # If passed, check if the course now meets all requirements for accredited certificate issuance
+        if is_passed and attempt.assessment.course_id:
+            try:
+                from app.services.certificate_service import CertificateService
+                eligibility = CertificateService.check_eligibility(
+                    db, user.id, attempt.assessment.course_id
+                )
+                if eligibility.eligible:
+                    CertificateService.issue_certificate(
+                        db, user.id, attempt.assessment.course_id
+                    )
+            except Exception as cert_err:
+                print(f"[AssessmentService] Certificate auto-issuance notice: {cert_err}")
+
         return AssessmentResultResponse(
             attempt_id=attempt.id,
             assessment_id=attempt.assessment_id,

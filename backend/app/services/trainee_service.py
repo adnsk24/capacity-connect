@@ -307,12 +307,13 @@ class TraineeService:
                     )
                 )
 
-        # Certifications
+        # Accredited Course Completion Certificates
+        from app.models.certificate import Certificate
         certs = (
-            db.query(Certification)
-            .options(joinedload(Certification.course))
-            .filter(Certification.user_id == current_user.id)
-            .order_by(Certification.issue_date.desc())
+            db.query(Certificate)
+            .options(joinedload(Certificate.course))
+            .filter(Certificate.user_id == current_user.id)
+            .order_by(Certificate.issue_date.desc(), Certificate.created_at.desc())
             .all()
         )
         certificates: List[CertificateItem] = []
@@ -320,13 +321,13 @@ class TraineeService:
             certificates.append(
                 CertificateItem(
                     id=cert.id,
-                    title=cert.title,
+                    title=cert.course.title if cert.course else "Accredited Training Course",
                     course_id=cert.course_id,
                     course_title=cert.course.title if cert.course else None,
-                    issuing_organization=cert.issuing_organization,
-                    credential_id=cert.credential_id,
+                    issuing_organization="India Meteorological Department (IMD)",
+                    credential_id=cert.certificate_number,
                     issue_date=cert.issue_date,
-                    verification_status=cert.verification_status,
+                    verification_status=cert.status,
                 )
             )
 

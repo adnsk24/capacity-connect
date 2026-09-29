@@ -2,6 +2,7 @@ import React from "react"
 import { X, Download, ShieldCheck, ExternalLink, Award } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Certificate, certificateService } from "@/services/certificates"
+import { API_BASE_URL } from "@/services/api"
 
 interface CertificatePreviewModalProps {
   certificate: Certificate | null
@@ -19,8 +20,9 @@ export const CertificatePreviewModal: React.FC<CertificatePreviewModalProps> = (
   if (!isOpen || !certificate) return null
 
   // Use download URL or direct storage URL
+  const backendOrigin = API_BASE_URL.replace("/api/v1", "")
   const pdfSource = certificate.pdf_url
-    ? (certificate.pdf_url.startsWith("http") ? certificate.pdf_url : `http://localhost:8000${certificate.pdf_url}`)
+    ? (certificate.pdf_url.startsWith("http") ? certificate.pdf_url : `${backendOrigin}${certificate.pdf_url}`)
     : certificateService.getDownloadUrl(certificate.id)
 
   const handleDownload = () => {

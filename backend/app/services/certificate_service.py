@@ -450,6 +450,21 @@ class CertificateService:
         rel_url, _ = cls.render_pdf(new_cert, user, course, public_verify_base_url)
         new_cert.pdf_url = rel_url
 
+        # Create in-app celebration notification for trainee
+        try:
+            from app.models.notification import Notification
+            notif = Notification(
+                user_id=user_id,
+                title=f"Certificate Issued: {course.title}",
+                message=f"Congratulations! Your official IMD Certificate of Completion ({cert_number}) is ready to view and download.",
+                notification_type="CERTIFICATE_ISSUED",
+                link_url="/trainee/certificates",
+                is_read=False,
+            )
+            db.add(notif)
+        except Exception as notif_err:
+            print(f"[CertificateService] Notification creation warning: {notif_err}")
+
         db.commit()
         db.refresh(new_cert)
         return new_cert
