@@ -22,11 +22,29 @@ import {
   TrainerRecommendationCandidate,
   SubjectRequirementItem,
 } from "@/services/competencies"
+import { aiService, AITrainerMatchExplainResponse } from "@/services/aiService"
 
 export const AdminTrainerRecommendationsPage: React.FC = () => {
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>("")
   const [expandedCandidateId, setExpandedCandidateId] = useState<string | null>(null)
   const [assignedSuccessMsg, setAssignedSuccessMsg] = useState<string | null>(null)
+  const [explainModalData, setExplainModalData] = useState<AITrainerMatchExplainResponse | null>(null)
+  const [isExplainingId, setIsExplainingId] = useState<string | null>(null)
+
+  const handleExplainMatch = async (trainerId: string) => {
+    setIsExplainingId(trainerId)
+    try {
+      const res = await aiService.explainTrainerMatch({
+        subject_id: activeSubjectId,
+        trainer_id: trainerId,
+      })
+      setExplainModalData(res)
+    } catch (err: any) {
+      alert(err?.message || "Failed to generate match explanation.")
+    } finally {
+      setIsExplainingId(null)
+    }
+  }
 
   // 1. Fetch available subjects
   const { data: subjects = [] } = useQuery({
@@ -221,6 +239,15 @@ export const AdminTrainerRecommendationsPage: React.FC = () => {
                             {cand.overall_match_score.toFixed(1)}%
                           </span>
                         </div>
+                        <button
+                          type="button"
+                          onClick={() => handleExplainMatch(cand.trainer_id)}
+                          disabled={isExplainingId === cand.trainer_id}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#1557A6] rounded-md text-xs font-semibold border border-blue-200 transition-colors disabled:opacity-50 cursor-pointer"
+                        >
+                          <Sparkles className={`h-3.5 w-3.5 ${isExplainingId === cand.trainer_id ? "animate-spin" : ""}`} />
+                          <span>Explain Match</span>
+                        </button>
                         <Button
                           size="sm"
                           onClick={() => handleAssignTrainer(cand)}
@@ -347,6 +374,89 @@ export const AdminTrainerRecommendationsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* AI Explainable Trainer Match Modal */}
+      {explainModalData && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="p-1 bg-[#1557A6] text-white rounded">
+                  <Sparkles className="h-4 w-4" />
+                </span>
+                <h3 className="text-sm font-bold text-slate-900">Explainable Trainer Matching</h3>
+              </div>
+              <button
+                onClick={() => setExplainModalData(null)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold px-2 py-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 bg-blue-50/50 rounded-lg border border-blue-200 flex items-center justify-between">
+                <div>
+                  <div className="font-bold text-slate-900 text-sm">{explainModalData.trainer_name}</div>
+                  <div className="text-slate-500">{explainModalData.designation} • {explainModalData.department}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-slate-500 font-semibold uppercase">Overall Match</div>
+                  <div className="text-xl font-black text-[#1557A6]">
+                    {explainModalData.overall_match_score.toFixed(1)}%
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="font-semibold text-slate-700 uppercase tracking-wider text-[10px] mb-1.5">
+                  Authoritative Deterministic Evidence Subscores
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="p-2 bg-slate-50 rounded border border-slate-200 text-center">
+                    <div className="text-[10px] text-slate-500 font-medium">Competency</div>
+                    <div className="font-bold text-slate-900">
+                      {explainModalData.evidence_subscores.competency_match.toFixed(1)}%
+                    </div>
+                  </div>
+                  <div className="p-2 bg-slate-50 rounded border border-slate-200 text-center">
+                    <div className="text-[10px] text-slate-500 font-medium">Experience</div>
+                    <div className="font-bold text-slate-900">
+                      {explainModalData.evidence_subscores.experience_score.toFixed(1)}%
+                    </div>
+                  </div>
+                  <div className="p-2 bg-slate-50 rounded border border-slate-200 text-center">
+                    <div className="text-[10px] text-slate-500 font-medium">Degrees</div>
+                    <div className="font-bold text-slate-900">
+                      {explainModalData.evidence_subscores.qualification_score.toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div className="font-semibold text-slate-700 uppercase tracking-wider text-[10px] mb-1">
+                  AI Explainable Narrative
+                </div>
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 leading-relaxed whitespace-pre-wrap">
+                  {explainModalData.ai_explainable_rationale}
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Source: {explainModalData.authoritative_source}</span>
+                <span className="font-semibold text-slate-700">Admin holds final appointment authority</span>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <Button size="sm" onClick={() => setExplainModalData(null)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from app.models.feedback import Feedback
     from app.models.competency import CourseCompetency
     from app.models.certificate import Certificate
+    from app.models.ai import AIDocumentChunk
 
 
 class CourseCategory(Base, UUIDPrimaryKeyMixin, TimestampMixin):
@@ -184,6 +185,9 @@ class Resource(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     created_by: Mapped[Optional[uuid.UUID]] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"), nullable=True
     )
+    # AI Grounding Metadata
+    ai_enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    ai_approved: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     @property
     def media_url(self) -> str:
@@ -208,6 +212,9 @@ class Resource(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     creator: Mapped[Optional["User"]] = relationship("User")
     completions: Mapped[List["ResourceCompletion"]] = relationship(
         "ResourceCompletion", back_populates="resource", cascade="all, delete-orphan"
+    )
+    ai_chunks: Mapped[List["AIDocumentChunk"]] = relationship(
+        "AIDocumentChunk", back_populates="resource", cascade="all, delete-orphan"
     )
 
 

@@ -6,6 +6,8 @@ import {
   ClipboardCheck,
   Users,
   X,
+  Sparkles,
+  BookMarked,
 } from "lucide-react"
 
 interface TrainerSidebarProps {
@@ -16,6 +18,8 @@ interface TrainerSidebarProps {
 const navItems = [
   { to: "/trainer/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/trainer/courses", label: "My Courses", icon: BookOpen },
+  { to: "/trainer/ai-quiz", label: "AI Quiz Studio", icon: Sparkles },
+  { to: "/trainer/ai-faq-glossary", label: "AI FAQ & Glossary", icon: BookMarked },
   { to: "/trainer/assessments", label: "Assessments", icon: ClipboardCheck },
   { to: "/trainer/performance", label: "Trainee Performance", icon: Users },
 ]

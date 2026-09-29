@@ -32,6 +32,7 @@ import {
   competenciesService,
   UserCompetency,
 } from "@/services/competencies"
+import { aiService, AICompetencyDiagnosticResponse } from "@/services/aiService"
 
 // Lazy-load Three.js 3D Universe to ensure it is isolated from the initial application bundle!
 const CompetencyUniverse3D = lazy(
@@ -42,6 +43,20 @@ export const TraineeCompetenciesPage: React.FC = () => {
   const [viewMode, setViewMode] = useState<"2d" | "3d">("2d")
   const [selectedComp, setSelectedComp] = useState<UserCompetency | null>(null)
   const [showFormulaModal, setShowFormulaModal] = useState<boolean>(false)
+  const [aiDiagnostic, setAiDiagnostic] = useState<AICompetencyDiagnosticResponse | null>(null)
+  const [isLoadingAiDiagnostic, setIsLoadingAiDiagnostic] = useState<boolean>(false)
+
+  const handleFetchAiDiagnostic = async () => {
+    setIsLoadingAiDiagnostic(true)
+    try {
+      const res = await aiService.generateCompetencyDiagnostic()
+      setAiDiagnostic(res)
+    } catch (err: any) {
+      alert(err?.message || "Failed to generate diagnostic explanation.")
+    } finally {
+      setIsLoadingAiDiagnostic(false)
+    }
+  }
 
   // 1. Fetch user evaluated competencies
   const { data: competencies = [] } = useQuery({
@@ -178,6 +193,16 @@ export const TraineeCompetenciesPage: React.FC = () => {
                 </strong>
               </span>
             </div>
+            <div className="pt-2 flex justify-end border-t border-slate-100">
+              <button
+                onClick={handleFetchAiDiagnostic}
+                disabled={isLoadingAiDiagnostic}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-[#1557A6] rounded-md text-xs font-semibold border border-blue-200 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                <Sparkles className={`h-3.5 w-3.5 ${isLoadingAiDiagnostic ? "animate-spin" : ""}`} />
+                {isLoadingAiDiagnostic ? "Analyzing Evidence..." : "AI Closed-Loop Diagnostic"}
+              </button>
+            </div>
           </CardContent>
         </Card>
 
@@ -231,6 +256,66 @@ export const TraineeCompetenciesPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Diagnostic Explanation & Closed-Loop Visualizer */}
+      {aiDiagnostic && (
+        <Card className="border-blue-200 bg-linear-to-r from-blue-50/40 via-white to-slate-50/40 shadow-xs">
+          <CardHeader className="p-5 pb-3 border-b border-slate-100 flex flex-row items-center justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="p-1 bg-[#1557A6] text-white rounded">
+                  <Sparkles className="h-4 w-4" />
+                </span>
+                <CardTitle className="text-sm font-bold text-slate-900">
+                  AI Closed-Loop Diagnostic Explanation
+                </CardTitle>
+                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[10px]">
+                  Authoritative Deterministic Source
+                </Badge>
+              </div>
+              <p className="text-xs text-slate-500">
+                AI synthesizes structured evidence without altering deterministic competency scores or readiness percentages.
+              </p>
+            </div>
+            <button
+              onClick={() => setAiDiagnostic(null)}
+              className="text-slate-400 hover:text-slate-600 p-1"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </CardHeader>
+          <CardContent className="p-5 space-y-6">
+            <div className="bg-white p-4 rounded-lg border border-slate-200 text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">
+              {aiDiagnostic.ai_diagnostic_explanation}
+            </div>
+
+            {/* 9-Stage Closed-Loop Pipeline */}
+            <div className="space-y-2">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                Closed-Loop Meteorological Learning Trajectory (Authoritative Engine)
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-9 gap-2">
+                {aiDiagnostic.closed_loop_framework.map((step) => (
+                  <div
+                    key={step.stage}
+                    className="p-2.5 bg-white border border-slate-200 rounded-lg text-center flex flex-col justify-between"
+                  >
+                    <div className="text-[10px] font-bold text-[#1557A6] bg-blue-50 rounded-full w-5 h-5 flex items-center justify-center mx-auto mb-1">
+                      {step.stage}
+                    </div>
+                    <div className="text-[11px] font-bold text-slate-800 leading-tight">
+                      {step.title}
+                    </div>
+                    <div className="text-[9px] text-slate-500 mt-1 leading-tight line-clamp-3">
+                      {step.description}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* VIEWPORT: 3D Universe vs 2D Analytical Matrix */}
       {viewMode === "3d" ? (

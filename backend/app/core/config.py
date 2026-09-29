@@ -61,6 +61,13 @@ class Settings(BaseSettings):
     # Public Frontend URL (Used for Certificate QR Verification Links)
     FRONTEND_URL: str = "http://localhost:5173"
 
+    # AI Intelligence Layer (Phase 7)
+    AI_ENABLED: bool = True
+    AI_PROVIDER: str = "mock"  # "mock", "gemini", "openai"
+    AI_MODEL: str = "gemini-1.5-flash"
+    AI_API_KEY: Optional[str] = None
+    AI_BASE_URL: Optional[str] = None
+
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env"),
         env_file_encoding="utf-8",

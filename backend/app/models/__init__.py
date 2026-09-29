@@ -71,6 +71,13 @@ from app.models.notification import (
     Notification,
 )
 
+# AI Intelligence Layer (Phase 7)
+from app.models.ai import (
+    AIDocumentChunk,
+    AIGeneratedContent,
+    AIAuditLog,
+)
+
 __all__ = [
     "Base",
     # Organization & Users (11)
@@ -112,4 +119,9 @@ __all__ = [
     # Subject & Recommendation (2)
     "Subject",
     "SubjectCompetencyRequirement",
+    # AI Intelligence Layer (3)
+    "AIDocumentChunk",
+    "AIGeneratedContent",
+    "AIAuditLog",
 ]
+

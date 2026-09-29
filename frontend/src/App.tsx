@@ -34,6 +34,12 @@ import { TraineeCompetenciesPage } from "@/pages/TraineeCompetenciesPage"
 import { TraineeSkillGapPage } from "@/pages/TraineeSkillGapPage"
 import { AdminTrainerRecommendationsPage } from "@/pages/AdminTrainerRecommendationsPage"
 
+// Phase 7 AI Intelligence Layer Pages
+import { TraineeAiNotebookPage } from "@/pages/TraineeAiNotebookPage"
+import { TraineeStudyGuidePage } from "@/pages/TraineeStudyGuidePage"
+import { TrainerAiQuizGeneratorPage } from "@/pages/TrainerAiQuizGeneratorPage"
+import { TrainerAiKnowledgePage } from "@/pages/TrainerAiKnowledgePage"
+
 // Phase 4 Assessment Engine Pages
 import { TraineeAssessmentsPage } from "@/pages/TraineeAssessmentsPage"
 import { AssessmentDetailPage } from "@/pages/AssessmentDetailPage"
@@ -124,6 +130,8 @@ export const App: React.FC = () => {
             <Route path="courses" element={<TraineeCoursesPage />} />
             <Route path="courses/:courseId" element={<CourseDetailPage />} />
             <Route path="learning" element={<MyLearningPage />} />
+            <Route path="ai-notebook" element={<TraineeAiNotebookPage />} />
+            <Route path="study-guide" element={<TraineeStudyGuidePage />} />
             <Route path="assessments" element={<TraineeAssessmentsPage />} />
             <Route path="assessments/:assessmentId" element={<AssessmentDetailPage />} />
             <Route path="assessments/:assessmentId/take/:attemptId" element={<AssessmentTakePage />} />
@@ -159,6 +167,8 @@ export const App: React.FC = () => {
             <Route path="dashboard" element={<TrainerDashboardPage />} />
             <Route path="courses" element={<TrainerCoursesPage />} />
             <Route path="courses/:courseId" element={<TrainerCourseDetailPage />} />
+            <Route path="ai-quiz" element={<TrainerAiQuizGeneratorPage />} />
+            <Route path="ai-faq-glossary" element={<TrainerAiKnowledgePage />} />
             <Route path="assessments" element={<TrainerAssessmentsPage />} />
             <Route path="assessments/:assessmentId" element={<TrainerAssessmentBuilderPage />} />
             <Route path="performance" element={<TrainerPerformancePage />} />

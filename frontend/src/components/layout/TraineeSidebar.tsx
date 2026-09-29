@@ -11,6 +11,8 @@ import {
   Bell,
   X,
   TrendingDown,
+  Sparkles,
+  FileText,
 } from "lucide-react"
 
 interface TraineeSidebarProps {
@@ -23,6 +25,8 @@ const navItems = [
   { to: "/trainee/profile", label: "My Profile", icon: User },
   { to: "/trainee/courses", label: "Course Catalogue", icon: BookOpen },
   { to: "/trainee/learning", label: "My Learning", icon: GraduationCap },
+  { to: "/trainee/ai-notebook", label: "AI Notebook", icon: Sparkles },
+  { to: "/trainee/study-guide", label: "AI Study Guide", icon: FileText },
   { to: "/trainee/assessments", label: "Assessments", icon: ClipboardCheck },
   { to: "/trainee/competencies", label: "Competencies", icon: Network },
   { to: "/trainee/skill-gap", label: "Skill Gap", icon: TrendingDown },

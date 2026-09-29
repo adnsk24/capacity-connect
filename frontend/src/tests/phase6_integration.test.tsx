@@ -11,12 +11,17 @@ import { coursesService } from "../services/courses"
 import { feedbackService } from "../services/feedback"
 
 // Mock services
-vi.mock("../services/courses", () => ({
-  coursesService: {
-    getCourseDetails: vi.fn(),
-    enrollInCourse: vi.fn(),
-  },
-}))
+vi.mock("../services/courses", async (importOriginal) => {
+  const actual = await importOriginal<any>()
+  return {
+    ...actual,
+    coursesService: {
+      ...actual.coursesService,
+      getCourseDetails: vi.fn(),
+      enrollInCourse: vi.fn(),
+    },
+  }
+})
 
 vi.mock("../services/feedback", () => ({
   feedbackService: {

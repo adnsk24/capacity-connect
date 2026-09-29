@@ -41,8 +41,13 @@ api_v1_router.include_router(feedback_router)
 
 # Course Media & Learning Resources
 from app.routers.certificates import router as certificates_router
+from app.routers.ai import router as ai_router
 
 api_v1_router.include_router(resources_router)
 
 # Accredited Course Completion Certificates
 api_v1_router.include_router(certificates_router)
+
+# Phase 7 AI Intelligence Layer (Grounded RAG, Quiz Gen, Competency & Trainer Explanations)
+api_v1_router.include_router(ai_router)
+
