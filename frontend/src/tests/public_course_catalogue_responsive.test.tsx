@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { CourseCataloguePage } from "../pages/CourseCataloguePage"
+import { CourseDetailPage } from "../pages/CourseDetailPage"
 import { AppShell } from "../components/layout/AppShell"
 import { TraineeLayout } from "../components/layout/TraineeLayout"
 import { TraineeCoursesPage } from "../pages/TraineeCoursesPage"
@@ -278,4 +279,102 @@ describe("Public Course Catalogue Responsive Redesign Suite", () => {
     const viewCourseLinks = screen.getAllByRole("link", { name: /view course/i })
     expect(viewCourseLinks[0].getAttribute("href")).toBe("/trainee/courses/course-101")
   })
+
+  it("renders public course details under AppShell with mobile container padding and wrapping breadcrumbs", async () => {
+    const mockDetail = {
+      id: "course-102",
+      code: "RAD-201",
+      title: "Doppler Weather Radar Interpretation and Severe Storm Warning",
+      description: "Advanced principles of dual-polarization radar operations and storm warning.",
+      objectives: "Operate radar workstations with high accuracy.",
+      prerequisites: "General meteorology foundations.",
+      status: "PUBLISHED",
+      difficulty_level: "ADVANCED" as const,
+      duration_hours: 45,
+      category: { id: "cat-2", name: "Radar Meteorology", code: "RADAR" },
+      trainer: {
+        id: "tr-2",
+        first_name: "Sunita",
+        last_name: "Rao",
+        email: "sunita.rao@imd.gov.in",
+        designation: "Senior Radar Specialist",
+      },
+      modules: [
+        {
+          id: "m-1",
+          course_id: "course-102",
+          title: "Radar Calibration Fundamentals",
+          order_index: 1,
+          lessons: [
+            {
+              id: "l-1",
+              module_id: "m-1",
+              title: "Beam Propagation & Refraction",
+              order_index: 1,
+              duration_minutes: 40,
+              content_type: "TEXT",
+              is_mandatory: true,
+              is_completed: false,
+              resources: [],
+            },
+          ],
+        },
+      ],
+      resources: [],
+      competencies: [
+        {
+          id: "comp-1",
+          name: "Dual-Pol Interpretation",
+          code: "COMP-DUAL-POL",
+          category: "Radar",
+          target_level: 4,
+          contribution_weight: 0.8,
+        },
+      ],
+      is_enrolled: false,
+      completed_lessons_count: 0,
+      total_lessons_count: 1,
+    }
+
+    vi.mocked(coursesService.getCourseDetails).mockResolvedValue(mockDetail)
+    useAuthStore.getState().clearSession()
+
+    const { container } = render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={["/courses/course-102"]}>
+          <Routes>
+            <Route path="/" element={<AppShell />}>
+              <Route path="courses/:courseId" element={<CourseDetailPage />} />
+            </Route>
+          </Routes>
+        </MemoryRouter>
+      </QueryClientProvider>
+    )
+
+    // Wait for title to appear
+    expect(await screen.findByRole("heading", { name: /Doppler Weather Radar Interpretation/i, level: 1 })).toBeDefined()
+
+    // 1. Mobile & guest container padding exists (not flush with 0px viewport)
+    const guestWrapper = container.querySelector("main .bg-\\[\\#F7F9FC\\]")
+    expect(guestWrapper).not.toBeNull()
+    expect(guestWrapper?.className).toContain("px-4")
+    expect(guestWrapper?.className).toContain("sm:px-6")
+
+    // 2. Breadcrumbs have wrapping class preventing blowout
+    const breadcrumbNav = container.querySelector("main nav")
+    expect(breadcrumbNav?.className).toContain("flex-wrap")
+    expect(breadcrumbNav?.className).toContain("min-w-0")
+
+    // 3. Grid ordering: Course Access is order-1 on mobile, Curriculum is order-2
+    const rightCol = container.querySelector(".order-1.lg\\:order-2")
+    const leftCol = container.querySelector(".order-2.lg\\:order-1")
+    expect(rightCol).not.toBeNull()
+    expect(leftCol).not.toBeNull()
+
+    // 4. For guest (not logged in), single Course Access card provides "Sign in to Enroll"
+    const signInButton = screen.getByRole("link", { name: /sign in to enroll/i })
+    expect(signInButton).toBeDefined()
+    expect(signInButton.getAttribute("href")).toBe("/login")
+  })
 })
+
