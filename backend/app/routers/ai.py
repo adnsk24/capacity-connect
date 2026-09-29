@@ -60,15 +60,25 @@ async def ask_notebook(
     Submits a natural language query against approved course resources.
     Guarantees strict factual grounding with source citations or refusal.
     """
-    result = await NotebookService.ask_question(
-        db=db,
-        user=current_user,
-        course_id=payload.course_id,
-        question=payload.question,
-        module_id=payload.module_id,
-        resource_ids=payload.resource_ids,
-    )
-    return AINotebookAskResponse(**result)
+    try:
+        result = await NotebookService.ask_question(
+            db=db,
+            user=current_user,
+            course_id=payload.course_id,
+            question=payload.question,
+            module_id=payload.module_id,
+            resource_ids=payload.resource_ids,
+        )
+        return AINotebookAskResponse(**result)
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Notebook ask error: {type(e).__name__} - {str(e)}",
+        )
 
 
 @router.get("/notebook/resources", response_model=List[AIResourceItem])
@@ -79,13 +89,23 @@ def get_notebook_resources(
     current_user: User = Depends(get_current_active_user),
 ):
     """Retrieves AI-approved resources for selection in the AI Notebook."""
-    items = NotebookService.get_authorized_resources(
-        db=db,
-        user=current_user,
-        course_id=course_id,
-        module_id=module_id,
-    )
-    return [AIResourceItem(**i) for i in items]
+    try:
+        items = NotebookService.get_authorized_resources(
+            db=db,
+            user=current_user,
+            course_id=course_id,
+            module_id=module_id,
+        )
+        return [AIResourceItem(**i) for i in items]
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Resource retrieval error: {type(e).__name__} - {str(e)}",
+        )
 
 
 # ==============================================================
@@ -261,13 +281,23 @@ async def generate_study_guide(
     current_user: User = Depends(get_current_active_user),
 ):
     """Generates a 6-part grounded study guide with source citations for trainees."""
-    return await StudyGuideService.generate_study_guide(
-        db=db,
-        user=current_user,
-        course_id=payload.course_id,
-        module_id=payload.module_id,
-        resource_ids=payload.resource_ids,
-    )
+    try:
+        return await StudyGuideService.generate_study_guide(
+            db=db,
+            user=current_user,
+            course_id=payload.course_id,
+            module_id=payload.module_id,
+            resource_ids=payload.resource_ids,
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Study guide generation error: {type(e).__name__} - {str(e)}",
+        )
 
 
 # ==============================================================

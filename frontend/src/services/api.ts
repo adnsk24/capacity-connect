@@ -22,10 +22,17 @@ export async function fetchJson<T>(endpoint: string, options?: RequestInit): Pro
     headers["Authorization"] = `Bearer ${token}`
   }
 
-  let response = await fetch(url, {
-    ...options,
-    headers,
-  })
+  let response: Response
+  try {
+    response = await fetch(url, {
+      ...options,
+      headers,
+    })
+  } catch (netErr: any) {
+    throw new Error(
+      `Unable to connect to backend API server at ${url}. Please ensure the backend is running.`
+    )
+  }
 
   // Handle 401 token expiration and automatic refresh
   if (response.status === 401 && !endpoint.includes("/auth/refresh") && !endpoint.includes("/auth/login")) {

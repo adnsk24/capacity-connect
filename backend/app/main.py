@@ -6,10 +6,41 @@ from app.routers.api_v1 import api_v1_router
 from app.routers.health import router as health_router
 
 
+from pathlib import Path
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Phase 0 initialization logging
     print(f"[Capacity Connect] Starting {settings.APP_NAME} v{settings.APP_VERSION} ({settings.ENVIRONMENT})")
+    
+    # Auto-run database migrations and ensure AI tables/columns exist on startup
+    try:
+        from alembic.config import Config
+        from alembic import command
+        alembic_ini_path = Path(__file__).resolve().parent.parent / "alembic.ini"
+        if alembic_ini_path.exists():
+            cfg = Config(str(alembic_ini_path))
+            cfg.set_main_option("script_location", str(alembic_ini_path.parent / "alembic"))
+            command.upgrade(cfg, "head")
+            print("[Capacity Connect] Alembic database migration applied successfully on startup.")
+    except Exception as e:
+        print(f"[Capacity Connect] Alembic startup migration warning: {e}")
+        # DDL Fallback to ensure AI columns and tables exist even if Alembic was bypassed
+        try:
+            from app.database.session import SessionLocal, engine
+            from app.database.base import Base
+            from sqlalchemy import text
+            with SessionLocal() as db:
+                db.execute(text("ALTER TABLE resources ADD COLUMN IF NOT EXISTS ai_enabled BOOLEAN DEFAULT TRUE NOT NULL;"))
+                db.execute(text("ALTER TABLE resources ADD COLUMN IF NOT EXISTS ai_approved BOOLEAN DEFAULT TRUE NOT NULL;"))
+                db.commit()
+            Base.metadata.create_all(bind=engine)
+            print("[Capacity Connect] Fallback DDL executed successfully.")
+        except Exception as fallback_e:
+            print(f"[Capacity Connect] Fallback DDL warning: {fallback_e}")
+
     yield
     print(f"[Capacity Connect] Shutting down {settings.APP_NAME}")
 
@@ -23,7 +54,6 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 
 # CORS Middleware
@@ -35,6 +65,24 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    traceback.print_exc()
+    origin = request.headers.get("origin")
+    headers = {}
+    if origin:
+        headers["Access-Control-Allow-Origin"] = origin
+        headers["Access-Control-Allow-Credentials"] = "true"
+        headers["Access-Control-Allow-Headers"] = "*"
+        headers["Access-Control-Allow-Methods"] = "*"
+    return JSONResponse(
+        status_code=500,
+        content={"detail": f"Internal Server Error: {type(exc).__name__} - {str(exc)}"},
+        headers=headers,
+    )
 
 # Static media uploads directory
 upload_dir = Path(__file__).resolve().parent.parent / "uploads"
