@@ -634,3 +634,54 @@ def test_admin_list_and_rbac_protection(client, setup_certificate_data):
     )
     assert res_forbidden.status_code == status.HTTP_403_FORBIDDEN
 
+
+# Test 15: Download certificate and inline preview streaming with flexible auth
+def test_download_certificate_and_inline_preview(client, setup_certificate_data):
+    t1_token = setup_certificate_data["t1_token"]
+    t2_token = setup_certificate_data["t2_token"]
+    admin_token = setup_certificate_data["admin_token"]
+
+    # Get trainee 1 certificate
+    res_me = client.get("/api/v1/certificates/me", headers={"Authorization": f"Bearer {t1_token}"})
+    assert res_me.status_code == status.HTTP_200_OK
+    assert len(res_me.json()) >= 1
+    cert = res_me.json()[0]
+    cert_id = cert["id"]
+
+    # 1. Unauthenticated download fails with 401
+    res_unauth = client.get(f"/api/v1/certificates/{cert_id}/download")
+    assert res_unauth.status_code == status.HTTP_401_UNAUTHORIZED
+
+    # 2. Authenticated download with Bearer header serves attachment
+    res_bearer = client.get(
+        f"/api/v1/certificates/{cert_id}/download",
+        headers={"Authorization": f"Bearer {t1_token}"},
+    )
+    assert res_bearer.status_code == status.HTTP_200_OK
+    assert res_bearer.headers["content-type"] == "application/pdf"
+    assert "attachment" in res_bearer.headers.get("content-disposition", "")
+    assert len(res_bearer.content) > 1000
+
+    # 3. Inline streaming with query token serves inline PDF for browser preview
+    res_inline = client.get(f"/api/v1/certificates/{cert_id}/download?inline=true&token={t1_token}")
+    assert res_inline.status_code == status.HTTP_200_OK
+    assert res_inline.headers["content-type"] == "application/pdf"
+    assert "inline" in res_inline.headers.get("content-disposition", "")
+    assert len(res_inline.content) > 1000
+
+    # 4. Unauthorized trainee cannot download another trainee's certificate
+    res_other = client.get(
+        f"/api/v1/certificates/{cert_id}/download",
+        headers={"Authorization": f"Bearer {t2_token}"},
+    )
+    assert res_other.status_code in (status.HTTP_403_FORBIDDEN, status.HTTP_404_NOT_FOUND)
+
+    # 5. Admin can download any certificate
+    res_admin = client.get(
+        f"/api/v1/certificates/{cert_id}/download",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert res_admin.status_code == status.HTTP_200_OK
+    assert res_admin.headers["content-type"] == "application/pdf"
+
+

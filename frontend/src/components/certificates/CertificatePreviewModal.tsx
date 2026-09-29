@@ -19,11 +19,14 @@ export const CertificatePreviewModal: React.FC<CertificatePreviewModalProps> = (
 }) => {
   if (!isOpen || !certificate) return null
 
-  // Use download URL or direct storage URL
+  // Stream via backend inline download endpoint with local fallback to prevent bucket 404s
+  const token = localStorage.getItem("cc_access_token")
   const backendOrigin = API_BASE_URL.replace("/api/v1", "")
-  const pdfSource = certificate.pdf_url
-    ? (certificate.pdf_url.startsWith("http") ? certificate.pdf_url : `${backendOrigin}${certificate.pdf_url}`)
-    : certificateService.getDownloadUrl(certificate.id)
+  const downloadUrl = certificateService.getDownloadUrl(certificate.id)
+  const tokenQuery = token ? `&token=${encodeURIComponent(token)}` : ""
+  const pdfSource = certificate.pdf_url && !certificate.pdf_url.startsWith("http")
+    ? `${backendOrigin}${certificate.pdf_url}`
+    : `${downloadUrl}?inline=true${tokenQuery}`
 
   const handleDownload = () => {
     if (onDownload) {

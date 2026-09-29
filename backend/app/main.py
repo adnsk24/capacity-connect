@@ -41,6 +41,24 @@ async def lifespan(app: FastAPI):
         except Exception as fallback_e:
             print(f"[Capacity Connect] Fallback DDL warning: {fallback_e}")
 
+    # Auto-initialize Supabase storage buckets if Supabase is configured
+    if settings.SUPABASE_URL and (settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY):
+        try:
+            from supabase import create_client
+            key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY
+            sb_client = create_client(settings.SUPABASE_URL, key)
+            for b_id in [settings.SUPABASE_STORAGE_CERTIFICATES_BUCKET, settings.SUPABASE_STORAGE_MEDIA_BUCKET]:
+                try:
+                    sb_client.storage.get_bucket(b_id)
+                except Exception:
+                    try:
+                        sb_client.storage.create_bucket(b_id, options={"public": True})
+                        print(f"[Supabase Storage] Auto-created public bucket '{b_id}' on startup.")
+                    except Exception as b_err:
+                        print(f"[Supabase Storage] Notice: Bucket '{b_id}' startup check: {b_err}")
+        except Exception as sb_init_err:
+            print(f"[Supabase Storage] Startup storage initialization warning: {sb_init_err}")
+
     # Safe demo trainee certificate assurance for development and preview deployments
     try:
         from app.database.session import SessionLocal

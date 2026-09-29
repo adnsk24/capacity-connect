@@ -209,14 +209,28 @@ class StorageService:
                 key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY
                 supabase = create_client(settings.SUPABASE_URL, key)
                 bucket_name = settings.SUPABASE_STORAGE_MEDIA_BUCKET
+
+                # Check and ensure bucket exists
+                try:
+                    supabase.storage.get_bucket(bucket_name)
+                except Exception:
+                    try:
+                        supabase.storage.create_bucket(bucket_name, options={"public": True})
+                        print(f"[StorageService] Auto-created Supabase bucket '{bucket_name}'.")
+                    except Exception as b_err:
+                        print(f"[StorageService] Notice: Bucket '{bucket_name}' auto-create notice: {b_err}")
+
                 subfolder = folder_suffix.replace("course-media/", "").strip("/")
                 storage_path = f"{subfolder}/{final_filename}" if subfolder else final_filename
-                supabase.storage.from_(bucket_name).upload(
+                upload_res = supabase.storage.from_(bucket_name).upload(
                     path=storage_path,
                     file=contents,
                     file_options={"content-type": mime_type, "upsert": "true"},
                 )
-                storage_url = supabase.storage.from_(bucket_name).get_public_url(storage_path)
+                if hasattr(upload_res, "error") and upload_res.error:
+                    print(f"[StorageService] Supabase media upload error: {upload_res.error}, using local fallback")
+                else:
+                    storage_url = supabase.storage.from_(bucket_name).get_public_url(storage_path)
             except Exception as e:
                 print(f"[StorageService] Warning: Supabase media upload failed, falling back to local storage: {e}")
 

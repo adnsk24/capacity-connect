@@ -351,15 +351,29 @@ class CertificateService:
                 key = settings.SUPABASE_SERVICE_ROLE_KEY or settings.SUPABASE_ANON_KEY
                 supabase = create_client(settings.SUPABASE_URL, key)
                 bucket_name = settings.SUPABASE_STORAGE_CERTIFICATES_BUCKET
+
+                # Check and ensure bucket exists
+                try:
+                    supabase.storage.get_bucket(bucket_name)
+                except Exception:
+                    try:
+                        supabase.storage.create_bucket(bucket_name, options={"public": True})
+                        print(f"[CertificateService] Auto-created Supabase bucket '{bucket_name}'.")
+                    except Exception as b_err:
+                        print(f"[CertificateService] Notice: Bucket '{bucket_name}' auto-create notice: {b_err}")
+
                 storage_path = f"{user.id}/{filename}"
                 with open(abs_pdf_path, "rb") as pf:
                     pdf_bytes = pf.read()
-                supabase.storage.from_(bucket_name).upload(
+                upload_res = supabase.storage.from_(bucket_name).upload(
                     path=storage_path,
                     file=pdf_bytes,
                     file_options={"content-type": "application/pdf", "upsert": "true"},
                 )
-                rel_storage_url = supabase.storage.from_(bucket_name).get_public_url(storage_path)
+                if hasattr(upload_res, "error") and upload_res.error:
+                    print(f"[CertificateService] Supabase upload error: {upload_res.error}, using local fallback")
+                else:
+                    rel_storage_url = supabase.storage.from_(bucket_name).get_public_url(storage_path)
             except Exception as e:
                 print(f"[CertificateService] Warning: Supabase certificate upload failed, falling back to local: {e}")
 

@@ -5,7 +5,9 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
-from app.core.dependencies import get_current_active_user, require_admin
+from app.core.dependencies import get_current_active_user, require_admin, oauth2_scheme_optional
+from app.core.security import decode_access_token
+import jwt
 from app.models.user import User
 from app.models.course import Course
 from app.models.certificate import Certificate
@@ -20,6 +22,45 @@ from app.schemas.certificate import (
 from app.services.certificate_service import CertificateService
 
 router = APIRouter(prefix="/certificates", tags=["Certificates"])
+
+
+def get_current_user_flexible(
+    token_query: Optional[str] = Query(None, alias="token"),
+    token_bearer: Optional[str] = Depends(oauth2_scheme_optional),
+    db: Session = Depends(get_db),
+) -> User:
+    """Authenticates user via standard Bearer header or ?token query param for inline viewer embedding."""
+    token = token_bearer or token_query
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    try:
+        payload = decode_access_token(token)
+        user_id_str: str = payload.get("sub")
+        if not user_id_str:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate credentials.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        user_id = uuid.UUID(user_id_str)
+    except (jwt.PyJWTError, ValueError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user or not user.is_active or user.account_status != "ACTIVE":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
 
 
 @router.get("/me", response_model=List[CertificateResponse], summary="List all certificates for authenticated trainee")
@@ -145,19 +186,15 @@ def get_certificate_detail(
 @router.get("/{certificate_id}/download", summary="Download certificate PDF")
 def download_certificate(
     certificate_id: uuid.UUID,
+    inline: bool = Query(False, description="If true, serve inline for in-browser preview instead of attachment"),
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_active_user),
+    current_user: User = Depends(get_current_user_flexible),
 ):
-    """Securely downloads the generated PDF certificate.
+    """Securely downloads or previews the generated PDF certificate.
     Enforces ownership server-side.
     Filename: Capacity_Connect_Certificate_<CertificateNumber>.pdf
     """
     cert = CertificateService.get_certificate_by_id(db, certificate_id, current_user)
-
-    # If certificate is stored in Supabase / external CDN, redirect to download directly
-    if cert.pdf_url and (cert.pdf_url.startswith("http://") or cert.pdf_url.startswith("https://")):
-        from fastapi.responses import RedirectResponse
-        return RedirectResponse(url=cert.pdf_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
     pdf_path = CertificateService.get_pdf_path(cert)
 
@@ -169,16 +206,20 @@ def download_certificate(
             rel_url, abs_path = CertificateService.render_pdf(cert, user, course)
             cert.pdf_url = rel_url
             db.commit()
-            if rel_url.startswith("http://") or rel_url.startswith("https://"):
-                from fastapi.responses import RedirectResponse
-                return RedirectResponse(url=rel_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
             pdf_path = abs_path
+        elif cert.pdf_url and (cert.pdf_url.startswith("http://") or cert.pdf_url.startswith("https://")):
+            # Fallback redirect to external storage if local generation context is missing
+            from fastapi.responses import RedirectResponse
+            return RedirectResponse(url=cert.pdf_url, status_code=status.HTTP_307_TEMPORARY_REDIRECT)
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Certificate source not found.")
 
     download_filename = f"Capacity_Connect_Certificate_{cert.certificate_number}.pdf"
+    disposition = "inline" if inline else "attachment"
     return FileResponse(
         path=str(pdf_path),
         media_type="application/pdf",
         filename=download_filename,
+        content_disposition_type=disposition,
     )
+
